@@ -1,0 +1,88 @@
+{
+   "slides" : [
+      {
+         "img" : "/images/baseball.jpg",
+         "venue" : "IEEE Journal of Selected Areas in Sensors",
+         "title" : "曲面柔性壓力感測陣列：多通道方向性接觸感測",
+         "href" : "/research/wear/",
+         "badge" : "2026 · Accepted"
+      },
+      {
+         "href" : "/research/video/",
+         "badge" : "2026",
+         "title" : "運動模糊下的神經前後向軌跡還原",
+         "img" : "/images/pose2.jpg",
+         "venue" : "JKSU – Computer and Information Sciences (Q1)"
+      },
+      {
+         "img" : "/images/pose.jpg",
+         "venue" : "IEEE Embedded Systems Letters",
+         "href" : "/research/video/",
+         "title" : "多視角人體關節的穩健相機自動校正",
+         "badge" : "2026 · Accepted"
+      },
+      {
+         "badge" : "2026",
+         "href" : "/research/wear/",
+         "title" : "IoT 打擊手套：揮棒特徵感測與分析",
+         "img" : "/images/glove.jpg",
+         "venue" : "IEEE Embedded Systems Letters"
+      },
+      {
+         "title" : "JigsawGo：視覺引導機械手臂拼圖還原",
+         "href" : "/research/robot/",
+         "badge" : "Demo",
+         "img" : "/images/puzzle.jpg",
+         "venue" : "ACM UbiComp 2017 · Sensors 2023"
+      }
+   ],
+   "strip" : [
+      {
+         "img" : "/images/baseball.jpg",
+         "cap" : "智慧棒球"
+      },
+      {
+         "img" : "/images/bat.jpg",
+         "cap" : "智慧球棒"
+      },
+      {
+         "cap" : "打擊手套",
+         "img" : "/images/glove.jpg"
+      },
+      {
+         "cap" : "Otto 機器人",
+         "img" : "/images/robot.jpg"
+      },
+      {
+         "img" : "/images/pose.jpg",
+         "cap" : "WebNN 姿態估測"
+      },
+      {
+         "cap" : "機械手臂",
+         "img" : "/images/arm.jpg"
+      },
+      {
+         "img" : "/images/platform.jpg",
+         "cap" : "投打數據平台"
+      },
+      {
+         "img" : "/images/pose2.jpg",
+         "cap" : "揮棒骨架分析"
+      },
+      {
+         "cap" : "UbiComp 展示",
+         "img" : "/images/puzzle.jpg"
+      },
+      {
+         "img" : "/images/bat2.jpg",
+         "cap" : "球棒感測器"
+      }
+   ],
+   "words" : [
+      "棒球投打",
+      "比賽影片",
+      "視網膜影像",
+      "人的動作",
+      "語言與影像"
+   ]
+}

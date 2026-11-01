@@ -1,0 +1,123 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import { NAV } from '../config/nav';
+import { getSite, getMembers, masterCat, initial } from '../lib';
+
+const [site, { current, alumni }] = await Promise.all([getSite(), getMembers()]);
+const masters = alumni.filter((m) => m.data.thesis).map(({ data: m }) => ({ ...m, ...masterCat(m.thesis), year: m.grad_year, note: m.honor }));
+const steps = [
+  ['碩一上', '修課、熟悉實驗室設備，跟著學長姐的計畫做'],
+  ['碩一下', '定題目、做出第一版系統'],
+  ['碩二上', '投稿國內外研討會（CVGIP、ICCE、GCCE…）'],
+  ['碩二下', '完成碩論、口試，延伸投期刊'],
+];
+---
+<Layout title="研究所" active={NAV.graduate}>
+  <Hero eyebrow="Graduate Program" title="在這裡讀碩士" lead="做真的硬體、跑真的模型、投國際會議。兩年後帶著作品與論文畢業。" img="/images/pose.jpg" bg="#2F3B36" />
+
+  <section class="wrap section reveal">
+    <h2 class="h2">為什麼選這裡</h2>
+    <div class="why">
+      <div class="card zoom">
+        <img src={u('/images/robot.jpg')} alt="Otto DIY 機器人" class="why-img" loading="lazy" />
+        <div class="why-body"><b>摸得到邊緣運算</b><span>耐能 Kneron NPU／USB AI 加速棒、Raspberry Pi 4/5、深度攝影機，模型直接部署到裝置上。</span></div>
+      </div>
+      <div class="card">
+        <div class="why-img why-fill" style="background:#4A685D"><span style="font-family:var(--display);font-size:72px;font-weight:600;line-height:1">NSTC</span><span style="font-size:15px">國科會計畫連續執行</span></div>
+        <div class="why-body"><b>研究經費充足</b><span>主持 4 年期精準運動科學整合計畫、智慧醫療與網球分析計畫，設備與出國發表有支援。</span></div>
+      </div>
+      <div class="card">
+        <div class="why-img why-fill" style="background:#3E4A5A;align-items:flex-start;padding:24px;gap:10px;font-size:18px"><span>USA · Santa Clara University</span><span>Japan · Hokkaido University</span><span>IEEE ICME AI-Sports Workshop</span></div>
+        <div class="why-body"><b>國際合作</b><span>與美、日教授共同指導、共同發表；老師每年在 IEEE ICME 舉辦 AI-Sports 工作坊。</span></div>
+      </div>
+      <div class="card zoom">
+        <img src={u('/images/glove.jpg')} alt="壓力感測打擊手套" class="why-img" loading="lazy" />
+        <div class="why-body"><b>論文會發表</b><span>學長姐碩論延伸成 IEEE ESL、ICMEW、Sensors 論文，並拿過民生電子學會碩論獎佳作。</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band reveal">
+    <div class="wrap section">
+      <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:12px">
+        <h2 class="h2">碩士兩年怎麼過</h2>
+        <span class="star" style="font-weight:400;font-size:13px">範例流程，待老師確認</span>
+      </div>
+      <ol class="timeline">
+        {steps.map(([k, v]) => <li><span class="tl-k">{k}</span><span class="tl-v">{v}</span></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="wrap section reveal">
+    <div class="row-between">
+      <h2 class="h2">學長姐做了什麼 <small>{masters.length} 篇碩士論文</small></h2>
+      <span class="note" style="font-size:14px">元智電機時期 · 畢業去向待補</span>
+    </div>
+    <div class="grid-auto">
+      {masters.map((m) => (
+        <div class="card zoom">
+          <div style={`position:relative;aspect-ratio:16/9;background:${m.bg}`}>
+            {m.img && <img src={u(m.img)} alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />}
+            <span class="tag" style="left:12px">{m.tag}</span>
+          </div>
+          <div class="card-body" style="gap:8px">
+            <b style="font-size:16px;line-height:1.5">{m.thesis}</b>
+            <span style="font-size:14px;color:var(--muted)">{m.name} · {m.year} 畢業</span>
+            {m.note && <span class="star">★ {m.note}</span>}
+            {m.job && <span style="font-size:13px;color:var(--accent-ink)">→ {m.job}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="reveal" style="background:var(--surface);border-top:1px solid var(--line)">
+    <div class="wrap section" style="flex-direction:row;flex-wrap:wrap;gap:48px">
+      <div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <div class="row-between">
+          <h2 class="h2">現在的夥伴</h2>
+          <a href={u('/members/')} style="font-size:15px">認識他們 →</a>
+        </div>
+        <div class="team">
+          {current.map(({ data: p }) => (
+            <a href={u('/members/#people')}><span class="avatar">{initial(p.name)}</span><b>{p.name}</b></a>
+          ))}
+        </div>
+      </div>
+      <div class="join">
+        <div style="font-family:var(--serif);font-size:28px;font-weight:700">怎麼加入</div>
+        <ol>
+          <li>寄信給老師，附上履歷與有興趣的研究主題</li>
+          <li>約時間來實驗室看看、跟學長姐聊</li>
+          <li>推甄／考試錄取後確認指導</li>
+        </ol>
+        <span style="font-size:13px;color:#B9C4BF">[招生條件 — 待老師確認]</span>
+        <a class="btn btn-coral" style="align-self:flex-start" href={`mailto:${site.email}`}>寄信 {site.email}</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .why { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 20px; }
+  .why-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .why-fill { color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; }
+  .why-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .why-body b { font-size: 20px; }
+  .why-body span { font-size: 15px; line-height: 1.65; color: #4A4A4A; }
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); border-top: 2px solid var(--accent); }
+  .timeline li { padding: 20px 20px 0 0; display: flex; flex-direction: column; gap: 8px; }
+  .tl-k { font-family: var(--display); font-size: 34px; font-weight: 600; color: var(--accent-ink); }
+  .tl-v { font-size: 15px; line-height: 1.65; color: #4A4A4A; }
+  .team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .team a { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); }
+  .avatar { width: 96px; height: 96px; border-radius: 50%; background: #DCE5E0; color: #3D5A50; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 34px; }
+  .join { flex: 1 1 360px; min-width: 0; background: var(--pine); color: #F2EFE8; border-radius: 6px; padding: 36px; display: flex; flex-direction: column; gap: 16px; }
+  .join ol { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 12px; font-size: 16px; line-height: 1.6; }
+  .join li { counter-increment: s; display: flex; gap: 12px; }
+  .join li::before { content: counter(s); flex: 0 0 28px; height: 28px; border-radius: 50%; background: var(--wood); color: #1E1F1D; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+  @media (max-width: 767px) { .avatar { width: 72px; height: 72px; font-size: 26px; } .join { padding: 24px; } }
+</style>

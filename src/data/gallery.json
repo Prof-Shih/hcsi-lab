@@ -1,0 +1,82 @@
+[
+   {
+      "row" : 2,
+      "kind" : "photo",
+      "cap" : "實驗室合照",
+      "col" : 2,
+      "bg" : "#3D5A50",
+      "img" : ""
+   },
+   {
+      "col" : 1,
+      "img" : "/images/puzzle.jpg",
+      "bg" : "#2B2B2B",
+      "cap" : "機械手臂拼圖 Demo",
+      "row" : 1,
+      "kind" : "video"
+   },
+   {
+      "kind" : "photo",
+      "row" : 2,
+      "bg" : "#5C4A37",
+      "img" : "/images/glove.jpg",
+      "col" : 1,
+      "cap" : "打擊手套實測"
+   },
+   {
+      "kind" : "video",
+      "row" : 1,
+      "cap" : "球場揮棒分析",
+      "bg" : "#2F3B36",
+      "img" : "/images/pose2.jpg",
+      "col" : 1
+   },
+   {
+      "bg" : "#6B5A48",
+      "img" : "",
+      "col" : 1,
+      "cap" : "Group Meeting",
+      "kind" : "photo",
+      "row" : 1
+   },
+   {
+      "col" : 2,
+      "img" : "",
+      "bg" : "#3E4A5A",
+      "cap" : "研討會出國發表",
+      "row" : 1,
+      "kind" : "photo"
+   },
+   {
+      "row" : 1,
+      "kind" : "photo",
+      "cap" : "Otto 機器人",
+      "col" : 1,
+      "bg" : "#7A3B3B",
+      "img" : "/images/robot.jpg"
+   },
+   {
+      "kind" : "photo",
+      "row" : 1,
+      "bg" : "#4A685D",
+      "img" : "",
+      "col" : 1,
+      "cap" : "專題成果展"
+   },
+   {
+      "kind" : "video",
+      "row" : 1,
+      "cap" : "實驗室一日 vlog",
+      "bg" : "#A0703F",
+      "img" : "",
+      "col" : 1
+   },
+   {
+      "cap" : "聚餐・畢業典禮",
+      "col" : 2,
+      "bg" : "#5A4570",
+      "img" : "",
+      "row" : 1,
+      "kind" : "photo"
+   }
+]

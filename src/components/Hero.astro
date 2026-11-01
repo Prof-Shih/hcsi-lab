@@ -1,0 +1,18 @@
+---
+import { u } from '../lib';
+interface Props { eyebrow: string; title: string; lead?: string; img?: string; bg?: string }
+const { eyebrow, title, lead, img, bg } = Astro.props;
+---
+<section class="hero" style={bg ? `background:${bg}` : undefined}>
+  {img && <img class="hero-bg" src={u(img)} alt="" />}
+  <div class="blob blob-a" aria-hidden="true"></div>
+  <div class="blob blob-b" aria-hidden="true"></div>
+  <div class="blob blob-c" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <div class="eyebrow">{eyebrow}</div>
+    <h1>{title}</h1>
+    <span class="rule" aria-hidden="true"></span>
+    {lead && <p>{lead}</p>}
+    <slot />
+  </div>
+</section>

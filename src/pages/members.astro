@@ -1,0 +1,207 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import galleryData from '../data/gallery.json';
+import { NAV } from '../config/nav';
+import { getMembers, undergradProjects, initial } from '../lib';
+
+const { pi, current, alumni } = await getMembers();
+// 選了拉拉看風格的人，頭像改用拉拉看照片並啟用互動
+// 燈箱在瀏覽器端換圖，路徑先加好 base
+const gallery = galleryData.map((g) => ({ ...g, img: u(g.img) }));
+const people = [...pi, ...current].map(({ data }) => ({ ...data, lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
+
+const pal = [['#DCE5E0', '#3D5A50'], ['#F3E8DC', '#7A5634'], ['#F6DCD3', '#8A3E2A'], ['#DDE6EE', '#2F4A63'], ['#EAE3F0', '#5A4570'], ['#E6EBD8', '#4C5A2E']];
+const seen = new Set<string>();
+const ugs: { name: string; topic: string }[] = [];
+undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { seen.add(n); ugs.push({ name: n, topic: p.zh }); } }));
+---
+<Layout title="成員" active={NAV.members}>
+  <Hero eyebrow="Members & Lab Life" title="我們是誰" lead="滑鼠移到頭像上看每個人的介紹；往下看實驗室的日常照片與影片。">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;padding-top:6px">
+      <a class="btn btn-coral" href="#people" style="min-height:44px;padding:0 20px">成員</a>
+      <a class="btn btn-ghost-light" href="#life" style="min-height:44px;padding:0 20px">實驗室日常</a>
+    </div>
+  </Hero>
+
+  <section id="people" class="wrap" style="padding-top:56px;padding-bottom:72px;display:flex;flex-direction:column;gap:24px">
+    <div class="sec-head"><h2>目前成員</h2><span>{people.length} 位 · 中央大學</span></div>
+    <div class="people">
+      {people.map((m, i) => (
+        <div class="person has-pop">
+          <button type="button" class:list={['face', { lala: m.lala }]} data-lala={u(m.lala)} aria-label={m.lala ? `${m.name} 介紹（拉拉看：可以拉長頭像）` : `${m.name} 介紹`} style={`background:${pal[i % 6][0]};color:${pal[i % 6][1]}`}>
+            {m.lala || m.photo ? <img src={u(m.lala ?? m.photo)} alt="" /> : initial(m.name)}
+          </button>
+          <b style="font-size:18px">{m.name}</b>
+          <span class="note">{m.role}</span>
+          <div class="pop" role="dialog" aria-label={m.name} style="top:150px;width:min(300px,86vw);gap:12px">
+            <div style="display:flex;align-items:center;gap:12px"><span class="mini">{initial(m.name)}</span><span class="stack"><b style="font-size:17px">{m.name}</b><span class="note">{m.role}</span></span></div>
+            <div class="stack" style="gap:4px;font-size:14px;line-height:1.6"><span style="font-size:12px;color:var(--muted)">學經歷</span>{m.edu && <span>{m.edu}</span>}{m.topic && <span>{m.topic}</span>}{m.interests.length > 0 && <span>{m.interests.join('、')}</span>}</div>
+            <div class="stack" style="gap:6px;font-size:14px;border-top:1px solid #EFEBE3;padding-top:10px">
+              {m.instagram && <a href={u(`https://instagram.com/${m.instagram}`)} target="_blank" rel="noopener">@{m.instagram}</a>}
+              {m.email ? <a href={`mailto:${m.email}`}>{m.email}</a> : <span class="note">信箱 [待補]</span>}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <span class="note">成員資料由後台「成員」維護（照片、身分、信箱、學經歷）。</span>
+  </section>
+
+  <section id="life" style="background:var(--night);color:#F2EFE8">
+    <div class="wrap reveal" style="padding-top:72px;padding-bottom:72px;display:flex;flex-direction:column;gap:24px">
+      <div class="row-between">
+        <div class="stack" style="gap:8px">
+          <div class="eyebrow" style="color:#A9C4B8">Lab Life</div>
+          <h2 style="margin:0;font-family:var(--serif);font-size:36px;font-weight:700">實驗室日常</h2>
+        </div>
+        <div class="life-filters" role="group" aria-label="篩選">
+          <button type="button" data-k="all" aria-pressed="true">全部</button>
+          <button type="button" data-k="photo" aria-pressed="false">照片</button>
+          <button type="button" data-k="video" aria-pressed="false">影片</button>
+        </div>
+      </div>
+      <div class="mosaic">
+        {gallery.map((g, i) => (
+          <button type="button" class="tile zoom" data-i={i} data-kind={g.kind} aria-label={g.cap} style={`background:${g.bg};grid-column:span ${g.col};grid-row:span ${g.row}`}>
+            {g.img ? <img src={u(g.img)} alt="" loading="lazy" /> : <span class="tile-ph">[{g.kind === 'video' ? '影片' : '照片'}待補]</span>}
+            {g.kind === 'video' && <span class="play" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="#1F2622"><path d="M8 5v14l11-7z"></path></svg></span>}
+            <span class="tile-cap">{g.cap}</span>
+          </button>
+        ))}
+      </div>
+      <span style="font-size:13px;color:#B9C4BF">大家的照片、影片放進 src/data/gallery.json 就會出現在這裡。</span>
+    </div>
+  </section>
+
+  <dialog class="lightbox" aria-label="照片檢視">
+    <div class="lb-frame"><img alt="" /><span class="lb-ph"></span></div>
+    <div class="lb-bar">
+      <span class="lb-cap"></span>
+      <span style="display:flex;gap:8px">
+        <button type="button" class="lb-prev" aria-label="上一張">‹</button>
+        <button type="button" class="lb-next" aria-label="下一張">›</button>
+        <button type="button" class="lb-close">關閉</button>
+      </span>
+    </div>
+  </dialog>
+
+  <section class="reveal" style="background:var(--surface);border-top:1px solid var(--line)">
+    <div class="wrap" style="padding-top:64px;padding-bottom:88px;display:flex;flex-direction:column;gap:24px">
+      <div class="sec-head"><h2>畢業碩士</h2><span>{alumni.length} 位 · 元智電機時期</span></div>
+      <div class="alumni">
+        {alumni.map(({ data: m }) => (
+          <div class="alum has-pop" tabindex="0">
+            <span class="alum-face">{initial(m.name)}</span>
+            <b style="font-size:15px">{m.name}</b>
+            <span style="font-family:var(--latin);font-size:12px;color:var(--muted)">{m.grad_year}</span>
+            <div class="pop" role="tooltip" style="top:104px;width:min(260px,80vw);padding:16px;gap:6px">
+              <span style="font-size:12px;color:var(--muted)">碩士論文 · {m.grad_year}</span>
+              <b style="font-size:14px;line-height:1.55">{m.thesis}</b>
+              {m.honor && <span class="star">★ {m.honor}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="sec-head" style="padding-top:32px"><h2>歷屆專題生</h2><span>{ugs.length} 位</span></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        {ugs.map((s) => <a href={u('/undergrad/')} title={s.topic} class="ug">{s.name}</a>)}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // 拉拉看頭像（只有選了拉拉看風格的成員才有 data-lala）
+  import { mountLala } from '../scripts/lala';
+  mountLala();
+</script>
+
+<script define:vars={{ gallery }}>
+  // 頭像：手機沒有 hover，點一下打開介紹，點別處關閉
+  document.querySelectorAll('.person .face').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const p = b.closest('.person');
+    const was = p.classList.contains('open');
+    document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open'));
+    if (!was) p.classList.add('open');
+  }));
+  document.addEventListener('click', () => document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open')));
+
+  // 實驗室日常篩選
+  const fbtns = [...document.querySelectorAll('.life-filters button')];
+  const tiles = [...document.querySelectorAll('.tile')];
+  fbtns.forEach((b) => b.addEventListener('click', () => {
+    fbtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    tiles.forEach((t) => { t.hidden = !(b.dataset.k === 'all' || t.dataset.kind === b.dataset.k); });
+  }));
+
+  // 燈箱
+  const lb = document.querySelector('.lightbox');
+  const img = lb.querySelector('img');
+  const ph = lb.querySelector('.lb-ph');
+  const frame = lb.querySelector('.lb-frame');
+  const cap = lb.querySelector('.lb-cap');
+  let cur = 0;
+  const show = (i) => {
+    cur = (i + gallery.length) % gallery.length;
+    const g = gallery[cur];
+    frame.style.background = g.bg;
+    img.hidden = !g.img; if (g.img) { img.src = g.img; img.alt = g.cap; }
+    ph.textContent = g.img ? '' : `[${g.kind === 'video' ? '影片' : '照片'}待補]`;
+    cap.textContent = `${g.cap} · ${g.kind === 'video' ? '影片' : '照片'}`;
+  };
+  tiles.forEach((t) => t.addEventListener('click', () => { show(Number(t.dataset.i)); lb.showModal(); }));
+  lb.querySelector('.lb-prev').addEventListener('click', () => show(cur - 1));
+  lb.querySelector('.lb-next').addEventListener('click', () => show(cur + 1));
+  lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
+  lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+  lb.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1); });
+</script>
+
+<style>
+  .sec-head { display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  .sec-head h2 { margin: 0; font-size: 24px; font-weight: 700; }
+  .sec-head span { font-size: 15px; color: var(--muted); }
+  .people { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 45%), 1fr)); gap: 28px 20px; }
+  .person { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .face { width: 168px; height: 168px; max-width: 100%; border-radius: 50%; border: 0; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 56px; overflow: hidden; transition: transform .3s, box-shadow .3s; }
+  .face img { width: 100%; height: 100%; object-fit: cover; }
+  .person:hover .face, .person.open .face { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(30,28,24,.2); }
+  .face.lala { position: relative; overflow: visible; touch-action: none; cursor: grab; }
+  .face.lala:active { cursor: grabbing; }
+  .face.lala > img { border-radius: 50%; }
+  .face.lala-on { background: transparent !important; }
+  .face.lala-on > img { visibility: hidden; }
+  .face :global(.lala-canvas) { position: absolute; left: -100%; top: -100%; width: 300%; height: 300%; pointer-events: none; z-index: 3; }
+  .mini { width: 48px; height: 48px; border-radius: 50%; background: #DCE5E0; color: #3D5A50; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 20px; flex: 0 0 48px; }
+  .life-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .life-filters button { min-height: 40px; padding: 0 16px; border-radius: 999px; cursor: pointer; font-size: 14px; font-family: var(--sans); border: 1px solid #6E8079; background: transparent; color: #F2EFE8; }
+  .life-filters button[aria-pressed="true"] { background: var(--coral); border-color: var(--coral); color: #1E1F1D; }
+  .mosaic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 170px; grid-auto-flow: dense; gap: 12px; }
+  .tile { position: relative; border: 0; padding: 0; border-radius: 6px; cursor: pointer; color: #fff; text-align: left; }
+  .tile[hidden] { display: none; }
+  .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tile-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: rgba(255,255,255,.75); }
+  .tile-cap { position: absolute; left: 10px; bottom: 10px; font-family: var(--sans); font-size: 13px; background: rgba(20,24,22,.7); padding: 4px 10px; border-radius: 999px; }
+  .play { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: rgba(247,245,240,.92); display: flex; align-items: center; justify-content: center; }
+  .lightbox { width: min(960px, calc(100% - 32px)); max-width: none; padding: 0; border: 0; background: transparent; color: #F2EFE8; }
+  .lightbox::backdrop { background: rgba(15,18,16,.88); }
+  .lightbox[open] { display: flex; flex-direction: column; gap: 12px; animation: pop .3s ease-out; }
+  .lb-frame { position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .lb-frame img { width: 100%; height: 100%; object-fit: contain; background: #111; }
+  .lb-ph { position: absolute; font-size: 15px; color: rgba(255,255,255,.8); }
+  .lb-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .lb-bar button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #6E8079; background: transparent; color: #F2EFE8; cursor: pointer; font-size: 18px; }
+  .lb-bar .lb-close { width: auto; padding: 0 18px; border-radius: 999px; border: 0; background: var(--coral); color: #1E1F1D; font-weight: 700; font-size: 15px; }
+  .alumni { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 24px 16px; }
+  .alum { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; outline-offset: 4px; }
+  .alum-face { width: 96px; height: 96px; border-radius: 50%; background: #E9E3D8; color: #5C4A37; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 34px; transition: transform .3s; }
+  .alum:hover .alum-face, .alum:focus .alum-face { transform: translateY(-6px); }
+  .ug { font-size: 14px; padding: 7px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--ink); }
+  @media (max-width: 767px) {
+    .face { width: 128px; height: 128px; font-size: 44px; }
+    .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 130px; }
+  }
+</style>

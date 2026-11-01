@@ -1,0 +1,120 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import pi from '../data/pi.json';
+import { NAV } from '../config/nav';
+import { getSite } from '../lib';
+
+const site = await getSite();
+---
+<Layout title="指導教授" active={NAV.pi} description="施皇嘉 副教授 · 國立中央大學資訊管理學系">
+  <Hero eyebrow="Meet the Advisor" title="指導教授" />
+
+  <section class="wrap profile">
+    <img src={u('/images/pi.jpg')} alt="施皇嘉教授" class="portrait" />
+    <div class="stack" style="flex:1 1 480px;min-width:0;gap:16px">
+      <div class="eyebrow" style="color:var(--accent-ink)">Principal Investigator</div>
+      <h2 class="name">施皇嘉 <span>副教授</span></h2>
+      <div class="name-en">Huang-Chia (Royal) Shih, Ph.D.</div>
+      <div style="font-size:16px;line-height:1.8;color:#3F3F3F">國立中央大學 資訊管理學系 副教授<br>IEEE Senior Member · IEEE Trans. on Consumer Electronics 副編輯（2026–2027）</div>
+      <div class="facts">
+        <div><span>E-mail</span><a href={`mailto:${site.email}`}>{site.email}</a></div>
+        <div><span>研究室</span>資管系館 [室號待補]</div>
+        <div><span>連結</span><span><a href={u('/publications/')}>著作列表</a> · CV (PDF) [待補]</span></div>
+      </div>
+      <p class="bio">施老師於國立清華大學電機系取得博士學位，曾任元智大學電機系教授及電機通訊國際學士學位學程主任，並於美國華盛頓大學、匈牙利 Óbuda 大學擔任訪問教授，2025 年加入中央大學資管系。研究聚焦於內容導向多媒體分析、運動資料分析、AIoT 與人機互動。</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">{pi.interests.map((i) => <span class="chip">{i}</span>)}</div>
+    </div>
+  </section>
+
+  <section class="band reveal">
+    <div class="wrap two">
+      <div class="stack" style="flex:1 1 360px;min-width:0;gap:18px">
+        <h2 class="h3">學歷</h2>
+        {pi.edu.map((e) => <div style="display:flex;gap:18px;align-items:baseline"><span class="yr">{e.y}</span><span style="font-size:15px;line-height:1.6">{e.t}</span></div>)}
+      </div>
+      <div class="stack" style="flex:2 1 560px;min-width:0;gap:4px">
+        <h2 class="h3" style="margin-bottom:14px">經歷</h2>
+        <div class="exp">
+          {pi.exp.map((e) => (
+            <div class="exp-item"><span class="dot" style={e.now ? 'background:var(--accent)' : undefined}></span><span class="exp-y">{e.y}</span><span style="font-size:15px;line-height:1.55">{e.t}</span></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap reveal" style="padding-top:64px;padding-bottom:64px;display:flex;flex-direction:column;gap:22px">
+    <h2 class="h3">榮譽與獎項</h2>
+    <div class="honors">
+      {pi.honors.map((h) => <div><span class="hy">{h.y}</span><span style="font-size:14px;line-height:1.5">{h.t}</span></div>)}
+    </div>
+  </section>
+
+  <section class="band reveal">
+    <div class="wrap two">
+      <div class="stack" style="flex:1 1 400px;min-width:0;gap:16px">
+        <h2 class="h3">學術服務</h2>
+        {pi.service.map((v) => <div class="svc"><b>{v.k}</b><span>{v.v}</span></div>)}
+      </div>
+      <div class="stack" style="flex:1 1 400px;min-width:0;gap:16px">
+        <h2 class="h3">合作夥伴</h2>
+        <div class="partners">
+          {pi.partners.map((p) => <div><span class="pk">{p.kind}</span><b>{p.name}</b><span class="pw">{p.what}</span></div>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:64px;padding-bottom:64px;display:flex;flex-direction:column;gap:18px">
+    <h2 class="h3">研究計畫（近年）</h2>
+    <div class="table-box">
+      <table>
+        <thead><tr><th style="width:120px">期間</th><th>計畫名稱</th><th style="width:150px">單位</th></tr></thead>
+        <tbody>{pi.grants.map((g) => <tr><td style="color:var(--muted)">{g.y}</td><td>{g.t}</td><td>{g.s}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="reveal" style="background:var(--surface);border-top:1px solid var(--line)">
+    <div class="wrap" style="padding-top:64px;padding-bottom:88px;display:flex;flex-direction:column;gap:18px">
+      <h2 class="h3">授課</h2>
+      <div style="font-size:14px;color:var(--muted)">中央資管：初階程式設計（IM1013A）、網頁程式設計 [待老師確認課號] · 元智電機歷年（多門以全英語授課）：</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">{pi.courses.map((c) => <span class="course">{c}</span>)}</div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .profile { padding-top: 56px; padding-bottom: 56px; display: flex; flex-wrap: wrap; gap: 56px; align-items: flex-start; }
+  .portrait { flex: 0 0 280px; width: 280px; max-width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 6px; filter: sepia(.1) saturate(.92); }
+  .name { margin: 0; font-family: var(--serif); font-size: 48px; font-weight: 700; }
+  .name span { font-size: 26px; font-weight: 500; }
+  .name-en { font-family: var(--display); font-size: 30px; font-weight: 600; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 15px; }
+  .facts > div { display: flex; flex-direction: column; gap: 2px; }
+  .facts > div > span:first-child { font-size: 13px; color: var(--muted); }
+  .bio { margin: 0; font-size: 16px; line-height: 1.85; color: #3F3F3F; }
+  .two { padding-top: 64px; padding-bottom: 64px; display: flex; flex-wrap: wrap; gap: 56px; }
+  .h3 { margin: 0; font-family: var(--serif); font-size: 28px; font-weight: 700; }
+  .yr { flex: 0 0 56px; font-family: var(--display); font-size: 24px; font-weight: 600; color: var(--accent-ink); }
+  .exp { border-left: 2px solid var(--line); display: flex; flex-direction: column; }
+  .exp-item { position: relative; padding: 0 0 18px 22px; display: flex; flex-direction: column; gap: 2px; }
+  .dot { position: absolute; left: -6px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #CFC8BB; }
+  .exp-y { font-family: var(--latin); font-size: 13px; color: var(--muted); }
+  .honors { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+  .honors > div { display: flex; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; }
+  .hy { flex: 0 0 48px; font-family: var(--display); font-size: 22px; font-weight: 600; color: #A0703F; }
+  .svc { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid #EFEBE3; }
+  .svc b { font-size: 15px; } .svc span { font-size: 14px; color: #4A4A4A; line-height: 1.6; }
+  .partners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .partners > div { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .pk { font-size: 12px; color: var(--muted); } .partners b { font-size: 15px; } .pw { font-size: 13px; color: #4A4A4A; line-height: 1.5; }
+  .table-box { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+  table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font-size: 13px; color: var(--muted); font-weight: 500; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+  td { padding: 14px 18px; border-bottom: 1px solid #EFEBE3; line-height: 1.55; vertical-align: top; }
+  .course { font-size: 14px; padding: 8px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; }
+  @media (max-width: 767px) { .name { font-size: 36px; } .partners { grid-template-columns: 1fr; } .profile { gap: 32px; } }
+</style>

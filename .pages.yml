@@ -1,0 +1,165 @@
+# Pages CMS 後台設定（https://app.pagescms.org）
+# 欄位必須與 src/content.config.ts 的 zod schema 一一對應：名稱、必填、選項、list。
+# 新增內容類型時：先改 content.config.ts，再改這裡，最後做頁面。
+
+media:
+  input: public/uploads
+  output: /hcsi-lab/uploads   # 要包含 base（astro.config.mjs），內文裡的圖片才會正確
+
+content:
+  # ---------------- 成員 ----------------
+  - name: members
+    label: 成員
+    type: collection
+    path: src/content/members
+    format: yaml-frontmatter
+    filename:
+      template: "{fields.name_en}.md"
+      field: create
+    view:
+      fields: [name, role, order]
+      primary: name
+      sort: [order, name]
+      default: { sort: order, order: asc }
+      search: [name, name_en]
+    fields:
+      - { name: name, label: 中文姓名, type: string, required: true }
+      - { name: name_en, label: 英文姓名, type: string, description: "例如 Ming-An Chen；新增時也會用來產生檔名" }
+      - name: role
+        label: 身分
+        type: select
+        required: true
+        options:
+          values: [教授, 博士生, 碩士生, 大學專題生, 畢業生]
+      - { name: enroll_year, label: 入學年（西元）, type: number }
+      - { name: photo, label: 照片, type: image, description: "建議正方形；沒放會顯示姓氏頭像" }
+      - { name: email, label: 信箱, type: string }
+      - { name: interests, label: 研究興趣, type: string, list: true }
+      - { name: order, label: 排序, type: number, description: "同身分內數字小的排前面" }
+      - { name: edu, label: 學經歷, type: string }
+      - { name: topic, label: 研究題目, type: string }
+      - { name: instagram, label: Instagram 帳號, type: string, description: "只填帳號，不含 @" }
+      - { name: grad_year, label: 畢業年（西元）, type: number, description: "畢業生才需要" }
+      - { name: dept, label: 系所, type: string }
+      - { name: thesis, label: 碩士論文題目, type: string, description: "畢業生填寫，會出現在研究所頁與研究主題頁" }
+      - { name: honor, label: 得獎／發表註記, type: string }
+      - { name: job, label: 畢業去向, type: string }
+      - name: avatar_style
+        label: 頭像風格
+        type: select
+        description: "選「拉拉看」頭像可以被拉長、會眨眼微笑；必須另外上傳下面的「拉拉看照片」"
+        options:
+          values: [一般, 拉拉看]
+      - { name: lala_photo, label: 拉拉看照片, type: image, description: "照 https://machencompeq.github.io/hcsi-lab/lala-photo-guide.svg 拍：正方形正面照，雙眼、嘴角對準參考點。選拉拉看時必填" }
+      - { name: body, label: 個人簡介, type: rich-text }
+
+  # ---------------- 論文發表 ----------------
+  - name: publications
+    label: 論文發表
+    type: collection
+    path: src/content/publications
+    format: yaml-frontmatter
+    filename: "{fields.year}-{primary}.md"
+    view:
+      fields: [title, year, type]
+      primary: title
+      sort: [year, title]
+      default: { sort: year, order: desc }
+      search: [title, venue]
+    fields:
+      - { name: title, label: 標題, type: string, required: true }
+      - { name: authors, label: 作者（依順序，一格一位）, type: string, list: true, required: true }
+      - { name: venue, label: 期刊或會議, type: string, required: true }
+      - { name: year, label: 年份, type: number, required: true }
+      - name: type
+        label: 類型
+        type: select
+        required: true
+        options:
+          values:
+            - { name: journal, label: 期刊 }
+            - { name: conference, label: 會議 }
+            - { name: thesis, label: 學位論文 }
+            - { name: other, label: 其他 }
+      - { name: domestic, label: 國內發表, type: boolean, description: "勾選後列在「國內」分頁" }
+      - { name: url, label: DOI 或論文連結, type: string, description: "完整網址，例如 https://doi.org/10.xxxx" }
+      - { name: pdf, label: PDF, type: file, options: { extensions: [pdf] } }
+      - { name: award, label: 得獎註記, type: string }
+
+  # ---------------- 最新消息 ----------------
+  - name: news
+    label: 最新消息
+    type: collection
+    path: src/content/news
+    format: yaml-frontmatter
+    filename: "{fields.date}-{primary}.md"
+    view:
+      fields: [title, date]
+      primary: title
+      sort: [date]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: 標題, type: string, required: true }
+      - { name: date, label: 日期, type: date, required: true, options: { format: yyyy-MM-dd } }
+      - { name: cover, label: 封面圖, type: image }
+      - { name: body, label: 內文, type: rich-text }
+
+  # ---------------- 研究主題 ----------------
+  - name: research
+    label: 研究主題
+    type: collection
+    path: src/content/research
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: create
+    view:
+      fields: [title, group, order]
+      primary: title
+      sort: [order]
+      default: { sort: order, order: asc }
+    fields:
+      - { name: title, label: 主題名稱, type: string, required: true }
+      - { name: summary, label: 摘要（列表卡片與內頁開頭）, type: text, required: true }
+      - { name: cover, label: 封面圖, type: image }
+      - { name: order, label: 排序, type: number, description: "首頁顯示前 6 個" }
+      - { name: title_en, label: 英文名稱, type: string }
+      - name: group
+        label: 研究群
+        type: select
+        required: true
+        options:
+          values: [AIoT 生理訊號分析與低延遲傳輸, 大型語言模型智慧內容分析, 多模態人機互動與即時資訊蒐集]
+      - { name: tagline, label: 一句話介紹, type: string }
+      - { name: short, label: 首頁浮窗說明, type: text }
+      - { name: color, label: 卡片底色, type: string, description: "色碼，例如 #3E4A5A", pattern: "^#[0-9A-Fa-f]{6}$" }
+      - name: gallery
+        label: 成果照片
+        type: object
+        list: { collapsible: { summary: "{cap}" } }
+        fields:
+          - { name: src, label: 圖片, type: image, required: true }
+          - { name: cap, label: 說明, type: string, required: true }
+      - { name: skills, label: 加入後可能會做, type: string, list: true }
+      - { name: keywords_zh, label: 中文關鍵字（用 | 分隔）, type: string, description: "用來比對碩論與專題題目，例如 棒球|球棒" }
+      - { name: keywords_en, label: 英文關鍵字（用 | 分隔）, type: string, description: "用來比對論文標題，例如 baseball|swing" }
+      - { name: body, label: 詳細介紹, type: rich-text }
+
+  # ---------------- 實驗室基本資料（單一檔案） ----------------
+  - name: site
+    label: 實驗室基本資料
+    type: file
+    path: src/content/settings/site.yml
+    format: yaml
+    fields:
+      - { name: lab_name, label: 實驗室名稱, type: string, required: true }
+      - { name: lab_name_en, label: 英文名稱, type: string, required: true }
+      - { name: short_name, label: 簡稱, type: string, required: true }
+      - { name: dept, label: 所屬單位, type: string, required: true }
+      - { name: intro, label: 首頁簡介, type: text, required: true }
+      - { name: address, label: 地址, type: string, required: true }
+      - { name: room, label: 研究室位置, type: string }
+      - { name: lab_room, label: 實驗室室號與電話, type: string }
+      - { name: email, label: 聯絡信箱, type: string, required: true }
+      - { name: phone, label: 電話, type: string }
+      - { name: map_query, label: 地圖搜尋關鍵字, type: string }

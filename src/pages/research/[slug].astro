@@ -1,0 +1,115 @@
+---
+import { u } from '../../lib';
+import Layout from '../../layouts/Layout.astro';
+import { render } from 'astro:content';
+import { NAV } from '../../config/nav';
+import { getTopics, getMembers, getPubs, related, pubLink, initial, type Topic } from '../../lib';
+
+export async function getStaticPaths() {
+  return (await getTopics()).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: Topic };
+const t = entry.data;
+const [{ alumni }, allPubs] = await Promise.all([getMembers(), getPubs()]);
+const r = related(entry, alumni, allPubs);
+const { Content } = await render(entry);
+const hasBody = Boolean(entry.body?.trim());
+const projects = r.projects.slice(0, 6);
+const pubs = r.pubs.slice(0, 6);
+---
+<Layout title={t.title} active={NAV.research} description={t.summary}>
+  <section class="detail-hero" style={`background:${t.color}`}>
+    {t.cover && <img src={u(t.cover)} alt="" />}
+    <div class="wrap detail-inner">
+      <a class="back" href={u('/research/')}>← 全部研究主題</a>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="eyebrow">{t.title_en}</div>
+        <h1>{t.title}</h1>
+        <p>{t.summary}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap cols">
+    <div class="col">
+      {hasBody && <div class="prose"><Content /></div>}
+      <h2>做出來的東西</h2>
+      {t.gallery.length ? (
+        <div class="gal">
+          {t.gallery.map((im) => (
+            <figure class="zoom"><img src={u(im.src)} alt={im.cap} loading="lazy" /><figcaption>{im.cap}</figcaption></figure>
+          ))}
+        </div>
+      ) : (
+        <div class="gal-ph">[成果截圖／系統畫面 — 待補]</div>
+      )}
+      <h2 style="margin-top:16px">加入後你可能會做</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        {t.skills.map((d) => <span class="chip" style="font-size:15px;padding:10px 16px">{d}</span>)}
+      </div>
+    </div>
+
+    <div class="col" style="gap:28px">
+      <div class="stack" style="gap:12px">
+        <h2>學長姐的碩士論文 <small>{r.masters.length} 篇</small></h2>
+        {r.masters.map(({ data: m }) => (
+          <a class="item" href={u('/graduate/')} style="flex-direction:row;align-items:center;gap:14px">
+            <span class="ini">{initial(m.name)}</span>
+            <span class="stack" style="gap:2px;min-width:0"><b>{m.thesis}</b><span class="sub">{m.name} · {m.grad_year} {m.honor ?? ''}</span></span>
+          </a>
+        ))}
+        {r.masters.length === 0 && <span class="note">目前還沒有，等你來做第一篇。</span>}
+      </div>
+      <div class="stack" style="gap:12px">
+        <h2>相關大學專題 <small>{r.projects.length} 組</small></h2>
+        {projects.map((p) => (
+          <a class="item" href={u('/undergrad/')}>
+            <b>{p.zh}</b>
+            <span class="sub">{p.names.join('、')} · {p.sem} 學期</span>
+            {p.notes && <span class="star">★ {p.notes}</span>}
+          </a>
+        ))}
+      </div>
+      <div class="stack" style="gap:10px">
+        <h2>代表論文</h2>
+        {pubs.map((p) => (
+          <a class="pub" href={u(pubLink(p))} target="_blank" rel="noopener">
+            <span class="pt">{p.title}</span>
+            <span class="pv">{p.year} · {p.venue.split(',')[0]}</span>
+          </a>
+        ))}
+        <a href={u('/publications/')} style="font-size:15px">全部著作 →</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .detail-hero { position: relative; min-height: 420px; color: #fff; overflow: hidden; }
+  .detail-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .45; }
+  .detail-inner { position: relative; padding-top: 40px; padding-bottom: 56px; min-height: 420px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+  .back { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid rgba(255,255,255,.7); background: rgba(0,0,0,.25); color: #fff; border-radius: 2px; text-decoration: none; font-size: 15px; }
+  .back:hover { color: #fff; background: rgba(0,0,0,.4); }
+  h1 { margin: 0; font-family: var(--serif); font-size: 52px; font-weight: 700; }
+  .detail-inner p { margin: 0; font-size: 19px; line-height: 1.7; max-width: 760px; }
+  .cols { padding-top: 56px; padding-bottom: 72px; display: flex; flex-wrap: wrap; gap: 48px; }
+  .col { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  h2 { margin: 0; font-size: 24px; font-weight: 700; }
+  h2 small { font-size: 15px; font-weight: 400; color: var(--muted); }
+  .gal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .gal figure { margin: 0; display: flex; flex-direction: column; gap: 6px; border-radius: 4px; }
+  .gal img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; background: #E9E3D8; }
+  .gal figcaption { font-size: 13px; color: var(--muted); }
+  .gal-ph { aspect-ratio: 16 / 9; background: #E9E3D8; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); }
+  .item { display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 14px; text-decoration: none; color: var(--ink); }
+  .item:hover { color: var(--ink); border-color: var(--accent); }
+  .item b { font-size: 15px; line-height: 1.5; }
+  .sub { font-size: 13px; color: var(--muted); }
+  .ini { flex: 0 0 44px; height: 44px; border-radius: 50%; background: #DCE5E0; color: #3D5A50; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 18px; }
+  .pub { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid var(--line); text-decoration: none; color: var(--ink); }
+  .pub:hover { color: var(--accent-ink); }
+  .pt { font-size: 15px; font-weight: 500; line-height: 1.5; }
+  .pv { font-family: var(--latin); font-size: 13px; color: var(--muted); }
+  @media (max-width: 767px) { h1 { font-size: 36px; } .detail-inner p { font-size: 17px; } }
+</style>

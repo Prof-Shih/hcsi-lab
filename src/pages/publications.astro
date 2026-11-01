@@ -1,0 +1,138 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import { NAV } from '../config/nav';
+import { getPubs, pubLink, authorLine, type Pub } from '../lib';
+
+const pubs = await getPubs();
+
+// 分頁：國內（domestic）的期刊／會議另成一頁；沒有資料的分頁不顯示
+const tabOf = (p: Pub) => (p.domestic ? 'domestic' : p.type);
+const tabs = [
+  { key: 'journal', label: '期刊' },
+  { key: 'conference', label: '國際會議' },
+  { key: 'domestic', label: '國內' },
+  { key: 'thesis', label: '學位論文' },
+  { key: 'other', label: '其他' },
+].filter((t) => pubs.some((p) => tabOf(p) === t.key));
+const years = [...new Set(pubs.map((p) => p.year))].sort((a, b) => b - a);
+const groups = years.map((y) => ({ year: y, items: pubs.filter((p) => p.year === y) }));
+const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
+---
+<Layout title="著作" active={NAV.publications}>
+  <Hero eyebrow="Publications" title="著作" lead="期刊、國際會議、國內論文，可搜尋、只看得獎。" />
+
+  <section class="wrap" style="padding-top:40px;padding-bottom:96px;display:flex;flex-direction:column;gap:28px">
+    <div class="toolbar">
+      <div class="tabs" role="tablist" aria-label="著作類型">
+        {tabs.map((t, i) => (
+          <button type="button" role="tab" data-tab={t.key} aria-selected={i === 0 ? 'true' : 'false'}>{t.label} <span>{countOf(t.key)}</span></button>
+        ))}
+        <span class="tab-line" aria-hidden="true"></span>
+      </div>
+      <div class="tools">
+        <label class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B6B6B" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <span class="sr-only">搜尋著作</span>
+          <input type="search" id="q" placeholder="搜尋標題、作者、會議（如 baseball）" />
+        </label>
+        <button type="button" class="pill award-btn" id="award" aria-pressed="false">★ 只看得獎</button>
+      </div>
+    </div>
+    <div class="note" style="font-size:14px" id="status" aria-live="polite"></div>
+
+    {groups.map((g) => (
+      <div class="year-group">
+        <div class="year">{g.year}</div>
+        <div class="items">
+          {g.items.map((p) => (
+            <div class="pub" data-tab={tabOf(p)} data-award={p.award ? '1' : ''} data-text={`${p.title} ${authorLine(p)} ${p.venue}`.toLowerCase()}>
+              <a class="pt" href={u(pubLink(p))} target="_blank" rel="noopener">{p.title}</a>
+              <div class="pa">{authorLine(p)}</div>
+              <div class="pm">
+                <i>{p.venue}</i>
+                {p.award && <span class="star">★ {p.award}</span>}
+                <a href={u(pubLink(p))} target="_blank" rel="noopener" style="font-size:13px">{p.url ? (p.url.includes('doi.org') ? 'DOI' : '連結') : 'Google Scholar'}</a>
+                {p.pdf && <a href={u(p.pdf)} target="_blank" rel="noopener" style="font-size:13px">PDF</a>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+    <div class="note" style="border-top:1px solid var(--line);padding-top:18px">資料來源：老師 c302 著作目錄（Last updated Aug. 7, 2026）。</div>
+  </section>
+</Layout>
+
+<style>
+  .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; border-bottom: 1px solid var(--line); }
+  .tabs { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 150px; }
+  .tabs button { height: 52px; border: 0; background: transparent; font-family: var(--sans); font-size: 16px; cursor: pointer; color: var(--muted); }
+  .tabs button[aria-selected="true"] { color: var(--ink); font-weight: 700; }
+  .tabs button span { font-size: 13px; color: var(--muted); font-weight: 400; }
+  .tab-line { position: absolute; bottom: -1px; height: 2px; width: 110px; background: var(--accent); left: 20px; transition: left .3s ease; }
+  .tools { display: flex; flex-wrap: wrap; gap: 10px; padding-bottom: 10px; }
+  .search { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; background: var(--surface); border: 1px solid var(--line-2); border-radius: 2px; width: 300px; max-width: 100%; }
+  .search input { border: 0; outline: none; background: transparent; font-size: 14px; flex-grow: 1; font-family: var(--sans); min-width: 0; }
+  .award-btn { min-height: 44px; }
+  .award-btn[aria-pressed="true"] { background: var(--coral); border-color: var(--coral); color: #1E1F1D; }
+  .year-group { display: flex; flex-wrap: wrap; gap: 32px; }
+  .year-group[hidden] { display: none; }
+  .year { flex: 0 0 110px; font-family: var(--display); font-size: 40px; font-weight: 600; color: var(--accent-ink); line-height: 1; }
+  .items { flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; }
+  .pub { display: flex; flex-direction: column; gap: 5px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .pub[hidden] { display: none; }
+  .pt { font-size: 17px; font-weight: 700; line-height: 1.45; color: var(--ink); text-decoration: none; }
+  .pt:hover { color: var(--accent-ink); text-decoration: underline; }
+  .pa { font-family: var(--latin); font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .pm { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14px; }
+  .pm i { color: #3F3F3F; font-family: var(--latin); }
+  @media (max-width: 767px) {
+    .tabs { grid-auto-columns: minmax(0, 1fr); width: 100%; }
+    .tabs button { font-size: 14px; }
+    .tab-line { width: 18%; }
+    .tools { width: 100%; }
+    .search { width: 100%; }
+    .year-group { gap: 8px; }
+    .year { font-size: 32px; }
+  }
+</style>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tabs button')];
+  const line = document.querySelector<HTMLElement>('.tab-line')!;
+  const q = document.getElementById('q') as HTMLInputElement;
+  const award = document.getElementById('award')!;
+  const status = document.getElementById('status')!;
+  const items = [...document.querySelectorAll<HTMLElement>('.pub')];
+  const groups = [...document.querySelectorAll<HTMLElement>('.year-group')];
+  let tab = 'journal';
+  let awardOnly = false;
+
+  const placeLine = () => {
+    const b = tabs.find((t) => t.dataset.tab === tab)!;
+    line.style.left = (b.offsetLeft + (b.offsetWidth - line.offsetWidth) / 2) + 'px';
+  };
+  const apply = () => {
+    const term = q.value.trim().toLowerCase();
+    let n = 0;
+    items.forEach((el) => {
+      const on = el.dataset.tab === tab && (!awardOnly || el.dataset.award === '1') && (!term || el.dataset.text!.includes(term));
+      el.hidden = !on;
+      if (on) n++;
+    });
+    groups.forEach((g) => { g.hidden = !g.querySelector('.pub:not([hidden])'); });
+    status.textContent = `共 ${n} 篇`;
+    placeLine();
+  };
+  tabs.forEach((b) => b.addEventListener('click', () => {
+    tab = b.dataset.tab!;
+    tabs.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+    apply();
+  }));
+  q.addEventListener('input', apply);
+  award.addEventListener('click', () => { awardOnly = !awardOnly; award.setAttribute('aria-pressed', String(awardOnly)); apply(); });
+  addEventListener('resize', placeLine);
+  apply();
+</script>

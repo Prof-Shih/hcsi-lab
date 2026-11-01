@@ -1,0 +1,10 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+---
+<Layout title="找不到頁面" active={-1}>
+  <Hero eyebrow="404" title="找不到這個頁面" lead="網址可能打錯了，或頁面已經搬家。">
+    <div style="padding-top:8px"><a class="btn btn-coral" href={u('/')}>回首頁</a></div>
+  </Hero>
+</Layout>

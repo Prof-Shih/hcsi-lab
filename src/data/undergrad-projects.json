@@ -1,0 +1,303 @@
+[
+   {
+      "notes" : "ICCE25 · CACS24 · ICCE25 best session presentation award · 大專學生研究計畫",
+      "sem" : "1131",
+      "dept" : "電通英專",
+      "en" : "A study on pose-guided auto-calibration system",
+      "names" : [
+         "黃海翔",
+         "朱軒正",
+         "陳政楷",
+         "吳冠勝"
+      ],
+      "zh" : "基於人體姿態引導的自動校準系統研究"
+   },
+   {
+      "zh" : "足球場地線之相機校正",
+      "names" : [
+         "陳瀚諶",
+         "吳哲嘉"
+      ],
+      "en" : "Camera Calibration for Soccer Field Line",
+      "dept" : "電機(甲)",
+      "sem" : "1122",
+      "notes" : "TANET25"
+   },
+   {
+      "zh" : "籃球物件定位及追蹤",
+      "names" : [
+         "張皓翔",
+         "張祐華",
+         "拾以龍",
+         "林承勳"
+      ],
+      "en" : "3D Object Localization and Tracking in Basketball",
+      "dept" : "電機(甲)",
+      "sem" : "1122",
+      "notes" : ""
+   },
+   {
+      "zh" : "高爾夫球之物理現象視覺分析",
+      "names" : [
+         "陳嵊凱",
+         "陳姿妤",
+         "劉彥狄"
+      ],
+      "en" : "Analysis of Physical Phenomena in Golf Swing",
+      "dept" : "電通英專",
+      "sem" : "1122",
+      "notes" : "ICMEW23"
+   },
+   {
+      "en" : "Lightweight Human Pose Estimation Using Heatmap-based",
+      "names" : [
+         "盧聖周",
+         "李浤瑋",
+         "韓育銘",
+         "周濟民"
+      ],
+      "zh" : "基於熱圖之人體姿態估計模型輕量化研究",
+      "dept" : "電機(甲)",
+      "sem" : "1112",
+      "notes" : "MIPR24"
+   },
+   {
+      "sem" : "1112",
+      "notes" : "",
+      "en" : "Built-In Binocular Stereo Camera on the Home Plate to Judge the Strike Zone",
+      "names" : [
+         "陳煥群",
+         "何公勝",
+         "歐陽宥",
+         "白旻諺"
+      ],
+      "zh" : "本壘板內嵌雙目視覺攝影機判斷好球帶",
+      "dept" : "電機(甲)"
+   },
+   {
+      "dept" : "電機(甲)",
+      "en" : "Development of VR Interactive System for Athletes' Dynamic Vision and Hand-Eye Coordination Training",
+      "names" : [
+         "張哲瑋",
+         "鍾嘉祐",
+         "陳宇宏",
+         "賴睿耆"
+      ],
+      "zh" : "運動員動態視覺及手眼協調訓練方案之VR互動系統開發",
+      "notes" : "",
+      "sem" : "1112"
+   },
+   {
+      "notes" : "",
+      "sem" : "1102",
+      "dept" : "電機(甲)",
+      "en" : "Smart Access Control-on Action Console",
+      "names" : [
+         "張書瑋",
+         "馬梓曦",
+         "鄧昊"
+      ],
+      "zh" : "智慧門禁系統專題"
+   },
+   {
+      "dept" : "電機(甲)",
+      "en" : "DIY Positional Tracking Using Vive's Lighthouse",
+      "names" : [
+         "周峻安",
+         "曾敬晏"
+      ],
+      "zh" : "利用HTC VIVE Lighthouse客製化3D追蹤系統實作",
+      "notes" : "",
+      "sem" : "1102"
+   },
+   {
+      "zh" : "棒球共軌效應軌跡分析",
+      "names" : [
+         "王鈞賢",
+         "周昌毅"
+      ],
+      "en" : "Trajectory Analysis of Baseball Pitch Tunneling",
+      "dept" : "電機(甲)",
+      "sem" : "1102",
+      "notes" : ""
+   },
+   {
+      "dept" : "電通英專",
+      "names" : [
+         "胡承佑",
+         "李維軒",
+         "戴士凱",
+         "劉軒佑"
+      ],
+      "zh" : "在部分遮蔽下動態紋理模型身份識別",
+      "en" : "Motion Texture Model Identification with Partial Occlusion",
+      "notes" : "",
+      "sem" : "1102"
+   },
+   {
+      "sem" : "1101",
+      "notes" : "",
+      "names" : [
+         "徐麒翔"
+      ],
+      "en" : "Development of Sport Injury Prevention and Protection System for The Bench Press by Wrist Positions Detection with Single IMU in Unity",
+      "zh" : "使用單一IMU在Unity進行槓鈴推舉之角度還原在傷害防治之應用",
+      "dept" : "電機(甲)"
+   },
+   {
+      "sem" : "1092",
+      "notes" : "",
+      "names" : [
+         "張建楚"
+      ],
+      "zh" : "即時臉部及口罩辨識",
+      "en" : "Realtime Face and Facial Mask Detection",
+      "dept" : "電機(甲)"
+   },
+   {
+      "dept" : "電機(甲)",
+      "zh" : "手眼協調反應力訓練設備",
+      "names" : [
+         "呂尚銓",
+         "江履中",
+         "歐德九"
+      ],
+      "en" : "Hand-eye Coordination Reaction Training Equipment",
+      "notes" : "",
+      "sem" : "1092"
+   },
+   {
+      "dept" : "電機(甲)",
+      "names" : [
+         "向禮勤",
+         "翁媺昕"
+      ],
+      "en" : "A Study on Stereo Vision Imaging and Its Applications for Object Tracking and 3D Modeling",
+      "zh" : "立體視覺成像之研究及其應用於物體追蹤及3D建模",
+      "notes" : "",
+      "sem" : "1092"
+   },
+   {
+      "names" : [
+         "陳柏華"
+      ],
+      "zh" : "手眼協調反應力訓練設備",
+      "en" : "Hand-eye Coordination Reaction Training Equipment",
+      "dept" : "電機(甲)",
+      "sem" : "1091",
+      "notes" : ""
+   },
+   {
+      "names" : [
+         "程梓恩",
+         "李俊霖",
+         "呂嘉挺"
+      ],
+      "zh" : "藉由視網膜影像辨識對阿茲海默症之分析",
+      "en" : "Analysis of Alzheimer's Disease by Retinal Image Recognition",
+      "dept" : "電機(甲)",
+      "sem" : "1091",
+      "notes" : ""
+   },
+   {
+      "sem" : "1082",
+      "notes" : "",
+      "zh" : "Python網路爬蟲天氣查詢Line Bot之應用",
+      "names" : [
+         "楊智涵"
+      ],
+      "en" : "Applications of Python Web Crawler in Weather Inquiry Line Bot",
+      "dept" : "電機(甲)"
+   },
+   {
+      "zh" : "使用深度學習實作膚色偵測",
+      "names" : [
+         "馬長瑄"
+      ],
+      "en" : "Skin Detection by Using a Convolutional Neural Network",
+      "dept" : "電機系",
+      "sem" : "1061",
+      "notes" : "GCCE2018 Best Paper Award"
+   },
+   {
+      "sem" : "1032",
+      "notes" : "大專學生研究計畫 · GCCE2015 Best Student Paper Award · TETCI",
+      "names" : [
+         "陳容毓"
+      ],
+      "zh" : "利用形態學模型細化之多重膚色偵測",
+      "en" : "MultiSkin Color Segmentation Through Morphological Model Refinement",
+      "dept" : "電機系"
+   },
+   {
+      "dept" : "電機系",
+      "zh" : "不依賴車牌之車型辨識-2",
+      "names" : [
+         "王晧宇"
+      ],
+      "en" : "Vehicle Recognition Without License Plate-2",
+      "notes" : "ISCE03 Best Paper Award · MTA",
+      "sem" : "1021"
+   },
+   {
+      "sem" : "1021",
+      "notes" : "SMC14, TIE, PR",
+      "en" : "Spiral Projection Model for Robust Template Matching-- A New Descriptor-2",
+      "names" : [
+         "俞冠均"
+      ],
+      "zh" : "一個新式的螺旋投影法在圖案比對之應用-2",
+      "dept" : "電機系"
+   },
+   {
+      "zh" : "基於形態學細化之適應性膚色偵測-2",
+      "names" : [
+         "李捷"
+      ],
+      "en" : "Adaptive Skin Color Tone Detection with Morphology-based Model Refinement-2",
+      "dept" : "電機系",
+      "sem" : "1021",
+      "notes" : ""
+   },
+   {
+      "names" : [
+         "王晧宇"
+      ],
+      "zh" : "不依賴車牌之車型辨識-1",
+      "en" : "Vehicle Recognition Without License Plate-1",
+      "dept" : "電機系",
+      "sem" : "1012",
+      "notes" : ""
+   },
+   {
+      "en" : "Spiral Projection Model for Robust Template Matching-- A New Descriptor-1",
+      "names" : [
+         "俞冠均"
+      ],
+      "zh" : "一個新式的螺旋投影法在圖案比對之應用-1",
+      "dept" : "電機系",
+      "sem" : "1012",
+      "notes" : ""
+   },
+   {
+      "dept" : "電機系",
+      "zh" : "基於形態學細化之適應性膚色偵測-1",
+      "names" : [
+         "劉玉祥",
+         "李捷"
+      ],
+      "en" : "Adaptive Skin Color Tone Detection with Morphology-based Model Refinement-1",
+      "notes" : "",
+      "sem" : "1012"
+   },
+   {
+      "names" : [
+         "高岱薇"
+      ],
+      "en" : "Based on Pattern Recognition and Huamgn-Computer Interaction for Augment Reality Application with Kinect",
+      "zh" : "擴增實境結合KINECT實作圖文辨識及人機互動之應用",
+      "dept" : "電機系",
+      "sem" : "1012",
+      "notes" : "ISCE03"
+   }
+]

@@ -1,0 +1,101 @@
+---
+import { u } from '../lib';
+import '../styles/global.css';
+import { nav } from '../config/nav';
+import { getSite } from '../lib';
+
+const site = await getSite();
+
+interface Props { title: string; description?: string; active: number }
+const { title, description = `${site.lab_name}（${site.short_name}）· ${site.dept}`, active } = Astro.props;
+const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${title} · ${site.short_name}`;
+---
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{fullTitle}</title>
+  <meta name="description" content={description}>
+  <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <a class="sr-only" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href={u('/')}>
+        <span class="brand-mark" aria-hidden="true">HC</span>
+        <span class="brand-text"><b>{site.short_name}</b><span>{site.lab_name}</span></span>
+      </a>
+      <nav class="nav" aria-label="主選單" data-active={active}>
+        {nav.map((n, i) => <a href={u(n.href)} aria-current={i === active ? 'page' : undefined} data-i={i}>{n.label}</a>)}
+        <span class="nav-line" aria-hidden="true"></span>
+      </nav>
+      <button class="menu-btn" type="button" aria-label="開啟選單" aria-expanded="false" aria-controls="mobile-nav">
+        <svg class="ic-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        <svg class="ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="1.6" aria-hidden="true" style="display:none"><path d="M5 5l14 14M19 5L5 19"></path></svg>
+      </button>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-links" data-active={active}>
+      <span class="mobile-bar" aria-hidden="true"></span>
+      {nav.map((n, i) => <a href={u(n.href)} aria-current={i === active ? 'page' : undefined} data-i={i}>{n.label}</a>)}
+    </div>
+    <div class="mobile-foot"><a href={`mailto:${site.email}`}>{site.email}</a></div>
+  </div>
+
+  <main id="main"><slot /></main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>{site.lab_name} · {site.dept}</div>
+      <div>{site.address} · <a href={`mailto:${site.email}`}>{site.email}</a></div>
+    </div>
+  </footer>
+
+  <script>
+    // 滑動底線：預設停在目前頁面，滑鼠移到哪個選項就滑過去
+    const nav = document.querySelector<HTMLElement>('.nav');
+    if (nav) {
+      const line = nav.querySelector<HTMLElement>('.nav-line')!;
+      const active = Number(nav.dataset.active);
+      const place = (i: number) => {
+        line.style.opacity = i < 0 ? '0' : '1';
+        if (i >= 0) line.style.left = (i * 84 + 14) + 'px';
+      };
+      place(active);
+      nav.querySelectorAll<HTMLElement>('a').forEach((a) => {
+        const i = Number(a.dataset.i);
+        a.addEventListener('mouseenter', () => place(i));
+        a.addEventListener('focus', () => place(i));
+      });
+      nav.addEventListener('mouseleave', () => place(active));
+    }
+
+    // 手機選單：展開後左側直線標示目前頁面
+    const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
+    const panel = document.getElementById('mobile-nav');
+    if (btn && panel) {
+      const links = panel.querySelector<HTMLElement>('.mobile-links')!;
+      const bar = links.querySelector<HTMLElement>('.mobile-bar')!;
+      const placeBar = (i: number) => { bar.style.opacity = i < 0 ? '0' : '1'; bar.style.top = (Math.max(i, 0) * 56 + 12) + 'px'; };
+      placeBar(Number(links.dataset.active));
+      links.querySelectorAll<HTMLElement>('a').forEach((a) => a.addEventListener('mouseenter', () => placeBar(Number(a.dataset.i))));
+      const setOpen = (open: boolean) => {
+        panel.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        btn.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+        btn.querySelector<SVGElement>('.ic-open')!.style.display = open ? 'none' : '';
+        btn.querySelector<SVGElement>('.ic-close')!.style.display = open ? '' : 'none';
+        document.body.style.overflow = open ? 'hidden' : '';
+      };
+      btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+    }
+  </script>
+</body>
+</html>

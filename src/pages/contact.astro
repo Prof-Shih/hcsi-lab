@@ -1,0 +1,51 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import { NAV } from '../config/nav';
+import { getSite } from '../lib';
+
+const site = await getSite();
+
+const q = encodeURIComponent(site.map_query);
+const mapEmbed = `https://www.google.com/maps?q=${q}&output=embed`;
+const mapLink = `https://www.google.com/maps/search/?api=1&query=${q}`;
+---
+<Layout title="聯絡" active={NAV.contact}>
+  <Hero eyebrow="Contact" title="來實驗室找我們" />
+
+  <section class="wrap" style="padding-top:56px;padding-bottom:88px;display:flex;flex-wrap:wrap;gap:48px">
+    <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:24px">
+      <div class="info">
+        <div><span>地址</span>{site.address}<br>{site.dept} {site.room}</div>
+        <div><span>指導教授</span><a href={`mailto:${site.email}`}>施皇嘉 {site.email}</a></div>
+        <div><span>實驗室</span>{site.lab_room}</div>
+        {site.phone && <div><span>電話</span><a href={`tel:${site.phone}`}>{site.phone}</a></div>}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <a class="btn btn-coral" href={`mailto:${site.email}`}>寄信給老師</a>
+        <a class="btn btn-ghost" href={u(mapLink)} target="_blank" rel="noopener">開啟 Google 地圖</a>
+      </div>
+    </div>
+    <iframe class="map" src={u(mapEmbed)} title="國立中央大學地圖" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+
+  <section style="background:var(--surface);border-top:1px solid var(--line)">
+    <div class="wrap next">
+      <div><b>想讀碩士？</b><span>推甄面試前先來信約時間，可以來實驗室參觀。</span><a href={u('/graduate/')}>研究所 →</a></div>
+      <div><b>想做專題？</b><span>看看歷屆題目，挑有興趣的主題來聊。</span><a href={u('/undergrad/')}>大學專題 →</a></div>
+      <div><b>產學合作</b><span>AIoT、運動科技、智慧醫療影像相關合作歡迎來信。</span><a href={u('/pi/')}>指導教授 →</a></div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .info { display: flex; flex-direction: column; gap: 18px; font-size: 16px; line-height: 1.7; }
+  .info > div { display: flex; flex-direction: column; }
+  .info span { font-size: 13px; color: var(--muted); }
+  .map { flex: 1 1 440px; min-width: 0; aspect-ratio: 4 / 3; border: 1px solid var(--line-2); border-radius: 6px; background: #E9E3D8; }
+  .next { padding-top: 56px; padding-bottom: 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 24px; }
+  .next > div { display: flex; flex-direction: column; gap: 8px; }
+  .next b { font-size: 18px; }
+  .next span { font-size: 15px; line-height: 1.65; color: #4A4A4A; }
+</style>

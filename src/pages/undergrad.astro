@@ -1,0 +1,107 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import { NAV } from '../config/nav';
+import { getSite, projectCats, undergradProjects } from '../lib';
+
+const site = await getSite();
+
+const projects = undergradProjects.map((p) => {
+  const c = projectCats.find((c) => c.re.test(p.zh + p.en))!;
+  return { ...p, cat: c.key, tag: c.tag, img: c.img, bg: c.bg };
+});
+const chips = [{ key: 'all', tag: '全部' }, ...projectCats];
+const wins = [
+  ['ICCE 2025', '姿態引導自動校正 · Best Session Presentation Award'],
+  ['IEEE MIPR 2024', '4 位專題生 × Santa Clara Univ. 輕量化姿態估測論文'],
+  ['畢業專題競賽第二名', '1122 學年 數位科技組 · 足球場地線相機校正'],
+  ['大專學生研究計畫', '國科會補助，專題生自己當計畫主持人'],
+];
+---
+<Layout title="大學專題" active={NAV.undergrad}>
+  <Hero eyebrow="Undergraduate Projects" title="在這裡做專題" lead="大學生也能做出能動的系統、發國際會議論文、拿獎。" img="/images/arm.jpg" bg="#5C4A37" />
+
+  <section class="wrap section reveal">
+    <h2 class="h2">專題生做到的事</h2>
+    <div class="wins">
+      {wins.map(([k, v]) => <div class="win"><b>{k}</b><span>{v}</span></div>)}
+    </div>
+  </section>
+
+  <section class="band reveal">
+    <div class="wrap section">
+      <h2 class="h2">你可以用的設備</h2>
+      <div class="gear">
+        <figure><div class="gear-ph" style="background:#3E4A5A">Kneron NPU</div><figcaption>耐能 AI 加速棒／離線 NPU</figcaption></figure>
+        <figure><div class="gear-ph" style="background:#7A3B3B">Raspberry Pi 4/5</div><figcaption>樹莓派邊緣運算</figcaption></figure>
+        <figure class="zoom"><img src={u('/images/arm.jpg')} alt="機械手臂" loading="lazy" /><figcaption>機械手臂</figcaption></figure>
+        <figure class="zoom"><img src={u('/images/baseball.jpg')} alt="智慧棒球" loading="lazy" /><figcaption>自製感測棒球／球棒／手套</figcaption></figure>
+      </div>
+      <span class="note">設備照片待補拍：耐能、樹莓派、深度攝影機（Azure Kinect／ZED／RealSense）</span>
+    </div>
+  </section>
+
+  <section class="wrap section" style="gap:20px">
+    <h2 class="h2">歷屆專題 <small class="count"><span id="shown">{projects.length}</span> / {projects.length} 組</small></h2>
+    <div class="filters" role="group" aria-label="依主題篩選">
+      {chips.map((c, i) => <button class="pill" type="button" data-f={c.key} aria-pressed={i === 0 ? 'true' : 'false'}>{c.tag}</button>)}
+    </div>
+    <div class="grid-auto">
+      {projects.map((p) => (
+        <div class="card zoom proj" data-cat={p.cat}>
+          <div style={`position:relative;aspect-ratio:16/9;background:${p.bg}`}>
+            {p.img && <img src={u(p.img)} alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />}
+            <span class="tag" style="left:12px">{p.tag}</span>
+            <span class="tag" style="right:12px;font-family:var(--latin)">{p.sem}</span>
+          </div>
+          <div class="card-body">
+            <b style="font-size:16px;line-height:1.5">{p.zh}</b>
+            <span style="font-family:var(--latin);font-size:13px;color:var(--muted);line-height:1.5">{p.en}</span>
+            <span style="font-size:14px;color:#3F3F3F">{p.names.join('、')}</span>
+            {p.notes && <span class="star">★ {p.notes}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+    <span class="note">元智電機／電通英專時期；中央資管專題生名單老師更新中。</span>
+  </section>
+
+  <section style="background:var(--pine);color:#F2EFE8">
+    <div class="wrap" style="padding-top:64px;padding-bottom:64px;display:flex;flex-wrap:wrap;gap:40px;align-items:center;justify-content:space-between">
+      <div style="flex:1 1 520px;display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:var(--serif);font-size:30px;font-weight:700">想做專題？</div>
+        <p style="margin:0;font-size:16px;line-height:1.7;color:#DAD5CC">先挑一個上面有興趣的主題，寄信給老師約時間聊。<br>[申請時間、人數、每週 meeting — 待老師提供]</p>
+      </div>
+      <a class="btn btn-coral" href={`mailto:${site.email}`}>寄信 {site.email}</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .wins { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
+  .win { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--wood); border-radius: 4px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
+  .win b { font-size: 19px; }
+  .win span { font-size: 14px; color: #4A4A4A; line-height: 1.6; }
+  .gear { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
+  .gear figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .gear img, .gear-ph { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
+  .gear-ph { color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--latin); font-size: 26px; font-weight: 600; }
+  .gear figcaption { font-size: 15px; font-weight: 700; }
+  .count { font-size: 18px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .proj[hidden] { display: none; }
+</style>
+
+<script>
+  const btns = [...document.querySelectorAll<HTMLButtonElement>('.filters .pill')];
+  const cards = [...document.querySelectorAll<HTMLElement>('.proj')];
+  const shown = document.getElementById('shown')!;
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.f;
+    btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    let n = 0;
+    cards.forEach((c) => { const on = f === 'all' || c.dataset.cat === f; c.hidden = !on; if (on) n++; });
+    shown.textContent = String(n);
+  }));
+</script>

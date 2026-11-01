@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="640" height="640" font-family="Noto Sans TC, Microsoft JhengHei, sans-serif">
+  <title>拉拉看照片對位參考圖</title>
+  <!-- 紅點座標與 src/scripts/lala.ts 的 EYES / MOUTH 一致，改一邊就要改另一邊 -->
+  <rect width="640" height="640" fill="#f4f1ec"/>
+  <circle cx="320" cy="320" r="318" fill="#fff" stroke="#3d5a50" stroke-width="3"/>
+  <ellipse cx="320" cy="350" rx="200" ry="255" fill="none" stroke="#3d5a50" stroke-width="2" stroke-dasharray="10 8"/>
+  <g stroke="#c0563d" stroke-width="2" stroke-dasharray="4 6">
+    <line x1="40" y1="290" x2="600" y2="290"/>
+    <line x1="80" y1="500" x2="560" y2="500"/>
+    <line x1="320" y1="150" x2="320" y2="620"/>
+  </g>
+  <g fill="#c0563d">
+    <circle cx="215" cy="290" r="12"/>
+    <circle cx="425" cy="290" r="12"/>
+    <circle cx="262" cy="500" r="9"/>
+    <circle cx="378" cy="500" r="9"/>
+  </g>
+  <g font-size="22" fill="#2b2b2b" text-anchor="middle">
+    <text x="215" y="262">左眼</text>
+    <text x="425" y="262">右眼</text>
+    <text x="320" y="548">嘴角</text>
+  </g>
+  <g text-anchor="middle">
+    <text x="320" y="70" font-size="22" fill="#3d5a50" font-weight="700">拉拉看照片對位參考</text>
+    <text x="320" y="100" font-size="16" fill="#6b6b6b">正方形 · 正面看鏡頭 · 頭不要歪</text>
+    <text x="320" y="122" font-size="16" fill="#6b6b6b">雙眼睜開、嘴巴閉起來不笑；眼睛、嘴角對準紅點</text>
+  </g>
+</svg>

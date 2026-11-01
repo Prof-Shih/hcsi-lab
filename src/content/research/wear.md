@@ -1,0 +1,28 @@
+---
+title: "智慧運動穿戴"
+title_en: "Smart Sports Wearables · AIoT"
+summary: "自己設計壓力感測薄膜與電路，做出智慧棒球、智慧球棒、打擊手套，用藍牙／Wi-Fi 即時傳回數據，再用深度學習分析投打動作。"
+cover: "/images/baseball.jpg"
+order: 1
+group: "AIoT 生理訊號分析與低延遲傳輸"
+tagline: "會感測指力的棒球、握力球棒、打擊手套"
+short: "自己設計壓力感測電路，做出智慧棒球、球棒、打擊手套，藍牙即時傳數據，再用深度學習分析投打動作。"
+color: "#5C4A37"
+gallery:
+  - src: "/images/baseball.jpg"
+    cap: "智慧棒球內部電路（DVT）"
+  - src: "/images/bat.jpg"
+    cap: "握力感測智慧球棒"
+  - src: "/images/glove.jpg"
+    cap: "壓力感測打擊手套"
+  - src: "/images/platform.jpg"
+    cap: "R Shiny 投打數據平台"
+skills:
+  - "感測器電路與 PCB"
+  - "BLE / Wi-Fi 傳輸"
+  - "Android App"
+  - "訊號處理與深度學習"
+  - "和球隊實測"
+keywords_zh: "棒球|球棒|手套|FSR|IMU|槓鈴|投球|握力"
+keywords_en: "baseball|swing|batting|pitch|glove|EMG|pressure|gripping|flight dynamic"
+---

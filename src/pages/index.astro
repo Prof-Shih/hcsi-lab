@@ -1,0 +1,289 @@
+---
+import { u } from '../lib';
+import Layout from '../layouts/Layout.astro';
+import home from '../data/home.json';
+import { NAV } from '../config/nav';
+import { getSite, getTopics, getNews, getCounts, ym } from '../lib';
+
+const [site, allTopics, news, counts] = await Promise.all([getSite(), getTopics(), getNews(), getCounts()]);
+
+// 首頁只放前 6 個主題（依 research 的 order）
+const topics = allTopics.slice(0, 6);
+const latestNews = news.slice(0, 3);
+const strip = [...home.strip, ...home.strip];
+---
+<Layout title="首頁" active={NAV.home}>
+  <section class="hero home-hero">
+    <div class="blob blob-a" aria-hidden="true" style="width:420px;height:420px;top:-80px"></div>
+    <div class="blob blob-b" aria-hidden="true" style="width:360px;height:360px;top:120px"></div>
+    <div class="blob blob-c" aria-hidden="true" style="width:280px;height:280px;left:40%;bottom:-140px"></div>
+    <div class="wrap home-grid">
+      <div class="home-intro">
+        <div class="eyebrow" style="color:#A9C4B8">NCU · Information Management</div>
+        <h1 class="home-title"><span class="we">We are</span><span class="lab">HCSI Lab<span style="color:var(--coral)">.</span></span></h1>
+        <div class="home-zh">{site.lab_name}</div>
+        <div class="home-words"><span>讓 AI 看懂</span>
+          <span class="word-window" aria-live="polite"><span class="word-track">{home.words.map((w) => <span>{w}</span>)}</span></span>
+        </div>
+        <p class="home-lead">{site.intro}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;padding-top:6px">
+          <a class="btn btn-coral" href="#paths">我想加入 →</a>
+          <a class="btn btn-ghost-light" href={u('/research/')}>看研究主題</a>
+        </div>
+      </div>
+      <div class="carousel" aria-roledescription="carousel" aria-label="最新研究">
+        <div class="stage">
+          <div class="stage-3d">
+            {home.slides.map((s, i) => (
+              <a class="slide" href={u(s.href)} data-i={i}>
+                <img src={u(s.img)} alt={s.title} />
+                <div class="slide-cap">
+                  <span class="badge">{s.badge}</span>
+                  <span class="slide-title">{s.title}</span>
+                  <span class="slide-venue">{s.venue}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <button class="car-btn prev" type="button" aria-label="上一則"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="2" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+          <button class="car-btn next" type="button" aria-label="下一則"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+        </div>
+        <div class="car-foot">
+          <div class="dots">{home.slides.map((_, i) => <button type="button" data-go={i} aria-label={`第 ${i + 1} 則`}><span></span></button>)}</div>
+          <span class="car-no">最新研究 · <span class="car-n">1</span> / {home.slides.length}</span>
+        </div>
+      </div>
+    </div>
+    <a class="scroll-hint" href="#paths" aria-label="往下看"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></a>
+  </section>
+
+  <section aria-label="實驗室作品" class="strip">
+    <div class="strip-track">
+      {strip.map((m, i) => (
+        <figure aria-hidden={i >= home.strip.length ? 'true' : undefined}>
+          <img src={u(m.img)} alt={m.cap} loading="lazy" />
+          <figcaption>{m.cap}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section id="paths" class="wrap reveal" style="padding-bottom:80px;display:flex;flex-direction:column;gap:24px">
+    <h2 class="h2">你想加入的是？</h2>
+    <div class="paths">
+      <a href={u('/graduate/')} class="path zoom" style="background:#2F3B36">
+        <img src={u('/images/pose2.jpg')} alt="" style="opacity:.55" />
+        <div class="path-body">
+          <div class="eyebrow" style="color:#DCE5E0">Graduate</div>
+          <div class="path-title">我想讀碩士 →</div>
+          <div class="path-tags"><span>{counts.masters} 篇碩士論文</span><span>學長姐論文上 IEEE 國際會議</span><span>碩論獎佳作</span></div>
+        </div>
+      </a>
+      <a href={u('/undergrad/')} class="path zoom" style="background:#5C4A37">
+        <img src={u('/images/robot.jpg')} alt="" style="opacity:.5" />
+        <div class="path-body">
+          <div class="eyebrow" style="color:#F3E8DC">Undergraduate Projects</div>
+          <div class="path-title">我想做專題 →</div>
+          <div class="path-tags"><span>{counts.projects} 組歷屆專題</span><span>專題也能發 paper、得獎</span><span>做真的硬體</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap section reveal" style="gap:28px">
+      <div class="row-between">
+        <h2 class="h2">我們在做什麼</h2>
+        <a href={u('/research/')} style="font-size:15px">看全部研究主題 →</a>
+      </div>
+      <div class="topic-grid">
+        {topics.map((t) => (
+          <a href={u(`/research/${t.id}/`)} class="topic has-pop zoom">
+            <div class="topic-card" style={`background:${t.data.color}`}>
+              {t.data.cover && <img src={u(t.data.cover)} alt="" loading="lazy" />}
+              <div class="topic-text"><div class="tz">{t.data.title}</div><div class="te">{t.data.title_en?.split(' · ')[0]}</div></div>
+            </div>
+            <div class="pop" role="tooltip" style="top:calc(100% - 24px);width:min(320px,90vw)">
+              <b style="font-size:17px">{t.data.title}</b>
+              <span style="font-size:14px;line-height:1.65;color:#4A4A4A">{t.data.short ?? t.data.summary}</span>
+              <span style="font-size:13px;color:var(--accent-ink);font-weight:500">點擊看成果、論文與學長姐題目 →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap reveal" style="padding-top:72px;display:flex;flex-direction:column;gap:20px">
+    <div class="row-between">
+      <h2 class="h2">實驗室日常</h2>
+      <a href={u('/members/#life')} style="font-size:15px">看更多照片與影片 →</a>
+    </div>
+    <div class="life-mosaic">
+      <a href={u('/members/#life')} class="zoom ph" style="grid-row:span 2;background:#3D5A50">[實驗室合照待補]<span class="tag" style="top:auto;bottom:10px;left:10px">實驗室合照</span></a>
+      <a href={u('/members/#life')} class="zoom"><img src={u('/images/puzzle.jpg')} alt="機械手臂拼圖 Demo 影片" /><span class="play" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1F2622"><path d="M8 5v14l11-7z"></path></svg></span></a>
+      <a href={u('/members/#life')} class="zoom"><img src={u('/images/glove.jpg')} alt="打擊手套實測" /></a>
+      <a href={u('/members/#life')} class="zoom ph" style="background:#6B5A48">[Group Meeting]</a>
+      <a href={u('/members/#life')} class="zoom"><img src={u('/images/robot.jpg')} alt="Otto 機器人" /></a>
+    </div>
+  </section>
+
+  <section class="wrap section reveal" style="gap:28px">
+    <h2 class="h2">成果一眼看</h2>
+    <div class="stats">
+      <a href={u('/publications/')}><span class="num">{counts.journal}</span><span>篇國際期刊</span></a>
+      <a href={u('/publications/')}><span class="num">{counts.conference}</span><span>篇國際會議論文</span></a>
+      <a href={u('/publications/')}><span class="num wood">{counts.awards}</span><span>次論文獎</span></a>
+      <a href={u('/pi/')}><span class="num wood">3</span><span>面台灣創新技術博覽會獎牌（金／銀／銅）</span></a>
+    </div>
+  </section>
+
+  <section style="background:var(--surface);border-top:1px solid var(--line)">
+    <div class="wrap section" style="flex-direction:row;flex-wrap:wrap;gap:48px">
+      <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+        <div class="row-between"><h2 class="h2">最新消息</h2><a href={u('/news/')} style="font-size:15px">全部消息 →</a></div>
+        <div class="news">
+          {latestNews.map((n) => <a class="news-row" href={u(`/news/${n.id}/`)}><div class="news-date">{ym(n.data.date)}</div><div>{n.data.title}</div></a>)}
+        </div>
+      </div>
+      <div class="cta-box">
+        <div style="font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.4">推甄、考試、專題<br>都歡迎直接來信聊聊</div>
+        <p style="margin:0;font-size:14px;line-height:1.7;color:#B9C4BF">[面談時段、研究室位置 — 待老師提供]</p>
+        <a class="btn btn-coral" style="align-self:flex-start" href={`mailto:${site.email}`}>寄信給老師</a>
+        <a href={u('/contact/')} style="color:#E8C9A8;font-size:15px">研究室位置與聯絡方式 →</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .home-grid { position: relative; padding-top: 80px; padding-bottom: 96px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center; }
+  .home-intro { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 18px; animation: rise .9s ease-out both; }
+  .home-title { margin: 0; display: flex; flex-direction: column; line-height: 1; }
+  .home-title .we { font-family: var(--display); font-size: 34px; font-weight: 500; color: #D9D3C7; }
+  .home-title .lab { font-family: var(--display); font-size: 76px; font-weight: 600; letter-spacing: -.01em; }
+  .home-zh { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+  .home-words { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; }
+  .word-window { display: inline-block; height: 36px; overflow: hidden; }
+  .word-track { display: flex; flex-direction: column; transition: transform .6s cubic-bezier(.6,0,.2,1); }
+  .word-track span { height: 36px; line-height: 36px; color: #E8B98A; white-space: nowrap; }
+  .home-lead { margin: 0; font-size: 16px; line-height: 1.75; color: #CFC9BE; }
+
+  .carousel { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .stage { position: relative; aspect-ratio: 16 / 10; perspective: 1400px; perspective-origin: 50% 40%; }
+  .stage-3d { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .slide { position: absolute; left: 14%; top: 6%; width: 72%; height: 84%; display: block; color: #fff; text-decoration: none; border-radius: 8px; overflow: hidden; background: var(--pine); box-shadow: 0 24px 48px rgba(30,28,24,.28); transition: transform .8s cubic-bezier(.4,0,.2,1), opacity .8s, filter .8s; }
+  .slide:hover { color: #fff; }
+  .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .slide-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 64px 24px 22px; background: linear-gradient(to top, rgba(18,22,20,.88), rgba(18,22,20,0)); display: none; flex-direction: column; gap: 6px; }
+  .slide.cur .slide-cap { display: flex; }
+  .badge { align-self: flex-start; font-family: var(--latin); font-size: 12px; letter-spacing: .08em; background: var(--wood); color: #1E1F1D; padding: 4px 10px; border-radius: 2px; font-weight: 600; }
+  .slide-title { font-size: 22px; font-weight: 700; line-height: 1.35; }
+  .slide-venue { font-size: 14px; color: #E4E0D8; }
+  .car-btn { position: absolute; top: 50%; z-index: 20; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(247,245,240,.85); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .car-btn.prev { left: 12px; } .car-btn.next { right: 12px; }
+  .car-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .dots { display: flex; gap: 4px; }
+  .dots button { width: 44px; height: 24px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .dots span { display: block; height: 3px; border-radius: 2px; width: 12px; background: #CFC8BB; transition: width .3s, background .3s; }
+  .dots button.on span { width: 32px; background: var(--accent); }
+  .car-no { font-family: var(--latin); font-size: 13px; color: #B9C4BF; }
+  .scroll-hint { position: absolute; left: 50%; bottom: 18px; margin-left: -22px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #D9D3C7; animation: bob 1.8s ease-in-out infinite; }
+
+  .strip { overflow: hidden; padding: 40px 0 56px; }
+  .strip-track { display: flex; gap: 16px; width: max-content; animation: marq 48s linear infinite; }
+  .strip:hover .strip-track { animation-play-state: paused; }
+  .strip figure { margin: 0; position: relative; width: 260px; height: 180px; border-radius: 6px; overflow: hidden; background: #E9E3D8; }
+  .strip img { width: 100%; height: 100%; object-fit: cover; }
+  .strip figcaption { position: absolute; left: 10px; bottom: 10px; font-size: 13px; color: #fff; background: rgba(20,24,22,.65); padding: 4px 10px; border-radius: 999px; }
+
+  .paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 24px; }
+  .path { position: relative; display: block; border-radius: 6px; text-decoration: none; color: #fff; aspect-ratio: 16 / 10; }
+  .path:hover { color: #fff; }
+  .path img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .path-body { position: absolute; inset: 0; padding: 36px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; }
+  .path-title { font-family: var(--serif); font-size: 40px; font-weight: 700; }
+  .path-tags { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; }
+  .path-tags span { background: rgba(20,24,22,.55); padding: 6px 12px; border-radius: 999px; }
+
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px; }
+  .topic { display: block; aspect-ratio: 4 / 3; text-decoration: none; color: #fff; overflow: visible; }
+  .topic:hover { color: #fff; }
+  .topic-card { position: absolute; inset: 0; border-radius: 4px; overflow: hidden; transition: transform .35s; }
+  .topic:hover .topic-card, .topic:focus-visible .topic-card { transform: translateY(-6px); }
+  .topic-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .6; }
+  .topic-text { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; }
+  .tz { font-size: 22px; font-weight: 700; } .te { font-family: var(--latin); font-size: 13px; color: #EDE9E1; }
+
+  .life-mosaic { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 150px 150px; gap: 12px; }
+  .life-mosaic > a { position: relative; border-radius: 6px; display: block; color: #fff; text-decoration: none; }
+  .life-mosaic img { width: 100%; height: 100%; object-fit: cover; }
+  .play { position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(247,245,240,.92); display: flex; align-items: center; justify-content: center; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
+  .stats a { text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 24px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+  .num { font-family: var(--display); font-size: 56px; font-weight: 600; line-height: 1; color: var(--accent-ink); }
+  .num.wood { color: #A0703F; }
+
+  a.news-row { color: var(--ink); text-decoration: none; }
+  a.news-row:hover { color: var(--accent-ink); }
+  .news-row { display: flex; gap: 28px; padding: 18px 0; border-top: 1px solid var(--line); font-size: 16px; line-height: 1.6; }
+  .news-row:last-child { border-bottom: 1px solid var(--line); }
+  .news-date { flex: 0 0 84px; font-family: var(--latin); font-size: 14px; color: var(--muted); }
+  .cta-box { flex: 1 1 360px; min-width: 0; background: var(--pine); color: #F2EFE8; border-radius: 4px; padding: 36px; display: flex; flex-direction: column; gap: 16px; align-self: flex-start; }
+
+  @media (max-width: 767px) {
+    .home-grid { padding-top: 48px; padding-bottom: 72px; }
+    .home-title .lab { font-size: 56px; }
+    .path-title { font-size: 30px; }
+    .path-body { padding: 24px; }
+    .life-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 130px); }
+    .news-row { gap: 16px; }
+    .news-date { flex-basis: 64px; }
+  }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 「讓 AI 看懂 ___」輪播字
+  const track = document.querySelector<HTMLElement>('.word-track');
+  if (track && !reduce) {
+    const n = track.children.length;
+    let w = 0;
+    setInterval(() => { w = (w + 1) % n; track.style.transform = `translateY(-${w * 36}px)`; }, 2200);
+  }
+
+  // 3D 立體輪播，5 秒切換，滑鼠停在上面時暫停
+  const slides = [...document.querySelectorAll<HTMLAnchorElement>('.slide')];
+  const dots = [...document.querySelectorAll<HTMLButtonElement>('.dots button')];
+  const no = document.querySelector('.car-n');
+  const stage = document.querySelector<HTMLElement>('.stage');
+  let cur = 0;
+  let paused = false;
+  const render = () => {
+    slides.forEach((el, i) => {
+      let d = i - cur;
+      if (d > 2) d -= slides.length;
+      if (d < -2) d += slides.length;
+      const a = Math.abs(d);
+      el.style.transform = `translateX(${d * 46}%) translateZ(${-a * 240}px) rotateY(${-d * 38}deg)`;
+      el.style.opacity = String(a > 2 ? 0 : 1 - a * 0.22);
+      el.style.zIndex = String(10 - a);
+      el.style.filter = a ? 'saturate(0.7) brightness(0.85)' : 'none';
+      el.classList.toggle('cur', d === 0);
+      el.tabIndex = d === 0 ? 0 : -1;
+    });
+    dots.forEach((b, i) => b.classList.toggle('on', i === cur));
+    if (no) no.textContent = String(cur + 1);
+  };
+  const go = (i: number) => { cur = (i + slides.length) % slides.length; render(); };
+  slides.forEach((el, i) => el.addEventListener('click', (e) => { if (i !== cur) { e.preventDefault(); go(i); } }));
+  dots.forEach((b, i) => b.addEventListener('click', () => go(i)));
+  document.querySelector('.car-btn.prev')?.addEventListener('click', () => go(cur - 1));
+  document.querySelector('.car-btn.next')?.addEventListener('click', () => go(cur + 1));
+  stage?.addEventListener('mouseenter', () => { paused = true; });
+  stage?.addEventListener('mouseleave', () => { paused = false; });
+  render();
+  if (!reduce) setInterval(() => { if (!paused && !document.hidden) go(cur + 1); }, 5000);
+</script>
