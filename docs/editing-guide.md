@@ -4,10 +4,13 @@
 
 ## 第一次使用
 
-1. 註冊 GitHub 帳號（https://github.com），把帳號名稱告訴網站管理員。
-2. 管理員把你加為 repo 的 collaborator 後，你會收到邀請信，點「Accept invitation」。
-3. 打開 https://app.pagescms.org ，按 **Sign in with GitHub**，第一次會詢問授權，按同意。
-4. 選擇 `machencompeq/hcsi-lab`，就會看到左側選單：成員、論文發表、最新消息、研究主題、實驗室基本資料。
+**不需要 GitHub 帳號。**
+
+1. 把你的 email 告訴網站管理員，管理員會在後台邀請你。
+2. 收到 Pages CMS 的邀請信後，點信裡的連結登入（之後從 https://app.pagescms.org 用同一個 email 登入）。
+3. 選擇 `machencompeq/hcsi-lab`，就會看到左側選單：成員、論文發表、最新消息、研究主題、實驗室基本資料。
+
+用 email 登入的人只能改內容和上傳圖片，碰不到網站程式，不用擔心改壞。
 
 ## 存檔之後
 

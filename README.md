@@ -61,6 +61,35 @@ npm run preview    # 預覽建置結果
 
 第一次設定：repo Settings → Pages → Source 選 **GitHub Actions**。
 
+## 後台（Pages CMS）設定
+
+擁有者第一次設定：
+
+1. 打開 https://app.pagescms.org ，用 repo 擁有者的 GitHub 帳號登入。
+2. 依畫面指示在 `machencompeq` 帳號安裝 Pages CMS 的 GitHub App，建議選 **Only select repositories → hcsi-lab**。
+3. 回到 Pages CMS 選 `machencompeq/hcsi-lab`，就會讀到 repo 裡的 `.pages.yml`，出現成員、論文等選單。
+4. 在後台的 collaborators 設定用 **email 邀請**老師與學弟妹。email 協作者不需要 GitHub 帳號，只能改內容與上傳檔案，不能改 `.pages.yml`、程式或協作者名單。
+
+## VM 備份與備援
+
+實驗室 VM（140.115.82.165）每小時從 GitHub 拉一次完整備份，避免 GitHub 帳號遺失或 repo 被刪：
+
+| VM 上的位置 | 內容 |
+|---|---|
+| `~/backup/hcsi-lab.git` | 完整鏡像（所有分支、標籤、歷史）；GitHub 上被刪的分支這裡不會跟著刪 |
+| `~/backup/git/hcsi-lab-日期.bundle` | 每天一份單檔快照，保留 30 天 |
+| `~/hcsi-site` | `main` 的最新內容；有更新就自動重建 VM 上的備援網站 http://140.115.82.165/hcsi-lab/ |
+| `~/backup/github-backup.log` | 每次備份的結果（`fetch=FETCH-FAILED` 代表連不上 GitHub，舊備份不受影響） |
+
+腳本是 VM 的 `~/stack/backup-github.sh`（來源 `C:\Users\USER\VMs\stack\`），由 cron 每小時執行。執行 `還原VM.ps1` 前會先把這些備份抓回 Windows 的 `C:\Users\USER\VMs\backup\`，還原後再放回去。另外，實驗室電腦上的開發資料夾本身也是一份完整的 git clone。
+
+**GitHub 帳號不見時：**
+
+1. VM 上的備援網站照常運作，網址 http://140.115.82.165/hcsi-lab/ 。
+2. 用新帳號建立空 repo，在 VM 執行：`git -C ~/backup/hcsi-lab.git push --mirror https://github.com/<新帳號>/<repo>.git`
+3. 改 `astro.config.mjs` 的 `site`／`base`、`.pages.yml` 的 `media.output`、`backup-github.sh` 的 `REPO`，push 後重新設定 Pages 與 Pages CMS。
+4. 鏡像也壞了的話，從 bundle 還原：`git clone ~/backup/git/hcsi-lab-日期.bundle hcsi-lab`
+
 日後綁定自訂網域：新增 `public/CNAME`（內容為網域），並把 `astro.config.mjs` 的 `site` 改成該網域，不需改其他程式。
 
 ## 擴充：新增一種內容類型
@@ -86,14 +115,14 @@ npm run preview    # 預覽建置結果
 - 欄位定義以 `content.config.ts` 為準。改了 schema 一定要同步改 `.pages.yml`。
 - CMS 清空欄位時可能寫入 `""` 或 `null`，schema 外層的 `clean()` 會先移除，選填欄位不受影響。
 - 研究主題的 `keywords_zh` / `keywords_en` 是正規表示式（以 `|` 分隔），用來自動找出相關碩論、專題與論文。
-- `Dockerfile`、`nginx.conf` 是舊的自架方案，正式部署不使用；只在想用實驗室 VM 做內部預覽時才用。
+- `Dockerfile`、`nginx.conf` 給實驗室 VM 的備援網站用（同樣放在 `/hcsi-lab/` 底下），正式網站是 GitHub Pages。
 
 ## 權限與防竄改
 
 個人帳號的 repo 只有「擁有者」和「collaborator」兩種身分，**collaborator 一律有寫入權限**：能直接 push 到 `main`（＝直接改線上網站），也能改 `.github/workflows/`。所以：
 
 - **寫程式的人不要加 collaborator**：請他 fork → 改 → 開 PR，擁有者審過再 merge。fork 的 PR 拿不到部署權限，看得到程式碼但動不了網站。
-- **只有用後台改內容的人才加 collaborator**（Pages CMS 需要寫入權限），而且只加信得過的人。
+- **用後台改內容的人用 Pages CMS 的 email 邀請**，不要加成 GitHub collaborator：email 協作者只能改內容，碰不到程式。
 - repo Settings → Rules → Rulesets 為 `main` 開：禁止 force push、禁止刪除分支，讓歷史紀錄無法被抹掉，出事可以 revert。
 - Settings → Environments → `github-pages` 限制只有 `main` 能部署（預設就是）。
 - 所有 collaborator 都要開 GitHub 兩步驟驗證（2FA）。
@@ -107,7 +136,7 @@ npm run preview    # 預覽建置結果
 | repo 公開或私有 | 公開（免費方案的 GitHub Pages 需要公開 repo） |
 | Wireframe | Claude 線框圖 artifact「HCSI Lab 網站線框圖」，版面已依此實作 |
 | 中英雙語 | 僅中文；schema 已保留 `name_en`、`title_en` 等欄位 |
-| 後台編輯者 | 待提供名單與 GitHub 帳號，加為 repo collaborator 後即可登入後台 |
+| 後台編輯者 | 待提供名單與 email，由擁有者在 Pages CMS 用 email 邀請 |
 | 既有內容 | 已一次匯入：論文 119 篇（老師著作目錄，2026/8/7 版）、畢業碩士 13 位、研究主題 6 個、消息 4 則 |
 | 目前成員資料 | 6 位成員的身分暫填「碩士生」，學經歷、照片、信箱待各人在後台補 |
 | 品牌素材 | 沿用線框圖的配色與字型；Logo 暫用文字標誌 |
