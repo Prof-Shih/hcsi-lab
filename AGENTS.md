@@ -1,0 +1,86 @@
+# AGENTS.md — 給 AI 寫程式助理的專案規則
+
+你在協助維護「人本超智慧創新實驗室（HCSI Lab）」的官方網站。實驗室成員多半不是專業工程師，請用**繁體中文**回覆、解釋你做了什麼，並嚴格遵守下面的規則。人類用的完整說明在 `README.md`（開發）與 `docs/editing-guide.md`（後台）。
+
+## 專案一句話
+
+Astro 7 純靜態網站。內容放在 `src/content/`（Markdown + YAML frontmatter，zod schema 驗證），老師與學弟妹用 Pages CMS 網頁後台修改內容；push 到 `main` 由 GitHub Actions 建置並部署到 GitHub Pages：https://machencompeq.github.io/hcsi-lab/
+
+## 指令
+
+```bash
+npm install        # 安裝套件（需要 Node.js >= 22.23.4，建議 24）
+npm run dev        # 本機預覽：http://localhost:4321/hcsi-lab/（注意 /hcsi-lab/）
+npm run build      # 完整建置＋schema 檢查。任何修改完成前都必須通過
+npm run preview    # 預覽建置結果
+```
+
+沒有測試框架；**`npm run build` 通過就是驗收標準**。改了頁面請再用 `npm run dev` 實際打開相關網址確認。
+
+## 架構
+
+| 路徑 | 用途 | 誰改 |
+|---|---|---|
+| `src/content/{members,publications,news,research}/` | 一筆一檔的內容 | Pages CMS（人類）；你只在使用者要求時改 |
+| `src/content/settings/site.yml` | 實驗室基本資料（單一檔） | Pages CMS |
+| `src/content.config.ts` | 所有 collection 的 zod schema 與 enum（`MEMBER_ROLES`、`PUB_TYPES`、`RESEARCH_GROUPS`、`AVATAR_STYLES`） | 程式 |
+| `.pages.yml` | Pages CMS 後台欄位設定 | 程式 |
+| `src/lib.ts` | 讀取內容並排序的函式（`getMembers`、`getPubs`、`getNews`、`getTopics`、`getSite`）、`u()`、其他工具 | 程式 |
+| `src/pages/` | 檔案即路由；`[slug].astro` 用 `getStaticPaths()` | 程式 |
+| `src/layouts/Layout.astro` | 共用頁首、選單、頁尾；props `title`、`active`、`description` | 程式 |
+| `src/config/nav.ts` | 主選單與 `NAV` 索引常數 | 程式 |
+| `src/data/*.json` | 尚未搬進後台的資料（首頁輪播、教授學經歷、大學專題、日常照片） | 程式 |
+| `src/scripts/lala.ts` | 拉拉看頭像（WebGL） | 程式 |
+| `src/styles/global.css` | 全站樣式與 CSS 變數 | 程式 |
+| `public/` | 原樣輸出；`public/uploads/` 是 CMS 上傳區 | — |
+| `.github/workflows/deploy.yml` | CI/CD | 程式（勿隨意改） |
+| `Dockerfile`、`nginx.conf` | 實驗室 VM 備援站（同樣在 `/hcsi-lab/` 底下） | 程式 |
+
+## 必須遵守的規則
+
+1. **站內網址一律經過 `u()`**（`import { u } from '../lib'`）。網站部署在 `/hcsi-lab/` 底下：
+   - 正確：`href={u('/members/')}`、`src={u(m.data.photo)}`、`href={u(`/news/${n.id}/`)}`
+   - 錯誤：`href="/members/"`、`src="/images/x.jpg"`
+   - `mailto:`、`tel:`、外部網址不必包（包了也無害）。`u()` 遇到已含 `/hcsi-lab` 的路徑不會重複加。
+   - 送到瀏覽器端 JS 的路徑（例如 `define:vars` 的資料）要在 frontmatter 先用 `u()` 處理。
+2. **不要用 `u` 當變數或參數名稱**（例如 `.map((u) => …)`），會遮蔽 `u()`，建置時出現 `u is not a function`。
+3. **schema 與 `.pages.yml` 必須一一對應**：欄位名稱、必填、enum 選項、list。改一邊就要改另一邊。Markdown 內文在 `.pages.yml` 固定叫 `body`（`type: rich-text`），不寫進 schema。
+4. **enum 選項只定義在 `src/content.config.ts`**，頁面從那裡 import，不要寫死字串清單。
+5. **每個 schema 外面包 `clean(...)`**：Pages CMS 清空欄位時會寫入 `""` 或 `null`，`clean()` 會先移除，選填欄位與 `.default()` 才會正常。
+6. **圖片／檔案欄位用 `path`**（`src/content.config.ts` 裡定義，要求以 `/` 或 `http(s)://` 開頭）。Pages CMS 上傳後寫入的路徑是 `/hcsi-lab/uploads/...`（`.pages.yml` 的 `media.output`）。
+7. **選填欄位缺值時頁面要正常顯示**：用 `{x && …}` 或預設值，不要假設一定有。
+8. **collection 讀出來的順序不固定**：排序寫在 `src/lib.ts` 的讀取函式裡。
+9. **完成前執行 `npm run build`**，並把結果告訴使用者。失敗就修到通過，不要留下壞掉的建置。
+10. **不要 commit 秘密或個人資料**：repo 是公開的，commit 過就永久留在歷史。不要放密碼、token、金鑰、別人沒同意公開的照片或聯絡方式。
+11. **Git**：
+    - 開工前 `git pull --rebase`（後台存檔會直接 commit 到 `main`）。
+    - **禁止 `git push --force`、禁止刪除 `main`**（GitHub ruleset 也會擋）。被拒絕就 `git pull --rebase` 後再 push。
+    - commit 訊息用繁體中文、一句話說清楚改了什麼。
+    - 除非使用者明確要求，不要自己 push；push 前先讓使用者看過改動。
+12. **不要動這些，除非使用者明確要求並理解後果**：`.github/workflows/deploy.yml`、`astro.config.mjs` 的 `site`／`base`、`.pages.yml` 的 `media`、`package.json` 的 Astro 主版本。
+13. **改欄位名稱時連舊內容一起改**：所有 `src/content/` 下用到該欄位的檔案都要更新，否則建置失敗。
+14. **拉拉看**：`members` 的 `avatar_style: 拉拉看` 必須有 `lala_photo`，且檔案要存在於 `public/`（`getMembers()` 會檢查）。眨眼／微笑位置依 `src/scripts/lala.ts` 的 `EYES`／`MOUTH`，與 `public/lala-photo-guide.svg` 的紅點一致，改一邊要改另一邊。不要把任何真人照片加進 repo 當範例。
+15. Astro 與 Pages CMS 的 API 會隨版本改變。不確定寫法時先查官方文件（docs.astro.build、pagescms.org/docs），不要憑記憶猜。注意 Astro 7 的 zod 從 `astro/zod` import，loader 從 `astro/loaders` import；預設 Markdown 處理器不是 unified，`markdown.rehypePlugins` 需要另裝 `@astrojs/markdown-remark`。
+
+## 常見任務
+
+### 新增一種後台可編輯的內容（例如「獲獎紀錄」）
+
+1. `src/content.config.ts`：新增 `defineCollection({ loader: md('awards'), schema: clean(z.object({ … })) })`，加進最後的 `collections`。
+2. `.pages.yml`：在 `content:` 下、`site` 之前新增對應 collection（`path: src/content/awards`、`format: yaml-frontmatter`、`filename`、`fields` 與 schema 一致，另加 `body`）。
+3. `src/lib.ts`：新增 `getAwards()`，在這裡排序。
+4. `src/pages/awards/index.astro`（需要內頁再加 `[slug].astro`，參考 `src/pages/news/`）。所有網址用 `u()`。
+5. 需要的話在 `src/config/nav.ts` 的 `nav` 與 `NAV` 加項目（選單最多約 10 項），頁面的 `active` 用 `NAV.xxx`。
+6. 放一筆範例內容，`npm run build` 通過。
+
+### 新增欄位到既有內容
+
+schema 加欄位（通常 `.optional()` 或 `.default()`，避免舊資料失效）→ `.pages.yml` 加對應欄位 → 頁面顯示（處理缺值）→ build。
+
+### 把 `src/data/*.json` 搬進後台
+
+建立 collection（或 `settings` 那種單一檔）→ 用腳本把 JSON 轉成 `src/content/` 下的檔案 → 頁面改用 `src/lib.ts` 的讀取函式 → 刪除舊 JSON → build 並比對頁面內容與數量沒變。
+
+## 回報方式
+
+完成後用繁體中文告訴使用者：改了哪些檔案、為什麼、`npm run build` 的結果、需要他們自己做的事（例如到後台填資料、push、在 GitHub 設定）。遇到規則與使用者要求衝突時，先說明風險再請使用者決定。

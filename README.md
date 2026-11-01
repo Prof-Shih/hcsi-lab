@@ -8,6 +8,8 @@
 
 給不寫程式的人：請看 [docs/editing-guide.md](docs/editing-guide.md)。
 
+用 AI 寫程式助理（Claude Code、Copilot、Codex 等）時，它會自動讀 [AGENTS.md](AGENTS.md) 裡的專案規則。
+
 ## 架構
 
 ```
