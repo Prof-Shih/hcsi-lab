@@ -55,6 +55,7 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
     <div class="wrap">
       <div>{site.lab_name} · {site.dept}</div>
       <div>{site.address} · <a href={`mailto:${site.email}`}>{site.email}</a></div>
+      <div class="cursor-pick" role="group" aria-label="游標樣式"><span>游標</span></div>
     </div>
   </footer>
 
@@ -102,8 +103,10 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
   <script>
     import { mountEaster } from '../scripts/easter';
     import { mountFun } from '../scripts/fun';
+    import { mountCursors } from '../scripts/cursors';
     mountEaster();
     mountFun();
+    mountCursors();
   </script>
 </body>
 </html>
