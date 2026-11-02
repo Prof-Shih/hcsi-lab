@@ -6,6 +6,8 @@
 - 技術：Astro 7（純靜態輸出）＋ Content Collections（zod schema）＋ Pages CMS 後台 ＋ GitHub Actions → GitHub Pages
 - 原則：**內容與程式分離**。後台（CMS）只能寫 `src/content/` 和 `public/uploads/`，其餘由程式人員維護。
 
+**新成員**：`git clone https://github.com/Prof-Shih/hcsi-lab.git`，用 VS Code 開啟，對 AI 助理說「我是新成員，幫我開始」，它會照 [AGENTS.md](AGENTS.md) 帶你裝環境、填成員資料、提交。
+
 給不寫程式的人：請看 [docs/editing-guide.md](docs/editing-guide.md)。
 
 用 AI 寫程式助理（Claude Code、Copilot、Codex 等）時，它會自動讀 [AGENTS.md](AGENTS.md) 裡的專案規則。

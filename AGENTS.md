@@ -66,6 +66,21 @@ npm run preview    # 預覽建置結果
 14. **拉拉看**：`members` 的 `avatar_style: 拉拉看` 必須有 `lala_photo`，且檔案要存在於 `public/`（`getMembers()` 會檢查）。眨眼／微笑位置依 `src/scripts/lala.ts` 的 `EYES`／`MOUTH`，與 `public/lala-photo-guide.svg` 的紅點一致，改一邊要改另一邊。不要把任何真人照片加進 repo 當範例。
 15. Astro 與 Pages CMS 的 API 會隨版本改變。不確定寫法時先查官方文件（docs.astro.build、pagescms.org/docs），不要憑記憶猜。注意 Astro 7 的 zod 從 `astro/zod` import，loader 從 `astro/loaders` import；預設 Markdown 處理器不是 unified，`markdown.rehypePlugins` 需要另裝 `@astrojs/markdown-remark`。
 
+## 新成員第一次開工（使用者剛 clone、說「幫我開始」或沒有明確任務時，主動照做）
+
+使用者通常只收到一句「clone 下來叫 AI 讀」，其他都靠你帶。一次做一步，每步用一句話告訴使用者在做什麼。
+
+1. **環境**：`node -v`（需 >= 22.23.4）→ `npm install` → `npm run build` 確認可建置。缺 Node 就教使用者安裝 Node.js 24 LTS。
+2. **身分**：`git config user.name`／`user.email` 沒設就請使用者提供後設定；`gh auth status` 確認登入的帳號是收到協作邀請的那個。
+3. **讀規則**：向使用者用三句話摘要 `TEACHER_REQUIREMENTS.md`、`CONTRIBUTING.md` 的重點（老師要求優先、小改可直接 push、大改開分支發 PR 給管理員）。
+4. **填自己的成員資料**：
+   - 問使用者中文姓名，在 `src/content/members/` 找 `name` 相同的檔（姓名可能有錯字，找到相近的要跟使用者確認）；沒有就新增 `<英文姓名拼音，小寫、連字號>.md`。
+   - 逐一詢問並填寫：`name_en`、`role`（只能是 `MEMBER_ROLES` 之一）、`enroll_year`、`email`、`edu`（學歷）、`topic`（研究題目）、`interests`（list）、`instagram`（可空）。把 `[… — 待補]` 佔位字換成實際內容；使用者不想填的欄位整行刪掉，不要留佔位字。
+   - **照片**：只放使用者本人提供、同意公開的照片，存到 `public/uploads/`，`photo: /hcsi-lab/uploads/<檔名>`。沒有就不放（會顯示預設頭像）。不可替別人填資料或放別人的照片。
+   - 不要改 `order`，除非使用者要求。
+5. `npm run build` 通過 → 給使用者看 `git diff` → 使用者同意後 commit（例：「更新陳洺安的成員資料」）並 push `main`（這是小改）。
+6. 告訴使用者：網站約 2～5 分鐘後更新，網址 https://prof-shih.github.io/hcsi-lab/members/ ；之後想開發新功能，先看 `TEACHER_REQUIREMENTS.md` 的「目前狀態」裡還沒完成的項目。
+
 ## 常見任務
 
 ### 新增一種後台可編輯的內容（例如「獲獎紀錄」）
