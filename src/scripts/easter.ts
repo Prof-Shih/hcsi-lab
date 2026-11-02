@@ -14,7 +14,7 @@ function rotate([x, y, z]: number[], ax: number, ay: number) {
   return [x * Math.cos(ay) + z1 * Math.sin(ay), y1, -x * Math.sin(ay) + z1 * Math.cos(ay)];
 }
 
-function drawBall(c: CanvasRenderingContext2D, cx: number, cy: number, r: number, ax: number, ay: number) {
+export function drawBall(c: CanvasRenderingContext2D, cx: number, cy: number, r: number, ax: number, ay: number) {
   const g = c.createRadialGradient(cx - r * 0.35, cy - r * 0.4, r * 0.1, cx, cy, r);
   g.addColorStop(0, '#FFFFFF'); g.addColorStop(0.7, '#EFE9DD'); g.addColorStop(1, '#BFB5A3');
   c.fillStyle = g;
