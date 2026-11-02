@@ -8,5 +8,7 @@ export default defineConfig({
   site: 'https://prof-shih.github.io',
   base: '/hcsi-lab',
   trailingSlash: 'ignore',
-  build: { format: 'directory' },
+  // 樣式一律內嵌進 HTML：GitHub Pages 讓 HTML 快取 10 分鐘，若樣式是獨立的雜湊檔，
+  // 頻繁部署後快取中的舊 HTML 會去要已被刪掉的舊 CSS，整頁變成沒有樣式。
+  build: { format: 'directory', inlineStylesheets: 'always' },
 });

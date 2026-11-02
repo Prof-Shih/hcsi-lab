@@ -20,8 +20,8 @@ const site = await getSite();
       <div style="font-size:16px;line-height:1.8;color:#3F3F3F">國立中央大學 資訊管理學系 副教授<br>IEEE Senior Member · IEEE Trans. on Consumer Electronics 副編輯（2026–2027）</div>
       <div class="facts">
         <div><span>E-mail</span><a href={`mailto:${site.email}`}>{site.email}</a></div>
-        <div><span>研究室</span>資管系館 [室號待補]</div>
-        <div><span>連結</span><span><a href={u('/publications/')}>著作列表</a> · CV (PDF) [待補]</span></div>
+        <div><span>研究室</span>{site.lab_room ?? site.room}</div>
+        <div><span>連結</span><span><a href={u('/publications/')}>著作列表</a></span></div>
       </div>
       <p class="bio">施老師於國立清華大學電機系取得博士學位，曾任元智大學電機系教授及電機通訊國際學士學位學程主任，並於美國華盛頓大學、匈牙利 Óbuda 大學擔任訪問教授，2025 年加入中央大學資管系。研究聚焦於內容導向多媒體分析、運動資料分析、AIoT 與人機互動。</p>
       <div style="display:flex;flex-wrap:wrap;gap:8px">{pi.interests.map((i) => <span class="chip">{i}</span>)}</div>
