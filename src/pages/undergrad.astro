@@ -3,13 +3,15 @@ import { u } from '../lib';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import { NAV } from '../config/nav';
-import { getSite, projectCats, undergradProjects } from '../lib';
+import { getSite, imagePicker, projectCats, undergradProjects } from '../lib';
 
 const site = await getSite();
 
+// 頁面上已固定使用的圖先標記，卡片就不會再重複
+const pick = imagePicker(new Set(['/images/arm.jpg', '/images/puzzle.jpg', '/images/baseball.jpg']));
 const projects = undergradProjects.map((p) => {
   const c = projectCats.find((c) => c.re.test(p.zh + p.en))!;
-  return { ...p, cat: c.key, tag: c.tag, img: c.img, bg: c.bg };
+  return { ...p, cat: c.key, tag: c.tag, img: pick(c.imgs), bg: c.bg };
 });
 const chips = [{ key: 'all', tag: '全部' }, ...projectCats];
 const wins = [
@@ -21,6 +23,22 @@ const wins = [
 ---
 <Layout title="大學專題" active={NAV.undergrad}>
   <Hero eyebrow="Undergraduate Projects" title="在這裡做專題" lead="大學生也能做出能動的系統、發國際會議論文、拿獎。" img="/images/arm.jpg" bg="#5C4A37" />
+
+  <section id="recruit" class="wrap section reveal">
+    <div class="recruit">
+      <div class="recruit-head">
+        <span class="badge">115 學年 · 招募中</span>
+        <h2 class="h2" style="color:#fff">今年收 <span class="big">3</span> 組專題生，每組 <span class="big">5</span> 人</h2>
+        <p>施皇嘉老師在中央資管第一年收專題生。題目從實驗室的研究主題挑，也可以帶自己的點子來談。</p>
+      </div>
+      <div class="recruit-grid">
+        <div><b>做什麼</b><span>智慧運動穿戴、運動影像分析、機器人與邊緣 AI、多模態 LLM、智慧醫療影像、人機互動與 3D，挑一個方向做出能動的系統。</span></div>
+        <div><b>有什麼</b><span>耐能 NPU、樹莓派、深度相機、自製感測棒球／球棒／手套；老師正在規劃提供 AI 開發工具（共用帳號、API 額度）。</span></div>
+        <div><b>會得到</b><span>學長姐帶、可以發研討會論文、申請國科會大專生研究計畫，推甄時有作品可以講。</span></div>
+        <div><b>怎麼加入</b><span>寄信給老師，或直接來 I-717-1 找我們聊。</span><a class="btn btn-coral" href={`mailto:${site.email}?subject=${encodeURIComponent('專題生申請')}`}>寄信給老師 →</a></div>
+      </div>
+    </div>
+  </section>
 
   <section class="wrap section reveal">
     <h2 class="h2">專題生做到的事</h2>
@@ -35,7 +53,7 @@ const wins = [
       <div class="gear">
         <figure><div class="gear-ph" style="background:#3E4A5A">Kneron NPU</div><figcaption>耐能 AI 加速棒／離線 NPU</figcaption></figure>
         <figure><div class="gear-ph" style="background:#7A3B3B">Raspberry Pi 4/5</div><figcaption>樹莓派邊緣運算</figcaption></figure>
-        <figure class="zoom"><img src={u('/images/arm.jpg')} alt="機械手臂" loading="lazy" /><figcaption>機械手臂</figcaption></figure>
+        <figure class="zoom"><img src={u('/images/puzzle.jpg')} alt="機械手臂拼圖" loading="lazy" /><figcaption>機械手臂</figcaption></figure>
         <figure class="zoom"><img src={u('/images/baseball.jpg')} alt="智慧棒球" loading="lazy" /><figcaption>自製感測棒球／球棒／手套</figcaption></figure>
       </div>
       <span class="note">設備照片待補拍：耐能、樹莓派、深度攝影機（Azure Kinect／ZED／RealSense）</span>
@@ -79,6 +97,14 @@ const wins = [
 </Layout>
 
 <style>
+  .recruit { border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, #2F3B36, #4A685D); color: #F2EFE8; }
+  .recruit-head { padding: 32px 32px 8px; display: flex; flex-direction: column; gap: 10px; }
+  .recruit-head p { margin: 0; color: #DCE5E0; line-height: 1.7; }
+  .recruit .big { font-family: var(--display); font-size: 1.6em; color: var(--wood); }
+  .recruit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,.12); margin-top: 24px; }
+  .recruit-grid > div { background: rgba(31,38,34,.55); padding: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.7; }
+  .recruit-grid b { font-size: 16px; color: #fff; }
+  .recruit-grid .btn { align-self: flex-start; margin-top: 6px; }
   .wins { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
   .win { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--wood); border-radius: 4px; padding: 22px; display: flex; flex-direction: column; gap: 6px; }
   .win b { font-size: 19px; }

@@ -5,5 +5,6 @@ authors:
   - "C. L. Huang"
 venue: "IEEE Trans. on Broadcasting, vol. 54, no. 3, pp. 333-346, Sept. 2008"
 year: 2008
+pdf: "/papers/2008-content-extraction-and-interpretation-of-superimposed-captio.pdf"
 type: "journal"
 ---

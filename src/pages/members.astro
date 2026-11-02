@@ -10,7 +10,15 @@ const { pi, current, alumni } = await getMembers();
 // 選了拉拉看風格的人，頭像改用拉拉看照片並啟用互動
 // 燈箱在瀏覽器端換圖，路徑先加好 base
 const gallery = galleryData.map((g) => ({ ...g, img: u(g.img) }));
-const people = [...pi, ...current].map(({ data }) => ({ ...data, lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
+// 年級依入學年與建置當下的學年推算（8 月起算新學年），例：2025 入學的碩士生在 2026 學年是碩二
+const now = new Date();
+const ay = now.getMonth() >= 7 ? now.getFullYear() : now.getFullYear() - 1;
+const gradeOf = (role: string, y?: number) => {
+  const n = y ? ay - y + 1 : 0;
+  if (n < 1 || n > 9) return role;
+  return role === '碩士生' ? `碩${'一二三四五六七八九'[n - 1]}` : role === '博士生' ? `博${'一二三四五六七八九'[n - 1]}` : role;
+};
+const people = [...pi, ...current].map(({ data }) => ({ ...data, role: gradeOf(data.role, data.enroll_year), lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
 
 const pal = [['#DCE5E0', '#3D5A50'], ['#F3E8DC', '#7A5634'], ['#F6DCD3', '#8A3E2A'], ['#DDE6EE', '#2F4A63'], ['#EAE3F0', '#5A4570'], ['#E6EBD8', '#4C5A2E']];
 const seen = new Set<string>();

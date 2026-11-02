@@ -36,3 +36,11 @@ skills:
 keywords_zh: "棒球|球棒|手套|FSR|IMU|槓鈴|投球|握力"
 keywords_en: "baseball|swing|batting|pitch|glove|EMG|pressure|gripping|flight dynamic"
 ---
+
+## 媒體報導
+
+愛爾達電視 2020-11-12 報導台灣棒球農場團隊開發的智慧訓練器材與運動科學數據應用。
+
+<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/fmkriprPADo" title="台灣棒球農場團隊 開發智慧訓練器材" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+<div class="video-embed"><iframe src="https://www.youtube-nocookie.com/embed/eJCWRbw45bg" title="台灣棒球農場 精準運科掌握動作數據" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>

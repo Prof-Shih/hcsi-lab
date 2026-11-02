@@ -11,3 +11,5 @@ date: "2026-11-02"
 - Workshop 日期：待大會公布
 
 徵稿與議程：<https://prof-shih.github.io/ai-sports26/>
+
+<div class="video-embed site-embed"><iframe src="https://prof-shih.github.io/ai-sports26/" title="AI-Sports 2026 官網" loading="lazy"></iframe></div>

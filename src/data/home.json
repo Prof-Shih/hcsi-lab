@@ -1,7 +1,7 @@
 {
    "slides" : [
       {
-         "img" : "/images/baseball.jpg",
+         "img" : "/images/ball-module.jpg",
          "venue" : "IEEE Journal of Selected Areas in Sensors",
          "title" : "曲面柔性壓力感測陣列：多通道方向性接觸感測",
          "href" : "/research/wear/",
@@ -11,7 +11,7 @@
          "href" : "/research/video/",
          "badge" : "2026",
          "title" : "運動模糊下的神經前後向軌跡還原",
-         "img" : "/images/pose2.jpg",
+         "img" : "/images/baseball-frames.jpg",
          "venue" : "JKSU – Computer and Information Sciences (Q1)"
       },
       {
@@ -38,44 +38,40 @@
    ],
    "strip" : [
       {
-         "img" : "/images/baseball.jpg",
-         "cap" : "智慧棒球"
+         "cap" : "智慧球棒",
+         "img" : "/images/bat.jpg"
       },
       {
-         "img" : "/images/bat.jpg",
-         "cap" : "智慧球棒"
+         "cap" : "智慧棒球結構",
+         "img" : "/images/ball-exploded.jpg"
       },
       {
-         "cap" : "打擊手套",
-         "img" : "/images/glove.jpg"
+         "cap" : "球棒感測器",
+         "img" : "/images/bat2.jpg"
       },
       {
-         "cap" : "Otto 機器人",
-         "img" : "/images/robot.jpg"
+         "cap" : "比分字幕辨識",
+         "img" : "/images/scoreboard.jpg"
       },
       {
-         "img" : "/images/pose.jpg",
-         "cap" : "WebNN 姿態估測"
+         "cap" : "足球場線偵測",
+         "img" : "/images/soccer-lines.jpg"
       },
       {
-         "cap" : "機械手臂",
-         "img" : "/images/arm.jpg"
+         "cap" : "即時動作擷取",
+         "img" : "/images/basketball.jpg"
       },
       {
-         "img" : "/images/platform.jpg",
-         "cap" : "投打數據平台"
+         "cap" : "足球事件分析",
+         "img" : "/images/referee.jpg"
       },
       {
-         "img" : "/images/pose2.jpg",
-         "cap" : "揮棒骨架分析"
+         "cap" : "棒球轉播分析",
+         "img" : "/images/baseball-gui.jpg"
       },
       {
-         "cap" : "UbiComp 展示",
-         "img" : "/images/puzzle.jpg"
-      },
-      {
-         "img" : "/images/bat2.jpg",
-         "cap" : "球棒感測器"
+         "cap" : "投打數據平台",
+         "img" : "/images/platform.jpg"
       }
    ],
    "words" : [
