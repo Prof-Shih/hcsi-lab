@@ -32,6 +32,7 @@ const profileSchema = z.object({
   topic: z.string(),
   interests: z.array(z.string()),
   instagram: z.string(),
+  website: z.string(),
 }).partial().strict();
 const profileFiles = import.meta.glob<unknown>('./data/profiles/*/*.json', { eager: true, import: 'default' });
 let profileCache: Record<string, z.infer<typeof profileSchema>> | undefined;

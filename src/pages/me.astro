@@ -14,7 +14,7 @@ const { current } = await getMembers();
 const people = current.map(({ id, data: d }) => ({
   id, name: d.name, done: lalaUploaded(id) || avatarUploaded(id),
   name_en: d.name_en ?? '', role: d.role, enroll_year: d.enroll_year ?? '', email: d.email ?? '',
-  edu: d.edu ?? '', topic: d.topic ?? '', interests: d.interests.join('、'), instagram: d.instagram ?? '',
+  edu: d.edu ?? '', topic: d.topic ?? '', interests: d.interests.join('、'), instagram: d.instagram ?? '', website: d.website ?? '',
 }));
 const gh = `https://github.com/${cfg.repo}`;
 const roles = MEMBER_ROLES.filter((r) => r !== '教授');
@@ -49,6 +49,7 @@ const roles = MEMBER_ROLES.filter((r) => r !== '教授');
           <label>研究題目<input name="topic" /></label>
           <label>研究興趣（用頓號或逗號分開）<input name="interests" placeholder="電腦視覺、運動科技" /></label>
           <label>Instagram 帳號（不含 @）<input name="instagram" autocapitalize="off" /></label>
+          <label>個人網站<input name="website" type="url" inputmode="url" autocapitalize="off" placeholder="https://xxx.github.io/" /></label>
           <p class="hint">空著的欄位不會顯示在成員頁。</p>
           <button type="submit" class="btn btn-coral">送出個人資料 →</button>
           <p class="hint" id="profile-after" hidden>GitHub 已開啟並填好內容：拉到最下面選 <b>Commit directly to the main branch</b>，按 <b>Commit changes</b>。約 2～5 分鐘後到 <a href={u('/members/')}>成員頁</a> 看結果。</p>
@@ -129,7 +130,7 @@ const roles = MEMBER_ROLES.filter((r) => r !== '教授');
     type Person = { id: string; name: string; done: boolean } & Record<string, string | number | boolean>;
     const people: Person[] = JSON.parse(root.dataset.people ?? '[]');
     const form = $<HTMLFormElement>('profile');
-    const FIELDS = ['name_en', 'role', 'enroll_year', 'email', 'edu', 'topic', 'interests', 'instagram'];
+    const FIELDS = ['name_en', 'role', 'enroll_year', 'email', 'edu', 'topic', 'interests', 'instagram', 'website'];
     who.addEventListener('change', () => {
       const p = people.find((q) => q.id === who.value);
       $('me').hidden = !p;
@@ -143,7 +144,7 @@ const roles = MEMBER_ROLES.filter((r) => r !== '教授');
       if (!form.reportValidity()) return;
       const v = (f: string) => (form.elements.namedItem(f) as HTMLInputElement).value.trim();
       const data: Record<string, unknown> = {};
-      for (const f of ['name_en', 'role', 'email', 'edu', 'topic']) data[f] = v(f);
+      for (const f of ['name_en', 'role', 'email', 'edu', 'topic', 'website']) data[f] = v(f);
       data.instagram = v('instagram').replace(/^@/, '');
       data.interests = v('interests').split(/[、,，;；]/).map((s) => s.trim()).filter(Boolean);
       if (v('enroll_year')) data.enroll_year = Number(v('enroll_year'));

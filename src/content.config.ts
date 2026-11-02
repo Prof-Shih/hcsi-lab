@@ -41,6 +41,8 @@ const members = defineCollection({
     edu: z.string().optional(),
     topic: z.string().optional(),
     instagram: z.string().optional(),
+    website: z.string().optional(),
+    card_photo: path.optional(),
     grad_year: z.number().int().optional(),
     dept: z.string().optional(),
     thesis: z.string().optional(),

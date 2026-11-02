@@ -39,6 +39,8 @@ content:
       - { name: edu, label: 學經歷, type: string }
       - { name: topic, label: 研究題目, type: string }
       - { name: instagram, label: Instagram 帳號, type: string, description: "只填帳號，不含 @" }
+      - { name: website, label: 個人網站, type: string, description: "完整網址，例：https://xxx.github.io/" }
+      - { name: card_photo, label: 介紹卡小照片, type: image, description: "成員頁點頭像後，介紹卡左上角的圓形小照；正方形較好。沒放就用頭像" }
       - { name: grad_year, label: 畢業年（西元）, type: number, description: "畢業生才需要" }
       - { name: dept, label: 系所, type: string }
       - { name: thesis, label: 碩士論文題目, type: string, description: "畢業生填寫，會出現在研究所頁與研究主題頁" }

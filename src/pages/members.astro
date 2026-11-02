@@ -20,6 +20,10 @@ const gradeOf = (role: string, y?: number) => {
 };
 const people = [...pi, ...current].map(({ data }) => ({ ...data, role: gradeOf(data.role, data.enroll_year), lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
 
+// 介紹卡顯示的網址：去掉 https:// 與結尾斜線
+const siteLabel = (s: string) => {
+  try { const x = new URL(s); return (x.host + x.pathname).replace(/\/$/, ''); } catch { return s; }
+};
 const pal = [['#DCE5E0', '#3D5A50'], ['#F3E8DC', '#7A5634'], ['#F6DCD3', '#8A3E2A'], ['#DDE6EE', '#2F4A63'], ['#EAE3F0', '#5A4570'], ['#E6EBD8', '#4C5A2E']];
 const seen = new Set<string>();
 const ugs: { name: string; topic: string }[] = [];
@@ -43,12 +47,31 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
           </button>
           <b style="font-size:18px">{m.name}</b>
           <span class="note">{m.role}</span>
-          <div class="pop" role="dialog" aria-label={m.name} style="top:150px;width:min(300px,86vw);gap:12px">
-            <div style="display:flex;align-items:center;gap:12px"><span class="mini">{initial(m.name)}</span><span class="stack"><b style="font-size:17px">{m.name}</b><span class="note">{m.role}</span></span></div>
-            <div class="stack" style="gap:4px;font-size:14px;line-height:1.6"><span style="font-size:12px;color:var(--muted)">學經歷</span>{m.edu && <span>{m.edu}</span>}{m.topic && <span>{m.topic}</span>}{m.interests.length > 0 && <span>{m.interests.join('、')}</span>}</div>
-            <div class="stack" style="gap:6px;font-size:14px;border-top:1px solid #EFEBE3;padding-top:10px">
-              {m.instagram && <a href={u(`https://instagram.com/${m.instagram}`)} target="_blank" rel="noopener">@{m.instagram}</a>}
-              {m.email ? <a href={`mailto:${m.email}`}>{m.email}</a> : <span class="note">信箱 [待補]</span>}
+          <div class="pop card" role="dialog" aria-label={m.name} style={`top:150px;width:min(300px,86vw);gap:14px;--tint:${pal[i % 6][0]};--tint-ink:${pal[i % 6][1]}`}>
+            {m.card_photo ? (
+              <div class="card-hero">
+                <img src={u(m.card_photo)} alt={`${m.name}的照片`} loading="lazy" />
+                <span class="stack card-hero-name"><b style="font-size:19px">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span>{m.role}</span></span>
+              </div>
+            ) : (
+              <div class="card-head">
+                {m.photo || m.lala ? <img class="mini" src={u(m.photo ?? m.lala)} alt="" loading="lazy" /> : <span class="mini">{initial(m.name)}</span>}
+                <span class="stack" style="gap:2px"><b style="font-size:17px">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span class="note">{m.role}</span></span>
+              </div>
+            )}
+            {(m.edu || m.topic || m.interests.length > 0) && (
+              <div class="stack" style="gap:4px;font-size:14px;line-height:1.6"><span style="font-size:12px;color:var(--muted)">學經歷</span>{m.edu && <span>{m.edu}</span>}{m.topic && <span>{m.topic}</span>}{m.interests.length > 0 && <span>{m.interests.join('、')}</span>}</div>
+            )}
+            {m.website && (
+              <a class="site" href={m.website} target="_blank" rel="noopener">
+                <span class="site-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z" /></svg></span>
+                <span class="stack" style="gap:1px;min-width:0"><b style="font-size:14px">個人網站</b><span class="site-url">{siteLabel(m.website)}</span></span>
+                <span class="site-go" aria-hidden="true">↗</span>
+              </a>
+            )}
+            <div class="links">
+              {m.instagram && <a href={u(`https://instagram.com/${m.instagram}`)} target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>@{m.instagram}</a>}
+              {m.email ? <a href={`mailto:${m.email}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>{m.email}</a> : <span class="note">信箱 [待補]</span>}
             </div>
           </div>
         </div>
@@ -199,7 +222,24 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .face.lala-on { background: transparent !important; }
   .face.lala-on > img { visibility: hidden; }
   .face :global(.lala-canvas) { position: absolute; left: -100%; top: -100%; width: 300%; height: 300%; pointer-events: none; z-index: 3; }
-  .mini { width: 48px; height: 48px; border-radius: 50%; background: #DCE5E0; color: #3D5A50; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 20px; flex: 0 0 48px; }
+  .mini { width: 56px; height: 56px; border-radius: 50%; background: var(--surface); color: var(--tint-ink, #3D5A50); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 22px; flex: 0 0 56px; object-fit: cover; border: 3px solid var(--surface); box-shadow: 0 4px 12px rgba(30,28,24,.16); }
+  .card { padding-top: 0; overflow: hidden; }
+  .card-head { display: flex; align-items: center; gap: 14px; margin: 0 -20px; padding: 18px 20px 4px; background: linear-gradient(180deg, var(--tint, #DCE5E0) 0%, var(--tint, #DCE5E0) 45%, transparent 100%); }
+  .card-hero { position: relative; margin: 0 -20px; line-height: 0; background: var(--tint); }
+  .card-hero img { display: block; width: 100%; height: auto; max-height: min(400px, 52vh); object-fit: contain; }
+  .card-hero-name { position: absolute; left: 0; right: 0; bottom: 0; gap: 2px; padding: 40px 20px 14px; line-height: 1.35; color: #fff; background: linear-gradient(180deg, transparent, rgba(20,22,20,.72)); }
+  .card .card-hero-name .en { color: rgba(255,255,255,.85); }
+  .card-hero-name span:last-child { font-size: 13px; color: rgba(255,255,255,.85); }
+  .card .en {font-family: var(--latin); font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+  .site { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); color: var(--ink); text-decoration: none; transition: border-color .2s, transform .2s, box-shadow .2s; }
+  .site:hover, .site:focus-visible { border-color: var(--tint-ink); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(30,28,24,.12); }
+  .site-ico { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 9px; background: var(--tint); color: var(--tint-ink); display: flex; align-items: center; justify-content: center; }
+  .site-url { font-family: var(--latin); font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .site-go { margin-left: auto; color: var(--tint-ink); font-size: 16px; transition: transform .2s; }
+  .site:hover .site-go { transform: translate(2px, -2px); }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; }
+  .links a { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 5px 10px; border-radius: 999px; background: var(--bg); color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+  .links a:hover { background: var(--tint); color: var(--tint-ink); }
   .life-filters { display: flex; flex-wrap: wrap; gap: 8px; }
   .life-filters button { min-height: 40px; padding: 0 16px; border-radius: 999px; cursor: pointer; font-size: 14px; font-family: var(--sans); border: 1px solid #6E8079; background: transparent; color: #F2EFE8; }
   .life-filters button[aria-pressed="true"] { background: var(--coral); border-color: var(--coral); color: #1E1F1D; }
