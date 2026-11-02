@@ -50,7 +50,7 @@ content:
         description: "選「拉拉看」頭像可以被拉長、會眨眼微笑；必須另外上傳下面的「拉拉看照片」"
         options:
           values: [一般, 拉拉看]
-      - { name: lala_photo, label: 拉拉看照片, type: image, description: "照 https://machencompeq.github.io/hcsi-lab/lala-photo-guide.svg 拍：正方形正面照，雙眼、嘴角對準參考點。選拉拉看時必填" }
+      - { name: lala_photo, label: 拉拉看照片, type: image, description: "照 https://prof-shih.github.io/hcsi-lab/lala-photo-guide.svg 拍：正方形正面照，雙眼、嘴角對準參考點。選拉拉看時必填" }
       - { name: body, label: 個人簡介, type: rich-text }
 
   # ---------------- 論文發表 ----------------

@@ -4,7 +4,7 @@
 
 ## 專案一句話
 
-Astro 7 純靜態網站。內容放在 `src/content/`（Markdown + YAML frontmatter，zod schema 驗證），老師與學弟妹用 Pages CMS 網頁後台修改內容；push 到 `main` 由 GitHub Actions 建置並部署到 GitHub Pages：https://machencompeq.github.io/hcsi-lab/
+Astro 7 純靜態網站。內容放在 `src/content/`（Markdown + YAML frontmatter，zod schema 驗證），老師與學弟妹用 Pages CMS 網頁後台修改內容；push 到 `main` 由 GitHub Actions 建置並部署到 GitHub Pages：https://prof-shih.github.io/hcsi-lab/
 
 ## 指令
 
@@ -52,8 +52,9 @@ npm run preview    # 預覽建置結果
 8. **collection 讀出來的順序不固定**：排序寫在 `src/lib.ts` 的讀取函式裡。
 9. **完成前執行 `npm run build`**，並把結果告訴使用者。失敗就修到通過，不要留下壞掉的建置。
 10. **不要 commit 秘密或個人資料**：repo 是公開的，commit 過就永久留在歷史。不要放密碼、token、金鑰、別人沒同意公開的照片或聯絡方式。
-11. **Git**：
-    - 開工前 `git pull --rebase`（後台存檔會直接 commit 到 `main`）。
+11. **Git**（完整流程見 `CONTRIBUTING.md`）：
+    - **不要在 `main` 上改**：開工前 `git switch main && git pull --rebase`，再 `git switch -c <類型>/<簡述>`（例如 `feat/awards-page`、`fix/member-photo`）。發現自己在 `main` 上有改動，先開分支再 commit。
+    - 一個分支只做一件事；完成後用 `gh pr create` 開 PR，內文寫改了什麼、`npm run build` 結果、截圖（改到畫面時）。不要自己 merge。
     - **禁止 `git push --force`、禁止刪除 `main`**（GitHub ruleset 也會擋）。被拒絕就 `git pull --rebase` 後再 push。
     - commit 訊息用繁體中文、一句話說清楚改了什麼。
     - 除非使用者明確要求，不要自己 push；push 前先讓使用者看過改動。
