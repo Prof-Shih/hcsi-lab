@@ -151,3 +151,6 @@ a:hover { color: #2F4A40; }
 .egg-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 90; pointer-events: none; }
 .egg-toast { position: fixed; left: 50%; top: 50%; z-index: 91; transform: translate(-50%, -50%); padding: 14px 26px; border-radius: 999px; background: var(--pine); color: #F2EFE8; font-family: var(--serif); font-size: 26px; font-weight: 700; box-shadow: 0 14px 36px rgba(30,28,24,.3); pointer-events: none; animation: egg-pop .35s cubic-bezier(.2,1.6,.4,1) both; }
 @keyframes egg-pop { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } }
+
+/* 背景骨架（src/scripts/fun.ts）：在所有內容後面，不吃滑鼠事件 */
+.bones-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
