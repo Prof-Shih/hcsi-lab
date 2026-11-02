@@ -1,0 +1,11 @@
+#!/bin/sh
+# push 前先建置：建置失敗就取消 push，避免把壞掉的版本推上 main 卡住所有人。
+# 由 package.json 的 prepare（npm install 時）設定 core.hooksPath 啟用。
+echo "pre-push：npm run build 檢查中…"
+if ! out=$(npm run build 2>&1); then
+  echo "$out" | tail -40
+  echo ""
+  echo "✗ 建置失敗，已取消 push。照上面的錯誤修好（可整段貼給 AI），再 push 一次。"
+  exit 1
+fi
+echo "✓ 建置通過"

@@ -36,6 +36,18 @@ gh pr create --fill   # 或到 GitHub 網頁按 Compare & pull request
 6. **只有管理員會 merge**，其他人開完 PR 就好，不要自己按 merge。要修改時直接在同一個分支繼續 commit、push，PR 會自動更新。
 7. merge 後 2～5 分鐘網站自動更新。回到第 2 步開下一個分支。
 
+## 多人同時開發
+
+很多人（和很多 AI）同時在改，照這幾條就不會互相踩到：
+
+1. **先認領再動手**：到 [Issues](https://github.com/Prof-Shih/hcsi-lab/issues) 找要做的事，右側 **Assignees** 指派給自己（或留言「我來」）。沒有 issue 就先開一個。別人已認領的不要做。
+2. **小步、常推**：每完成一小段就 commit＋push，不要累積一整天。分支不要放超過兩天，越久衝突越多。
+3. **push 前一定先 `git pull --rebase`**。push 被拒（`rejected`／`fetch first`）＝別人剛推過，再 `git pull --rebase` 然後 push，**不要 force**。
+4. **push 時自動 build**：`npm install` 後會啟用 pre-push 檢查，建置失敗就推不上去，避免 main 壞掉卡住所有人。不要用 `--no-verify` 跳過。
+5. **共用檔案只做最小修改**：`src/styles/global.css`、`src/layouts/Layout.astro`、`src/config/nav.ts`、`src/content.config.ts`、`.pages.yml`、`package.json`／`package-lock.json`。改這些一律開分支發 PR；不要順手重排、格式化整個檔案。
+6. **內容一人一檔**：成員、論文、消息都是一筆一個檔，只改自己負責的那幾個。
+7. **衝突時保留雙方**：rebase 出現衝突，兩邊的改動都要留下，看不懂就請 AI 解釋或問管理員。**絕對不要**為了解決衝突用 `git reset --hard`、`git checkout -- .`、`git push --force`，那會刪掉別人的工作。
+
 ## 分支命名
 
 `<類型>/<簡短英文描述>`
@@ -69,12 +81,12 @@ gh pr create --fill   # 或到 GitHub 網頁按 Compare & pull request
 
 **1. 先救線上（1 分鐘）**：GitHub → **Actions** → 左側 **Deploy** → 找到最後一個「正常」的那次，記下它的 commit（7 碼 SHA）→ 右上 **Run workflow** →「版本」填這個 SHA → **Run workflow**。約 2 分鐘後線上就回到那一版。
 
-**2. 再修 `main`（一定要做）**：步驟 1 只換線上檔案，`main` 還是壞的，下一次任何人 push 或後台存檔都會再把壞的版本部署上去。
+**2. 再修 `main`（10 分鐘內，一定要做）**：步驟 1 只換線上檔案，`main` 還是壞的，下一次任何人 push 或後台存檔都會再把壞的版本部署上去。而且舊版會**暫時蓋掉之後別人的正常改動**，所以只能當急救，要盡快 revert，讓大家的改動回到線上。
 
 ```bash
 git switch main && git pull --rebase
 git log --oneline -10        # 找出弄壞的 commit
-git revert <壞掉的 SHA>       # 產生一個「撤銷」commit，歷史都保留
+git revert <壞掉的 SHA>       # 只撤銷那一個 commit，別人之後的改動都保留
 git push
 ```
 

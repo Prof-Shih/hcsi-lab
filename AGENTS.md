@@ -61,6 +61,13 @@ npm run preview    # 預覽建置結果
     - **禁止 `git push --force`、禁止刪除 `main`**（GitHub ruleset 也會擋）。被拒絕就 `git pull --rebase` 後再 push。
     - commit 訊息用繁體中文、一句話說清楚改了什麼。
     - 除非使用者明確要求，不要自己 push；push 前先讓使用者看過改動。
+11a. **多人同時開發**（很多人和 AI 同時在推 `main`）：
+    - 開工前：`gh issue list` 看有沒有人已認領同一件事；使用者要做的事沒有 issue，就提議 `gh issue create` 並指派給他（`--assignee @me`）。別人認領中的不要做，先告訴使用者。
+    - commit 前、push 前都 `git pull --rebase`。push 被拒就再 rebase 一次再 push，最多重試 3 次，仍失敗就停下來回報。
+    - **rebase 衝突**：兩邊的改動都保留後 `git rebase --continue`；無法判斷就 `git rebase --abort` 並回報使用者。**禁止**用 `git reset --hard`、`git checkout -- .`、`git stash drop`、`git push --force`、`--no-verify` 解決任何問題。
+    - 只改任務需要的行：不要重排、重新格式化或「順手整理」共用檔案（`global.css`、`Layout.astro`、`nav.ts`、`content.config.ts`、`.pages.yml`、`package*.json`），這是衝突的主要來源。改這些檔案一律開分支發 PR。
+    - 不要新增套件（`npm install <pkg>`），除非使用者明確要求並開 PR：`package-lock.json` 幾乎一定衝突。
+    - pre-push hook 會跑 `npm run build`；失敗就修，不可跳過。
 12. **不要動這些，除非使用者明確要求並理解後果**：`.github/workflows/deploy.yml`、`astro.config.mjs` 的 `site`／`base`、`.pages.yml` 的 `media`、`package.json` 的 Astro 主版本。
 13. **改欄位名稱時連舊內容一起改**：所有 `src/content/` 下用到該欄位的檔案都要更新，否則建置失敗。
 14. **拉拉看**：`members` 的 `avatar_style: 拉拉看` 必須有 `lala_photo`，且檔案要存在於 `public/`（`getMembers()` 會檢查）。眨眼／微笑位置依 `src/scripts/lala.ts` 的 `EYES`／`MOUTH`，與 `public/lala-photo-guide.svg` 的紅點一致，改一邊要改另一邊。不要把任何真人照片加進 repo 當範例。
@@ -79,7 +86,7 @@ npm run preview    # 預覽建置結果
    - **照片**：只放使用者本人提供、同意公開的照片，存到 `public/uploads/`，`photo: /hcsi-lab/uploads/<檔名>`。沒有就不放（會顯示預設頭像）。不可替別人填資料或放別人的照片。
    - 不要改 `order`，除非使用者要求。
 5. `npm run build` 通過 → 給使用者看 `git diff` → 使用者同意後 commit（例：「更新陳洺安的成員資料」）並 push `main`（這是小改）。
-6. 告訴使用者：網站約 2～5 分鐘後更新，網址 https://prof-shih.github.io/hcsi-lab/members/ ；之後想開發新功能，先看 `TEACHER_REQUIREMENTS.md` 的「目前狀態」裡還沒完成的項目。
+6. 告訴使用者：網站約 2～5 分鐘後更新，網址 https://prof-shih.github.io/hcsi-lab/members/ ；之後想開發新功能，到 `gh issue list` 挑沒人認領的（多半對應 `TEACHER_REQUIREMENTS.md` 未完成項目），認領後再動手。
 
 ## 常見任務
 
