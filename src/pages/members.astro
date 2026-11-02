@@ -133,9 +133,25 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
     const p = b.closest('.person');
     const was = p.classList.contains('open');
     document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open'));
-    if (!was) p.classList.add('open');
+    if (!was) { p.classList.add('open'); keepIn(p); }
   }));
   document.addEventListener('click', () => document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open')));
+
+  // 介紹卡片置中在頭像下方，靠螢幕邊的頭像會讓卡片超出畫面：打開時往內推回來
+  function keepIn(h) {
+    const p = h.querySelector(':scope > .pop');
+    if (!p) return;
+    p.style.translate = '';
+    const r = p.getBoundingClientRect();
+    if (!r.width) return;
+    const m = 12, vw = document.documentElement.clientWidth;
+    const dx = r.left < m ? m - r.left : r.right > vw - m ? vw - m - r.right : 0;
+    if (dx) p.style.translate = `calc(-50% + ${dx}px) 0`;
+  }
+  document.querySelectorAll('.has-pop').forEach((h) => {
+    h.addEventListener('mouseenter', () => keepIn(h));
+    h.addEventListener('focusin', () => keepIn(h));
+  });
 
   // 實驗室日常篩選
   const fbtns = [...document.querySelectorAll('.life-filters button')];
