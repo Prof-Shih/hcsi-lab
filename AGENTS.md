@@ -70,7 +70,7 @@ npm run preview    # 預覽建置結果
     - pre-push hook 會跑 `npm run build`；失敗就修，不可跳過。
 12. **不要動這些，除非使用者明確要求並理解後果**：`.github/workflows/deploy.yml`、`astro.config.mjs` 的 `site`／`base`、`.pages.yml` 的 `media`、`package.json` 的 Astro 主版本。
 13. **改欄位名稱時連舊內容一起改**：所有 `src/content/` 下用到該欄位的檔案都要更新，否則建置失敗。
-14. **拉拉看**：手機收集頁 `src/pages/lala.astro` 把照片存成 `public/lala/<成員檔名>.jpg`；`getMembers()` 看到這個檔、且成員沒自行設定拉拉看時，自動改用拉拉看（`lalaUploaded()`）。`src/data/lala-upload.json` 的 `open` 由管理員控制，不要自己改。其餘：`members` 的 `avatar_style: 拉拉看` 必須有 `lala_photo`，且檔案要存在於 `public/`（`getMembers()` 會檢查）。眨眼／微笑位置依 `src/scripts/lala.ts` 的 `EYES`／`MOUTH`，與 `public/lala-photo-guide.svg` 的紅點一致，改一邊要改另一邊。不要把任何真人照片加進 repo 當範例。
+14. **拉拉看**：手機收集頁 `src/pages/lala.astro` 把照片存成 `public/lala/<成員檔名>.jpg`（拉拉看）或 `public/avatars/<成員檔名>.jpg`（一般頭像）；`getMembers()` 看到檔案、且成員檔沒自行設定時自動套用（`lalaUploaded()`、`avatarUploaded()`）。`src/data/lala-upload.json` 的 `open` 由管理員控制，不要自己改。其餘：`members` 的 `avatar_style: 拉拉看` 必須有 `lala_photo`，且檔案要存在於 `public/`（`getMembers()` 會檢查）。眨眼／微笑位置依 `src/scripts/lala.ts` 的 `EYES`／`MOUTH`，與 `public/lala-photo-guide.svg` 的紅點一致，改一邊要改另一邊。不要把任何真人照片加進 repo 當範例。
 15. Astro 與 Pages CMS 的 API 會隨版本改變。不確定寫法時先查官方文件（docs.astro.build、pagescms.org/docs），不要憑記憶猜。注意 Astro 7 的 zod 從 `astro/zod` import，loader 從 `astro/loaders` import；預設 Markdown 處理器不是 unified，`markdown.rehypePlugins` 需要另裝 `@astrojs/markdown-remark`。
 
 ## 新成員第一次開工（使用者剛 clone、說「幫我開始」或沒有明確任務時，主動照做）
@@ -85,7 +85,7 @@ npm run preview    # 預覽建置結果
    - 逐一詢問並填寫：`name_en`、`role`（只能是 `MEMBER_ROLES` 之一）、`enroll_year`、`email`、`edu`（學歷）、`topic`（研究題目）、`interests`（list）、`instagram`（可空）。把 `[… — 待補]` 佔位字換成實際內容；使用者不想填的欄位整行刪掉，不要留佔位字。
    - **照片**：只放使用者本人提供、同意公開的照片，存到 `public/uploads/`，`photo: /hcsi-lab/uploads/<檔名>`。沒有就不放（會顯示預設頭像）。不可替別人填資料或放別人的照片。
    - 不要改 `order`，除非使用者要求。
-   - **拉拉看頭像（一定要提醒）**：若 `src/data/lala-upload.json` 的 `open` 是 `true`，告訴使用者「用手機打開 https://prof-shih.github.io/hcsi-lab/lala/ ，選名字、拍照、對準紅點、照指示傳上 GitHub」。不要在電腦上替他處理照片，也不要自己改 `avatar_style`／`lala_photo`：上傳到 `public/lala/<成員檔名>.jpg` 後網站會自動切換。
+   - **頭像照片（一定要提醒）**：若 `src/data/lala-upload.json` 的 `open` 是 `true`，告訴使用者「用手機打開 https://prof-shih.github.io/hcsi-lab/lala/ ，選名字、選拉拉看或一般照片、拍照對位、照指示傳上 GitHub」。不要在電腦上替他處理照片，也不要自己改 `photo`／`avatar_style`／`lala_photo`：上傳到 `public/lala/` 或 `public/avatars/` 的 `<成員檔名>.jpg` 後網站會自動套用。
 5. `npm run build` 通過 → 給使用者看 `git diff` → 使用者同意後 commit（例：「更新陳洺安的成員資料」）並 push `main`（這是小改）。
 6. 告訴使用者：網站約 2～5 分鐘後更新，網址 https://prof-shih.github.io/hcsi-lab/members/ ；之後想開發新功能，到 `gh issue list` 挑沒人認領的（多半對應 `TEACHER_REQUIREMENTS.md` 未完成項目），認領後再動手。
 
