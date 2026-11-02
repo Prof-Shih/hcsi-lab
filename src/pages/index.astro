@@ -59,11 +59,11 @@ const strip = [...home.strip, ...home.strip];
 
   <section class="hl" aria-label="近期亮點">
     <div class="wrap hl-inner">
-      <div class="row-between"><h2 class="h2" style="color:#F2EFE8">近期亮點</h2><span class="hl-sub">Now · 2026</span></div>
+      <div class="row-between"><h2 class="h2">近期亮點</h2><span class="hl-sub">Now · 2026</span></div>
       <div class="hl-grid">
         <article class="hl-card hl-ws">
           <div class="hl-ws-text">
-            <span class="badge">我們主辦 · IEEE BigData 2026</span>
+            <span class="badge">IEEE BigData 2026 · Workshop</span>
             <h3>第六屆 AI-Sports Workshop</h3>
             <p>The Sixth International Workshop on Artificial Intelligence in Sports<br />12 月 14–17 日 · 美國 Phoenix</p>
             <div class="count" data-deadline="2026-11-07T23:59:59-12:00">
@@ -71,7 +71,7 @@ const strip = [...home.strip, ...home.strip];
             </div>
             <div class="hl-btns">
               <a class="btn btn-coral" href="https://prof-shih.github.io/ai-sports26/" target="_blank" rel="noopener">Workshop 官網 →</a>
-              <a class="btn btn-ghost-light" href={u('/news/2026-11-02-ai-sports-2026-ieee-bigdata/')}>消息</a>
+              <a class="btn btn-ghost" href={u('/news/2026-11-02-ai-sports-2026-ieee-bigdata/')}>看消息</a>
             </div>
           </div>
           <div class="browser" aria-label="AI-Sports 2026 官網預覽">
@@ -229,19 +229,19 @@ const strip = [...home.strip, ...home.strip];
   .car-no { font-family: var(--latin); font-size: 13px; color: #B9C4BF; }
   .scroll-hint { position: absolute; left: 50%; bottom: 18px; margin-left: -22px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #D9D3C7; animation: bob 1.8s ease-in-out infinite; }
 
-  .hl { background: var(--night); color: #F2EFE8; }
+  .hl { background: #EEF2EE; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .hl-inner { padding-top: 56px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 24px; }
-  .hl-sub { font-family: var(--latin); font-size: 13px; letter-spacing: .12em; color: #8FA79C; }
+  .hl-sub { font-family: var(--latin); font-size: 13px; letter-spacing: .12em; color: var(--accent); }
   .hl-grid { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto auto; gap: 16px; }
-  .hl-card { position: relative; border-radius: 8px; overflow: hidden; background: var(--pine); color: #F2EFE8; text-decoration: none; }
+  .hl-card { position: relative; border-radius: 8px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
   .hl-ws { grid-row: span 2; display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px; padding: 28px; align-items: center; }
   .hl-ws h3 { font-family: var(--serif); font-size: 30px; margin: 12px 0 8px; line-height: 1.3; }
-  .hl-ws p { margin: 0; color: #C9D3CE; font-size: 14px; line-height: 1.7; }
+  .hl-ws p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
   .count { display: flex; align-items: baseline; gap: 10px; margin: 20px 0; }
-  .count-num { font-family: var(--display); font-size: 72px; font-weight: 600; line-height: 1; color: var(--wood); }
-  .count-unit { font-size: 15px; color: #DCE5E0; }
+  .count-num { font-family: var(--display); font-size: 72px; font-weight: 600; line-height: 1; color: var(--coral); }
+  .count-unit { font-size: 15px; color: var(--muted); }
   .hl-btns { display: flex; flex-wrap: wrap; gap: 10px; }
-  .browser { border-radius: 8px; overflow: hidden; background: #fff; box-shadow: 0 18px 40px rgba(0,0,0,.35); transform: perspective(1200px) rotateY(-8deg); transition: transform .5s; }
+  .browser { border-radius: 8px; overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 14px 32px rgba(30,28,24,.12); transform: perspective(1200px) rotateY(-8deg); transition: transform .5s; }
   .hl-ws:hover .browser { transform: perspective(1200px) rotateY(0); }
   .browser-bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: #E9E3D8; font-family: var(--latin); font-size: 11px; color: #6B6B6B; }
   .browser-bar i { width: 9px; height: 9px; border-radius: 50%; background: #CFC8BB; }
@@ -252,8 +252,8 @@ const strip = [...home.strip, ...home.strip];
   .yt { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; border: 0; background: #000; cursor: pointer; }
   .yt img, .yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
   .hl-tv-text { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
-  .hl-tv-text a { color: #E8C9A8; font-size: 14px; }
-  .hl-join { padding: 22px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(135deg, #5C4A37, #A0703F); font-size: 15px; }
+  .hl-tv-text a { color: var(--accent-ink); font-size: 14px; }
+  .hl-join { padding: 22px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(135deg, #A0703F, #C08B5C); border: 0; color: #fff; font-size: 15px; }
   .hl-join:hover { color: #fff; }
   .join-big { font-family: var(--display); font-size: 44px; line-height: 1.05; }
   .join-go { margin-top: auto; color: #FBE9D6; font-size: 14px; }

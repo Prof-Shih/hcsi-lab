@@ -4,6 +4,7 @@
 
 ## 原則
 
+0. **先看進度**：[PROGRESS.md](PROGRESS.md) 記錄目前做到哪、誰在做什麼；做完一件事在「進度紀錄」加一行。
 0. **老師的要求優先**：動手前看 [TEACHER_REQUIREMENTS.md](TEACHER_REQUIREMENTS.md)，任何改動都不能違反老師說過的話。
 1. **多用 AI 開發**：Claude Code、Copilot、Codex、Cursor 都可以。它們會自動讀 [AGENTS.md](AGENTS.md) 的專案規則，你只要用中文描述想要的結果。
 2. **大家都能 push `main`，但 `main` 一更新就上線**：改字、換圖這種小改可以直接 push；新頁面、改版面、動到很多檔案的大改，開分支發 PR。壞掉就照下面「網站壞掉：回到上一版」處理。
