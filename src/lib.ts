@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { z } from 'astro/zod';
+import { MEMBER_ROLES } from './content.config';
 import undergrad from './data/undergrad-projects.json';
 
 export type Member = CollectionEntry<'members'>;
@@ -14,8 +16,50 @@ export async function getSite() {
   return s.data;
 }
 
+// 手機上傳頁（/lala/）收到的照片：拉拉看在 public/lala/<成員檔名>.jpg，一般頭像在 public/avatars/<成員檔名>.jpg。
+// 成員檔沒自己設定時才自動套用；不想用就刪掉照片。
+export const lalaUploaded = (id: string) => fs.existsSync(`public/lala/${id}.jpg`);
+export const avatarUploaded = (id: string) => fs.existsSync(`public/avatars/${id}.jpg`);
+
+// 手機「我的資料」頁（/me/）送出的個人資料：src/data/profiles/<成員檔名>/<時間>.json，取檔名最新的一份覆蓋成員檔欄位。
+// 這些檔案從 GitHub 網頁直接 commit、不經 pre-push 建置檢查，所以格式不符時只警告並略過，不讓建置失敗。
+const profileSchema = z.object({
+  name_en: z.string(),
+  role: z.enum(MEMBER_ROLES),
+  enroll_year: z.number().int(),
+  email: z.string(),
+  edu: z.string(),
+  topic: z.string(),
+  interests: z.array(z.string()),
+  instagram: z.string(),
+}).partial().strict();
+const profileFiles = import.meta.glob<unknown>('./data/profiles/*/*.json', { eager: true, import: 'default' });
+let profileCache: Record<string, z.infer<typeof profileSchema>> | undefined;
+export const latestProfiles = () => {
+  if (profileCache) return profileCache;
+  const out: Record<string, z.infer<typeof profileSchema>> = (profileCache = {});
+  for (const file of Object.keys(profileFiles).sort()) {
+    const id = file.split('/').at(-2)!;
+    const r = profileSchema.safeParse(profileFiles[file]);
+    if (r.success) out[id] = r.data;
+    else console.warn(`[profiles] 略過 src/${file.slice(2)}：${r.error.issues.map((i) => i.path.join('.') + ' ' + i.message).join('；')}`);
+  }
+  return out;
+};
+
 export async function getMembers() {
-  const all = (await getCollection('members')).sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id));
+  const profiles = latestProfiles();
+  const all = (await getCollection('members'))
+    .map((m) => {
+      const d = { ...m.data, ...profiles[m.id] };
+      if (d.avatar_style === '一般' && !d.lala_photo && lalaUploaded(m.id)) {
+        d.avatar_style = '拉拉看';
+        d.lala_photo = `/lala/${m.id}.jpg`;
+      }
+      if (!d.photo && avatarUploaded(m.id)) d.photo = `/avatars/${m.id}.jpg`;
+      return { ...m, data: d };
+    })
+    .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id));
   // 拉拉看照片要真的存在（避免填了路徑卻沒上傳）
   for (const m of all) {
     const p = m.data.avatar_style === '拉拉看' ? m.data.lala_photo : undefined;

@@ -105,6 +105,8 @@ repo 在老師的個人帳號 `Prof-Shih` 下（2026-11-01 從 `machencompeq` �
 
 ### 拉拉看頭像
 
+**手機收集頁（目前開放）**：https://prof-shih.github.io/hcsi-lab/me/ 。選名字 → 選拉拉看或一般照片 → 拍照、手指對位 → 存成 `<成員檔名>.jpg` → 照指示用 GitHub 網頁上傳到 `public/lala/`（拉拉看）或 `public/avatars/`（一般）。不需要後台，網站看到檔案就自動套用（`src/lib.ts` 的 `lalaUploaded()`、`avatarUploaded()`）。收集完把 `src/data/me-page.json` 的 `open` 改成 `false` 即關閉頁面（已上傳的照片照常顯示；要撤下某人的就刪掉他的照片）。
+
 成員可在後台把「頭像風格」改成「拉拉看」：成員頁的頭像就能被按住拉長、放手彈回，靜止時會眨眼、微笑。
 
 - 必須另外上傳「拉拉看照片」：正方形正面照，依 `public/lala-photo-guide.svg` 讓雙眼、嘴角對準紅點。眨眼與微笑的位置是照這個構圖算的，沒對準會怪。

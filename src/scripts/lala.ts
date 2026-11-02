@@ -4,9 +4,9 @@
 // 下面的眨眼／微笑位移是依那個構圖算的。
 
 // 參考構圖（以 640×640 為基準）
-const T = 640;
-const EYES = [[215, 290], [425, 290]];
-const MOUTH = [[262, 500, -1], [378, 500, 1]];
+export const T = 640;
+export const EYES = [[215, 290], [425, 290]];
+export const MOUTH = [[262, 500, -1], [378, 500, 1]];
 const N = 40;
 const NV = (N + 1) * (N + 1);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
