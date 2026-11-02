@@ -15,6 +15,8 @@ gallery:
     cap: "UbiComp 現場展示"
   - src: "/images/robot.jpg"
     cap: "Otto DIY 機器人"
+  - src: "/images/robot-sense.jpg"
+    cap: "Otto 機器人感測互動"
 skills:
   - "耐能 Kneron NPU／AI 加速棒"
   - "Raspberry Pi 4/5"
