@@ -1,0 +1,12 @@
+{
+  "_說明": "分派工作用的成員對照表：AI 依此把名字對到 GitHub 帳號。新成員加入或換帳號時由管理員更新。github 為 null 表示還沒有帳號。",
+  "members": [
+    { "name": "施皇嘉", "aka": ["老師", "Royal"], "github": "Prof-Shih", "role": "指導教授" },
+    { "name": "陳洺安", "aka": ["安", "洺安"], "github": "machencompeq", "role": "網站管理員" },
+    { "name": "陳古智", "aka": ["古智"], "github": "JohnsonChenz", "role": "碩士生" },
+    { "name": "徐啟翔", "aka": ["翔", "啟翔"], "github": "kobocawaee", "role": "碩士生" },
+    { "name": "黃予岺", "aka": ["予岺", "予岑"], "github": "mintguesss", "role": "碩士生" },
+    { "name": "李秉霖", "aka": ["李霖", "秉霖"], "github": "Leeling296", "role": "碩士生" },
+    { "name": "郭明儒", "aka": ["小郭", "明儒"], "github": null, "role": "碩士生" }
+  ]
+}

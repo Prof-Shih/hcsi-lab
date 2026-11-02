@@ -89,6 +89,38 @@ npm run preview    # 預覽建置結果
 5. `npm run build` 通過 → 給使用者看 `git diff` → 使用者同意後 commit（例：「更新陳洺安的成員資料」）並 push `main`（這是小改）。
 6. 告訴使用者：網站約 2～5 分鐘後更新，網址 https://prof-shih.github.io/hcsi-lab/members/ ；之後想開發新功能，到 `gh issue list` 挑沒人認領的（多半對應 `TEACHER_REQUIREMENTS.md` 未完成項目），認領後再動手。
 
+## 分派工作（老師或管理員說「分派工作」「交代」「請某某做…」時）
+
+1. **問清楚再開單**，缺哪項就問哪項，一次問完：
+   - **做什麼**：具體到做完能驗收（例：「最近消息新增 AI-Sports 2026」，不是「弄一下消息」）。
+   - **給誰**：對照 `.github/team.json` 的 `name`／`aka` 找 GitHub 帳號；找不到、或 `github` 是 `null`，問對方要帳號或改派別人。可以給多人。
+   - **期限**：日期（可以沒有，就寫「無」）。
+   - **對應老師要求**：若和 `TEACHER_REQUIREMENTS.md` 某條有關，標出編號；若和某條衝突，先指出並停下來問。
+2. 先 `gh issue list --state open` 看有沒有重複的；有就問要不要改派那一張，而不是新開。
+3. 把整理好的內容給對方確認，**對方同意後**才建立：
+   ```bash
+   ts=$(TZ=Asia/Taipei date '+%Y-%m-%d %H:%M')
+   gh issue create --title "<做什麼>" --assignee <帳號>[,<帳號>] --label task --body "<內文>"
+   ```
+   內文格式：
+   ```
+   - 指派人：<誰交代的>
+   - 負責人：@<帳號>（<姓名>）
+   - 期限：<YYYY-MM-DD 或 無>
+   - 建立時間：<ts>（台灣時間）
+   - 對應：TEACHER_REQUIREMENTS.md <編號，沒有就省略>
+
+   ## 內容
+   <要做的事與驗收標準>
+
+   ## 進度
+   - <ts> 建立，指派給 @<帳號>
+   ```
+   沒有 `task` 標籤就先 `gh label create task -c 5B7B6F -d "分派的工作"`。
+4. 回報 issue 網址，並建議指派人在 LINE 群組貼這個網址通知負責人（GitHub 也會寄信給被指派的人）。
+
+**進度一律加時間戳留言**：負責人開工、卡住、完成時（或請 AI 代為更新時），用 `gh issue comment <編號> --body "<YYYY-MM-DD HH:mm> <狀態與說明>"` 留言（時間用 `TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'`）；完成的 commit 訊息寫 `(#編號)`，確認做完再 `gh issue close <編號>`。改派、延期也要留言並寫明原因。
+
 ## 常見任務
 
 ### 新增一種後台可編輯的內容（例如「獲獎紀錄」）

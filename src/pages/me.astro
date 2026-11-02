@@ -64,11 +64,24 @@ const roles = MEMBER_ROLES.filter((r) => r !== '教授');
             </div>
           </li>
           <li>
-            <h2>2. 拍照或選照片</h2>
+            <h2>2. 拍照</h2>
             <p class="hint" id="has-photo" hidden>你已經上傳過頭像，再傳會覆蓋。</p>
-            <p class="hint" data-for="lala">正面、頭不要歪、雙眼睜開、嘴巴閉著不要笑，光線均勻。</p>
+            <div data-for="lala">
+              <p class="hint">開前鏡頭後照畫面提示調整，全部合格會自動拍照並對準位置。光線要亮、臉前不要有頭髮或眼鏡反光。影像只在你的手機上處理，不會上傳。</p>
+              <button type="button" class="btn btn-coral" id="cam-start">開相機自動拍</button>
+              <div id="cam" hidden>
+                <div class="cam-box">
+                  <video id="cam-video" playsinline muted></video>
+                  <svg class="cam-guide" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="47" rx="27" ry="35" /></svg>
+                  <div class="cam-cue" id="cam-cue" aria-live="polite"></div>
+                  <div class="cam-bar"><i id="cam-bar"></i></div>
+                </div>
+                <button type="button" class="btn btn-ghost" id="cam-stop">取消</button>
+              </div>
+              <p class="hint" id="cam-err" hidden></p>
+            </div>
             <p class="hint" data-for="avatars" hidden>正面或微側都可以，臉清楚、光線均勻。</p>
-            <label class="btn btn-ghost pick">拍照／選照片<input id="file" type="file" accept="image/*" capture="user" hidden /></label>
+            <label class="btn btn-ghost pick"><span data-for="lala">或從相簿選（手動對位）</span><span data-for="avatars" hidden>拍照／選照片</span><input id="file" type="file" accept="image/*" capture="user" hidden /></label>
           </li>
           <li id="step-align" hidden>
             <h2>3. 調整位置</h2>
@@ -190,17 +203,49 @@ const roles = MEMBER_ROLES.filter((r) => r !== '教授');
       ctx.restore();
     };
 
-    file.addEventListener('change', () => {
-      const f = file.files?.[0];
-      if (!f) return;
+    const load = (src: string) => {
       const im = new Image();
       im.onload = () => {
         img = im; fit(); draw();
         $('step-align').hidden = false; $('step-save').hidden = false; $('after').hidden = true;
         $('step-align').scrollIntoView({ behavior: 'smooth' });
       };
-      im.src = URL.createObjectURL(f);
+      im.src = src;
+    };
+    file.addEventListener('change', () => {
+      const f = file.files?.[0];
+      if (f) load(URL.createObjectURL(f));
     });
+
+    // 自動拍照（拉拉看）：即時偵測臉、提示表情與姿勢，合格後自動拍並對位
+    let stopCam: (() => void) | null = null;
+    const camOff = () => { stopCam?.(); stopCam = null; $('cam').hidden = true; $('cam-start').hidden = false; };
+    $('cam-start').addEventListener('click', async () => {
+      $('cam-err').hidden = true; $('cam').hidden = false; $('cam-start').hidden = true;
+      const cue = $('cam-cue'), bar = $('cam-bar');
+      try {
+        const { startFaceCam } = await import('../scripts/facecam');
+        stopCam = await startFaceCam($<HTMLVideoElement>('cam-video'), (c) => {
+          cue.textContent = c.text;
+          cue.classList.toggle('ok', c.ok);
+          bar.style.width = `${Math.min(1, c.progress) * 100}%`;
+        }, (photo) => {
+          stopCam = null;
+          $('cam').hidden = true; $('cam-start').hidden = false;
+          $('cam-start').textContent = '重拍';
+          load(photo.toDataURL('image/jpeg', 0.92));
+        });
+      } catch (err) {
+        camOff();
+        const e = $('cam-err');
+        e.hidden = false;
+        e.textContent = (err as Error)?.name === 'NotAllowedError'
+          ? '沒有相機權限。請在瀏覽器設定允許相機，或改用下面的「從相簿選」。'
+          : '這支手機無法使用自動拍照，請改用下面的「從相簿選」手動對位。';
+      }
+    });
+    $('cam-stop').addEventListener('click', camOff);
+    root.querySelectorAll<HTMLInputElement>('input[name="mode"]').forEach((el) => el.addEventListener('change', camOff));
 
     // 手勢：一指移動；兩指縮放＋旋轉（以兩指中點為軸）
     const pts = new Map<number, { x: number; y: number }>();
@@ -277,7 +322,15 @@ const roles = MEMBER_ROLES.filter((r) => r !== '教授');
   h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 10px; }
   .hint { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 8px 0; }
   select { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); }
-  .pick { cursor: pointer; }
+  .pick { cursor: pointer; margin-top: 12px; }
+  .cam-box { position: relative; width: 100%; max-width: 420px; aspect-ratio: 3 / 4; margin: 12px 0; border-radius: 16px; overflow: hidden; background: var(--night); }
+  .cam-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+  .cam-guide { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .cam-guide ellipse { fill: none; stroke: rgba(255,255,255,.8); stroke-width: .8; stroke-dasharray: 2 2; }
+  .cam-cue { position: absolute; left: 12px; right: 12px; bottom: 24px; padding: 10px 14px; border-radius: 10px; background: rgba(31,38,34,.78); color: #fff; font-size: 18px; text-align: center; font-weight: 600; }
+  .cam-cue.ok { background: rgba(74,104,93,.9); }
+  .cam-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: rgba(255,255,255,.2); }
+  .cam-bar i { display: block; height: 100%; width: 0; background: var(--wood); transition: width .1s linear; }
   .part { font-size: 24px; margin: 56px 0 20px; padding-top: 24px; border-top: 1px solid var(--line); }
   .form { display: flex; flex-direction: column; gap: 14px; }
   .form label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
