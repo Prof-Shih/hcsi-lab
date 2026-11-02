@@ -101,7 +101,7 @@ npm run preview    # 預覽建置結果
 2. 先 `gh issue list --state open` 看有沒有重複的；有就問要不要改派那一張，而不是新開。
 3. 把整理好的內容給對方確認，**對方同意後**才建立：
    ```bash
-   ts=$(TZ=Asia/Taipei date '+%Y-%m-%d %H:%M')
+   ts=$(TZ=UTC-8 date '+%Y-%m-%d %H:%M')
    gh issue create --title "<做什麼>" --assignee <帳號>[,<帳號>] --label task --body "<內文>"
    ```
    內文格式：
@@ -121,7 +121,7 @@ npm run preview    # 預覽建置結果
    沒有 `task` 標籤就先 `gh label create task -c 5B7B6F -d "分派的工作"`。
 4. 回報 issue 網址，並建議指派人在 LINE 群組貼這個網址通知負責人（GitHub 也會寄信給被指派的人）。
 
-**進度一律加時間戳留言**：負責人開工、卡住、完成時（或請 AI 代為更新時），用 `gh issue comment <編號> --body "<YYYY-MM-DD HH:mm> <狀態與說明>"` 留言（時間用 `TZ=Asia/Taipei date '+%Y-%m-%d %H:%M'`）；完成的 commit 訊息寫 `(#編號)`，確認做完再 `gh issue close <編號>`。改派、延期也要留言並寫明原因。
+**進度一律加時間戳留言**：負責人開工、卡住、完成時（或請 AI 代為更新時），用 `gh issue comment <編號> --body "<YYYY-MM-DD HH:mm> <狀態與說明>"` 留言（時間用 `TZ=UTC-8 date '+%Y-%m-%d %H:%M'`）；完成的 commit 訊息寫 `(#編號)`，確認做完再 `gh issue close <編號>`。改派、延期也要留言並寫明原因。
 
 ## 常見任務
 
