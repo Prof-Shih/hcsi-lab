@@ -17,6 +17,8 @@ gallery:
     cap: "Otto DIY 機器人"
   - src: "/images/robot-sense.jpg"
     cap: "Otto 機器人感測互動"
+  - src: "/images/robot-walk.jpg"
+    cap: "Otto 機器人雙足步行"
 skills:
   - "耐能 Kneron NPU／AI 加速棒"
   - "Raspberry Pi 4/5"
