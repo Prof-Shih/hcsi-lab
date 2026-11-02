@@ -5,7 +5,7 @@
 ## 原則
 
 1. **多用 AI 開發**：Claude Code、Copilot、Codex、Cursor 都可以。它們會自動讀 [AGENTS.md](AGENTS.md) 的專案規則，你只要用中文描述想要的結果。
-2. **不要直接改 `main`**：`main` 一更新就會部署到線上網站。每件事開一個分支，用 PR 合併。
+2. **大家都能 push `main`，但 `main` 一更新就上線**：改字、換圖這種小改可以直接 push；新頁面、改版面、動到很多檔案的大改，開分支發 PR。壞掉就照下面「網站壞掉：回到上一版」處理。
 3. **`npm run build` 通過才算完成**：沒有測試框架，build 會順便檢查所有內容欄位。
 4. **AI 寫的程式你要看得懂**：送 PR 前自己讀過一遍 diff，看不懂就請 AI 解釋，不要把看不懂的東西合進去。
 
@@ -61,6 +61,25 @@ gh pr create --fill   # 或到 GitHub 網頁按 Compare & pull request
 - 沒講好就改 `.github/workflows/`、`astro.config.mjs` 的 `site`／`base`、`.pages.yml` 的 `media`
 - 一個 PR 混好幾件不相關的事
 - 自己 merge PR（由管理員 merge）
+
+## 網站壞掉：回到上一版
+
+建置失敗時網站本來就不會更新（保留上一版）。這裡處理的是**建置成功、但畫面壞了**的情況。
+
+**1. 先救線上（1 分鐘）**：GitHub → **Actions** → 左側 **Deploy** → 找到最後一個「正常」的那次，記下它的 commit（7 碼 SHA）→ 右上 **Run workflow** →「版本」填這個 SHA → **Run workflow**。約 2 分鐘後線上就回到那一版。
+
+**2. 再修 `main`（一定要做）**：步驟 1 只換線上檔案，`main` 還是壞的，下一次任何人 push 或後台存檔都會再把壞的版本部署上去。
+
+```bash
+git switch main && git pull --rebase
+git log --oneline -10        # 找出弄壞的 commit
+git revert <壞掉的 SHA>       # 產生一個「撤銷」commit，歷史都保留
+git push
+```
+
+不會用指令就跟 AI 說：「網站從 <SHA> 開始壞掉，幫我 revert 並 push」。
+
+**禁止用 `git reset` + `git push --force` 回滾**：會把之後別人的 commit 和後台存檔一起刪掉。
 
 ## 遇到問題
 

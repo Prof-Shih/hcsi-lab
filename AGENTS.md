@@ -53,7 +53,8 @@ npm run preview    # 預覽建置結果
 9. **完成前執行 `npm run build`**，並把結果告訴使用者。失敗就修到通過，不要留下壞掉的建置。
 10. **不要 commit 秘密或個人資料**：repo 是公開的，commit 過就永久留在歷史。不要放密碼、token、金鑰、別人沒同意公開的照片或聯絡方式。
 11. **Git**（完整流程見 `CONTRIBUTING.md`）：
-    - **不要在 `main` 上改**：開工前 `git switch main && git pull --rebase`，再 `git switch -c <類型>/<簡述>`（例如 `feat/awards-page`、`fix/member-photo`）。發現自己在 `main` 上有改動，先開分支再 commit。
+    - 開工前 `git switch main && git pull --rebase`。小改（文字、圖片、單一檔案）可直接在 `main` commit；大改（新頁面、版面、多檔案、schema）開分支 `git switch -c <類型>/<簡述>`（例如 `feat/awards-page`），不確定就開分支。
+    - 使用者說網站壞了要回滾：用 `git revert <SHA>`（不要 reset／force push），並提醒他可先到 Actions → Deploy → Run workflow 填舊 SHA 立即救線上（見 CONTRIBUTING.md）。
     - 一個分支只做一件事；完成後用 `gh pr create` 開 PR，內文寫改了什麼、`npm run build` 結果、截圖（改到畫面時）。不要自己 merge。
     - **禁止 `git push --force`、禁止刪除 `main`**（GitHub ruleset 也會擋）。被拒絕就 `git pull --rebase` 後再 push。
     - commit 訊息用繁體中文、一句話說清楚改了什麼。

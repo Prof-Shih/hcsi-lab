@@ -52,7 +52,7 @@ npm run preview    # 預覽建置結果
 
 ## 開發流程
 
-寫程式的人請照 [CONTRIBUTING.md](CONTRIBUTING.md)：**開分支 → 用 AI 助理開發 → `npm run build` → 開 PR → CI 通過 → 管理員（@machencompeq）review 並 merge**。不要直接 push `main`（後台存檔例外）。
+寫程式的人請照 [CONTRIBUTING.md](CONTRIBUTING.md)：小改直接 push `main`；大改**開分支 → 用 AI 助理開發 → `npm run build` → 開 PR → CI 通過 → 管理員（@machencompeq）review 並 merge**。網站壞掉時的回滾步驟也在該檔。
 
 repo 在老師的個人帳號 `Prof-Shih` 下（2026-11-01 從 `machencompeq` 轉入）。之後若移到實驗室 GitHub Organization，改 `astro.config.mjs` 的 `site`／`base` 即可。
 
@@ -122,7 +122,7 @@ repo 在老師的個人帳號 `Prof-Shih` 下（2026-11-01 從 `machencompeq` �
 
 個人帳號的 repo 只有「擁有者」和「collaborator」兩種身分，**collaborator 一律有寫入權限**：能直接 push 到 `main`（＝直接改線上網站），也能改 `.github/workflows/`。所以：
 
-- 目前寫程式的實驗室成員是 collaborator，**靠約定走分支＋PR**（見 [CONTRIBUTING.md](CONTRIBUTING.md)），技術上仍能直接 push `main`。不能用 ruleset 強制「必須經 PR」：個人帳號 repo 無法讓 Pages CMS 例外，後台存檔會被擋。
+- 目前寫程式的實驗室成員是 collaborator，**可以直接 push `main`**，大改走分支＋PR（見 [CONTRIBUTING.md](CONTRIBUTING.md)）。安全網是：建置失敗不發佈、Actions 可指定舊 SHA 立即重新部署、`git revert` 撤銷壞掉的 commit。不用 ruleset 強制「必須經 PR」：個人帳號 repo 無法讓 Pages CMS 例外，後台存檔會被擋。
 - 實驗室以外的人：請他 fork → 改 → 開 PR，擁有者審過再 merge。fork 的 PR 拿不到部署權限，看得到程式碼但動不了網站。
 - **用後台改內容的人用 Pages CMS 的 email 邀請**，不要加成 GitHub collaborator：email 協作者只能改內容，碰不到程式。
 - repo Settings → Rules → Rulesets 為 `main` 開：禁止 force push、禁止刪除分支，讓歷史紀錄無法被抹掉，出事可以 revert。
