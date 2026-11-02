@@ -12,11 +12,14 @@ const masters = alumni.filter((m) => m.data.thesis).map(({ data: m }) => {
   const c = masterCat(m.thesis);
   return { ...m, ...c, img: pick(c.imgs), year: m.grad_year, note: m.honor };
 });
-const steps = [
-  ['碩一上', '修課、熟悉實驗室設備，跟著學長姐的計畫做'],
-  ['碩一下', '定題目、做出第一版系統'],
-  ['碩二上', '投稿國內外研討會（CVGIP、ICCE、GCCE…）'],
-  ['碩二下', '完成碩論、口試，延伸投期刊'],
+// 依 115 學年資管所碩士班科目表（共同必修、英文門檻、口試條件）與實驗室慣例整理
+const steps: [string, string, string[]][] = [
+  ['碩0', '錄取後的暑假', ['聚餐破冰，認識老師和學長姐', '想做什麼大事，隨時找老師和實驗室提', '先摸實驗室設備：耐能 NPU、樹莓派、深度相機']],
+  ['碩一上', '修課為主', ['所必修：軟體工程、管理資訊系統，再加組必修', '多益 785 以上可申請免修進修英文', '開始接助教或國科會計畫，有助學金', '參加 group meeting，跟著學長姐的計畫做']],
+  ['碩一下', '定題目', ['所必修：研究方法', '和老師定碩論題目，做出第一版系統', '投國內研討會練手（CVGIP、TANET）']],
+  ['碩一暑假', '衝刺發表', ['補齊實驗，投國際會議（ICCE、GCCE、IEEE AI-Sports Workshop）', '想實習或參加 AI 競賽，跟老師討論']],
+  ['碩二上', '帶人也被帶', ['所必修：管理溝通', '碩論完整實驗', '帶碩一學弟妹與專題生，接助教']],
+  ['碩二下', '畢業', ['所必修：書報研討', '修完學術研究倫理、通過英文門檻後申請口試', '碩論延伸投期刊']],
 ];
 ---
 <Layout title="研究所" active={NAV.graduate}>
@@ -48,10 +51,10 @@ const steps = [
     <div class="wrap section">
       <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:12px">
         <h2 class="h2">碩士兩年怎麼過</h2>
-        <span class="star" style="font-weight:400;font-size:13px">範例流程，待老師確認</span>
+        <span class="star" style="font-weight:400;font-size:13px">依 115 學年資管所課程規定整理，實際以系所公告為準</span>
       </div>
       <ol class="timeline">
-        {steps.map(([k, v]) => <li><span class="tl-k">{k}</span><span class="tl-v">{v}</span></li>)}
+        {steps.map(([k, t, items]) => <li><span class="tl-k">{k}</span><b class="tl-t">{t}</b><ul class="tl-v">{items.map((x) => <li>{x}</li>)}</ul></li>)}
       </ol>
     </div>
   </section>
@@ -113,10 +116,14 @@ const steps = [
   .why-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
   .why-body b { font-size: 20px; }
   .why-body span { font-size: 15px; line-height: 1.65; color: #4A4A4A; }
-  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); border-top: 2px solid var(--accent); }
-  .timeline li { padding: 20px 20px 0 0; display: flex; flex-direction: column; gap: 8px; }
-  .tl-k { font-family: var(--display); font-size: 34px; font-weight: 600; color: var(--accent-ink); }
-  .tl-v { font-size: 15px; line-height: 1.65; color: #4A4A4A; }
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 16px; counter-reset: tl; }
+  .timeline > li { position: relative; padding: 22px 20px 20px; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 6px; display: flex; flex-direction: column; gap: 6px; transition: transform .3s, box-shadow .3s; }
+  .timeline > li:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(30,28,24,.1); }
+  .timeline > li:nth-child(4) { border-top-color: var(--wood); }
+  .timeline > li:last-child { border-top-color: var(--coral); }
+  .tl-k { font-family: var(--display); font-size: 34px; font-weight: 600; line-height: 1; color: var(--accent-ink); }
+  .tl-t { font-size: 16px; }
+  .tl-v { margin: 4px 0 0; padding-left: 1.1em; font-size: 14px; line-height: 1.7; color: #4A4A4A; }
   .team { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .team a { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); }
   .avatar { width: 96px; height: 96px; border-radius: 50%; background: #DCE5E0; color: #3D5A50; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 34px; }
