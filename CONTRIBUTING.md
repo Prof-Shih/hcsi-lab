@@ -40,7 +40,7 @@ gh pr create --fill   # 或到 GitHub 網頁按 Compare & pull request
 
 很多人（和很多 AI）同時在改，照這幾條就不會互相踩到：
 
-1. **先認領再動手**：到 [Issues](https://github.com/Prof-Shih/hcsi-lab/issues) 找要做的事，右側 **Assignees** 指派給自己（或留言「我來」）。沒有 issue 就先開一個。別人已認領的不要做。
+1. **先認領再動手**：到 [Issues](https://github.com/Prof-Shih/hcsi-lab/issues) 找要做的事，右側 **Assignees** 指派給自己（或留言「我來」）。沒有 issue 就先開一個。別人已認領的不要做。老師或管理員分派的工作會直接開成 `task` 標籤的 issue 並指派給你（跟 AI 說「分派工作」，它會問清楚做什麼、給誰、期限再開單）。開工、卡住、完成都在 issue 留一則帶時間的留言，例如「2026-11-03 14:20 開工」。成員與 GitHub 帳號對照在 [.github/team.json](.github/team.json)。
 2. **小步、常推**：每完成一小段就 commit＋push，不要累積一整天。分支不要放超過兩天，越久衝突越多。
 3. **push 前一定先 `git pull --rebase`**。push 被拒（`rejected`／`fetch first`）＝別人剛推過，再 `git pull --rebase` 然後 push，**不要 force**。
 4. **push 時自動 build**：`npm install` 後會啟用 pre-push 檢查，建置失敗就推不上去，避免 main 壞掉卡住所有人。不要用 `--no-verify` 跳過。
