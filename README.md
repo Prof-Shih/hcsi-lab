@@ -2,9 +2,11 @@
 
 人本超智慧創新實驗室（國立中央大學資訊管理學系，指導教授 施皇嘉）官方網站。
 
-- 線上網址：https://machencompeq.github.io/hcsi-lab/
+- 線上網址：https://prof-shih.github.io/hcsi-lab/
 - 技術：Astro 7（純靜態輸出）＋ Content Collections（zod schema）＋ Pages CMS 後台 ＋ GitHub Actions → GitHub Pages
 - 原則：**內容與程式分離**。後台（CMS）只能寫 `src/content/` 和 `public/uploads/`，其餘由程式人員維護。
+
+**新成員**：`git clone https://github.com/Prof-Shih/hcsi-lab.git`，用 VS Code 開啟，對 AI 助理說「我是新成員，幫我開始」，它會照 [AGENTS.md](AGENTS.md) 帶你裝環境、填成員資料、提交。
 
 給不寫程式的人：請看 [docs/editing-guide.md](docs/editing-guide.md)。
 
@@ -42,7 +44,7 @@
 需要 Node.js 24 LTS（最低 22.23.4，見 `.nvmrc`）。
 
 ```bash
-git clone https://github.com/machencompeq/hcsi-lab.git
+git clone https://github.com/Prof-Shih/hcsi-lab.git
 cd hcsi-lab
 npm install        # 第一次
 npm run dev        # 本機預覽 http://localhost:4321
@@ -52,10 +54,9 @@ npm run preview    # 預覽建置結果
 
 ## 開發流程
 
-- **開工前一定先 `git pull --rebase`**，因為後台存檔也會直接 commit 到 `main`。
-- 小改：修改 → `npm run build` 通過 → push `main`。
-- 大改：開 branch → PR → 等 CI 建置通過 → merge。
-- repo 目前在個人帳號 `machencompeq` 下。規格書建議移到實驗室的 GitHub Organization（老師為 Owner）；移過去後改 `astro.config.mjs` 的 `site`／`base` 即可。
+寫程式的人請照 [CONTRIBUTING.md](CONTRIBUTING.md)：小改直接 push `main`；大改**開分支 → 用 AI 助理開發 → `npm run build` → 開 PR → CI 通過 → 管理員（@machencompeq）review 並 merge**。網站壞掉時的回滾步驟也在該檔。
+
+repo 在老師的個人帳號 `Prof-Shih` 下（2026-11-01 從 `machencompeq` 轉入）。之後若移到實驗室 GitHub Organization，改 `astro.config.mjs` 的 `site`／`base` 即可。
 
 ## 部署
 
@@ -68,8 +69,8 @@ npm run preview    # 預覽建置結果
 擁有者第一次設定：
 
 1. 打開 https://app.pagescms.org ，用 repo 擁有者的 GitHub 帳號登入。
-2. 依畫面指示在 `machencompeq` 帳號安裝 Pages CMS 的 GitHub App，建議選 **Only select repositories → hcsi-lab**。
-3. 回到 Pages CMS 選 `machencompeq/hcsi-lab`，就會讀到 repo 裡的 `.pages.yml`，出現成員、論文等選單。
+2. 依畫面指示在 `Prof-Shih` 帳號安裝 Pages CMS 的 GitHub App，建議選 **Only select repositories → hcsi-lab**。
+3. 回到 Pages CMS 選 `Prof-Shih/hcsi-lab`，就會讀到 repo 裡的 `.pages.yml`，出現成員、論文等選單。
 4. 在後台的 collaborators 設定用 **email 邀請**老師與學弟妹。email 協作者不需要 GitHub 帳號，只能改內容與上傳檔案，不能改 `.pages.yml`、程式或協作者名單。
 
 ## VM 備份與備援
@@ -123,7 +124,8 @@ npm run preview    # 預覽建置結果
 
 個人帳號的 repo 只有「擁有者」和「collaborator」兩種身分，**collaborator 一律有寫入權限**：能直接 push 到 `main`（＝直接改線上網站），也能改 `.github/workflows/`。所以：
 
-- **寫程式的人不要加 collaborator**：請他 fork → 改 → 開 PR，擁有者審過再 merge。fork 的 PR 拿不到部署權限，看得到程式碼但動不了網站。
+- 目前寫程式的實驗室成員是 collaborator，**可以直接 push `main`**，大改走分支＋PR（見 [CONTRIBUTING.md](CONTRIBUTING.md)）。安全網是：建置失敗不發佈、Actions 可指定舊 SHA 立即重新部署、`git revert` 撤銷壞掉的 commit。不用 ruleset 強制「必須經 PR」：個人帳號 repo 無法讓 Pages CMS 例外，後台存檔會被擋。
+- 實驗室以外的人：請他 fork → 改 → 開 PR，擁有者審過再 merge。fork 的 PR 拿不到部署權限，看得到程式碼但動不了網站。
 - **用後台改內容的人用 Pages CMS 的 email 邀請**，不要加成 GitHub collaborator：email 協作者只能改內容，碰不到程式。
 - repo Settings → Rules → Rulesets 為 `main` 開：禁止 force push、禁止刪除分支，讓歷史紀錄無法被抹掉，出事可以 revert。
 - Settings → Environments → `github-pages` 限制只有 `main` 能部署（預設就是）。
@@ -134,7 +136,7 @@ npm run preview    # 預覽建置結果
 
 | 項目 | 目前做法 |
 |---|---|
-| repo | `machencompeq/hcsi-lab`（個人帳號；`base` 為 `/hcsi-lab`，站內網址一律經過 `u()`） |
+| repo | `Prof-Shih/hcsi-lab`（個人帳號；`base` 為 `/hcsi-lab`，站內網址一律經過 `u()`） |
 | repo 公開或私有 | 公開（免費方案的 GitHub Pages 需要公開 repo） |
 | Wireframe | Claude 線框圖 artifact「HCSI Lab 網站線框圖」，版面已依此實作 |
 | 中英雙語 | 僅中文；schema 已保留 `name_en`、`title_en` 等欄位 |

@@ -1,11 +1,19 @@
 # push 到 main（含 Pages CMS 的存檔）就自動建置並發佈到 GitHub Pages。
 # 建置失敗（例如內容欄位不符 schema）時不會發佈，線上保留上一個成功版本。
+# PR 只建置檢查，不發佈。
+# 網站壞掉要回到舊版：Actions → Deploy → Run workflow，「版本」填舊的 commit SHA（見 CONTRIBUTING.md）。
 name: Deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 要部署的版本（commit SHA 或 tag）；留空＝main 最新版
+        required: false
 
 permissions:
   contents: read
@@ -13,20 +21,23 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: withastro/action@v6
         with:
           node-version: 24
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
