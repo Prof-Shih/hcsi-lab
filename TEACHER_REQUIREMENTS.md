@@ -67,13 +67,13 @@ C1 注意：老師說過「以前都沒跟他們要」，**沒有本人同意的
 | # | 狀態 |
 |---|---|
 | A1 | 已完成（`src/content/settings/site.yml`） |
-| A2 | **未完成**：`site.yml` 的 `room`、`lab_room` 還是待補 |
+| A2 | 已完成（`site.yml` 的 `room`、`lab_room` 為 I-717-1；電話待補） |
 | B1、B2 | 已完成（`src/styles/global.css` 的 `.nav-line`、`.mobile-bar`） |
 | B3–B6 | 進行中，由老師看過才算完成 |
 | C1 | **未完成**：等學長姐提供並同意 |
 | C2 | 部分：碩士論文、大學專題已有頁面；專題生名單老師還在更新 |
-| C3 | **未完成**：`src/content/news/` 還沒有 AI-Sports 2026 |
-| C4 | **未完成** |
+| C3 | 已完成（`src/content/news/2026-11-02-ai-sports-2026-ieee-bigdata.md`） |
+| C4 | 已完成（`src/content/news/2020-11-12-elta-tv-baseball-farm.md`，依原播出日期排序，首頁最新消息不會顯示） |
 | C5 | 部分：論文已匯入；學長姐 GitHub 專案未放 |
 | C6 | 遵守中 |
 | D1、D2 | 已完成（Pages CMS）；repo 轉到 Prof-Shih 後要確認後台仍能存檔 |
