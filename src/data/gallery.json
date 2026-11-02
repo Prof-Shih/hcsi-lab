@@ -1,5 +1,13 @@
 [
    {
+      "cap" : "臭臭的",
+      "col" : 1,
+      "bg" : "#2F3B36",
+      "img" : "/images/lab-camera.jpg",
+      "row" : 2,
+      "kind" : "photo"
+   },
+   {
       "row" : 2,
       "kind" : "photo",
       "cap" : "實驗室合照",
@@ -77,14 +85,6 @@
       "bg" : "#5A4570",
       "img" : "",
       "row" : 1,
-      "kind" : "photo"
-   },
-   {
-      "cap" : "實驗室監視器裝好了",
-      "col" : 1,
-      "bg" : "#2F3B36",
-      "img" : "/images/lab-camera.jpg",
-      "row" : 2,
       "kind" : "photo"
    }
 ]
