@@ -146,3 +146,8 @@ a:hover { color: #2F4A40; }
 .prose li + li { margin-top: 4px; }
 .prose img { max-width: 100%; border-radius: 4px; }
 .prose a { color: var(--accent-ink); }
+
+/* 彩蛋（src/scripts/easter.ts）：3D 棒球投向螢幕 */
+.egg-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 90; pointer-events: none; }
+.egg-toast { position: fixed; left: 50%; top: 50%; z-index: 91; transform: translate(-50%, -50%); padding: 14px 26px; border-radius: 999px; background: var(--pine); color: #F2EFE8; font-family: var(--serif); font-size: 26px; font-weight: 700; box-shadow: 0 14px 36px rgba(30,28,24,.3); pointer-events: none; animation: egg-pop .35s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes egg-pop { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } }

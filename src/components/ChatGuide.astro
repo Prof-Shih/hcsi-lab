@@ -1,0 +1,168 @@
+---
+// 對話導覽：右下角小幫手，用關鍵字與快捷按鈕帶訪客找到頁面。全部在瀏覽器端運作，不連任何 AI 服務。
+// 回答內容在建置時從網站資料產生（研究主題、最新消息、聯絡資訊），內容更新後自動跟著更新。
+import { getNews, getSite, getTopics, u } from '../lib';
+
+const [site, topics, news] = await Promise.all([getSite(), getTopics(), getNews()]);
+const link = (label: string, href: string) => ({ label, href: u(href) });
+
+type Answer = { keys: string[]; text: string; links: { label: string; href: string }[] };
+const answers: Record<string, Answer> = {
+  grad: {
+    keys: ['碩士', '研究所', '推甄', '考試', '碩班', '讀碩', '面試', '入學', '學長姐'],
+    text: '想讀碩士：研究所頁有「碩士兩年怎麼過」和學長姐的碩論。推甄面試前歡迎先寄信給老師約時間，來實驗室參觀。',
+    links: [link('研究所', '/graduate/'), link('寄信給老師', `mailto:${site.email}`)],
+  },
+  ug: {
+    keys: ['專題', '大學', '大三', '大四', '招募', '加入', '招生'],
+    text: '想做專題：今年收 3 組、每組 5 人。大學專題頁有招募說明和歷屆題目。',
+    links: [link('專題生招募', '/undergrad/#recruit'), link('歷屆專題', '/undergrad/')],
+  },
+  research: {
+    keys: ['研究', '主題', '做什麼', '領域', '方向', 'AI', '論文題目'],
+    text: `實驗室有 ${topics.length} 個研究主題：${topics.map((t) => t.data.title).join('、')}。想看哪一個？`,
+    links: topics.map((t) => link(t.data.title, `/research/${t.id}/`)),
+  },
+  pubs: {
+    keys: ['論文', '著作', '發表', 'paper', '期刊', '會議', 'pdf'],
+    text: '著作頁可以依年份、類型篩選，也能只看得獎論文；部分早期論文有 PDF。',
+    links: [link('著作', '/publications/')],
+  },
+  contact: {
+    keys: ['聯絡', '信箱', 'email', 'mail', '地址', '在哪', '位置', '研究室', '怎麼去', 'I-717'],
+    text: `實驗室在 ${site.lab_room ?? site.room ?? site.dept}，${site.address}。老師信箱：${site.email}。`,
+    links: [link('聯絡與地圖', '/contact/'), link('寄信給老師', `mailto:${site.email}`)],
+  },
+  pi: {
+    keys: ['老師', '教授', '施皇嘉', '指導', '經歷', '學歷', '計畫'],
+    text: '指導教授施皇嘉：中央資管副教授，IEEE Trans. on Consumer Electronics 副編輯，主辦 AI-Sports 國際工作坊。',
+    links: [link('指導教授', '/pi/')],
+  },
+  news: {
+    keys: ['消息', '最新', '新聞', '公告', 'workshop', '工作坊', 'ai-sports', '報導', '影片'],
+    text: `最新消息：${news.slice(0, 3).map((n) => n.data.title).join('；')}。`,
+    links: [...news.slice(0, 3).map((n) => link(n.data.title.slice(0, 18) + (n.data.title.length > 18 ? '…' : ''), `/news/${n.id}/`)), link('全部消息', '/news/')],
+  },
+  members: {
+    keys: ['成員', '學生', '誰', '團隊', '同學', '畢業'],
+    text: '成員頁有目前的研究生與專題生，還有實驗室日常照片。',
+    links: [link('成員', '/members/')],
+  },
+  me: {
+    keys: ['我的資料', '頭像', '拉拉看', '照片', '個人資料', '上傳'],
+    text: '實驗室成員可以用手機在「我的資料」頁設定個人資料和頭像（含會眨眼的拉拉看）。',
+    links: [link('我的資料', '/me/')],
+  },
+};
+const chips: [string, string][] = [['grad', '我想讀碩士'], ['ug', '我想做專題'], ['research', '你們在研究什麼'], ['contact', '怎麼聯絡老師'], ['news', '最新消息']];
+---
+<div class="chat" id="chat" data-answers={JSON.stringify(answers)}>
+  <button type="button" class="chat-fab" id="chat-open" aria-expanded="false" aria-controls="chat-panel">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" stroke-linejoin="round"></path><circle cx="9" cy="10.5" r="1" fill="currentColor"></circle><circle cx="12" cy="10.5" r="1" fill="currentColor"></circle><circle cx="15" cy="10.5" r="1" fill="currentColor"></circle></svg>
+    <span>問問 HCSI</span>
+  </button>
+  <section class="chat-panel" id="chat-panel" aria-label="網站導覽小幫手" hidden>
+    <header class="chat-head"><b>HCSI 小幫手</b><button type="button" id="chat-close" aria-label="關閉">×</button></header>
+    <div class="chat-log" id="chat-log" aria-live="polite">
+      <div class="msg bot">嗨！我可以帶你逛實驗室網站。想知道什麼？</div>
+    </div>
+    <div class="chat-chips" id="chat-chips">{chips.map(([k, t]) => <button type="button" data-k={k}>{t}</button>)}</div>
+    <form class="chat-form" id="chat-form">
+      <label class="sr-only" for="chat-input">輸入問題</label>
+      <input id="chat-input" autocomplete="off" placeholder="例如：專題怎麼加入？" maxlength="80" />
+      <button type="submit">送出</button>
+    </form>
+  </section>
+</div>
+
+<script>
+  type Answer = { keys: string[]; text: string; links: { label: string; href: string }[] };
+  const root = document.getElementById('chat');
+  if (root) {
+    const answers: Record<string, Answer> = JSON.parse(root.dataset.answers ?? '{}');
+    const panel = document.getElementById('chat-panel')!;
+    const open = document.getElementById('chat-open')!;
+    const log = document.getElementById('chat-log')!;
+    const input = document.getElementById('chat-input') as HTMLInputElement;
+
+    const toggle = (show: boolean) => {
+      panel.hidden = !show;
+      open.setAttribute('aria-expanded', String(show));
+      root.classList.toggle('open', show);
+      if (show) input.focus();
+    };
+    open.addEventListener('click', () => toggle(panel.hidden));
+    document.getElementById('chat-close')!.addEventListener('click', () => { toggle(false); open.focus(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) { toggle(false); open.focus(); } });
+
+    const say = (who: 'me' | 'bot', text: string, links: Answer['links'] = []) => {
+      const m = document.createElement('div');
+      m.className = `msg ${who}`;
+      m.textContent = text;
+      if (links.length) {
+        const row = document.createElement('div');
+        row.className = 'msg-links';
+        for (const l of links) {
+          const a = document.createElement('a');
+          a.href = l.href; a.textContent = l.label;
+          row.append(a);
+        }
+        m.append(row);
+      }
+      log.append(m);
+      log.scrollTop = log.scrollHeight;
+    };
+    // 依關鍵字命中數挑答案；都沒中就列出常見選項
+    const answer = (q: string) => {
+      const t = q.toLowerCase();
+      let best = '', score = 0;
+      for (const [k, a] of Object.entries(answers)) {
+        const s = a.keys.reduce((n, key) => n + (t.includes(key.toLowerCase()) ? key.length : 0), 0);
+        if (s > score) { score = s; best = k; }
+      }
+      const a = answers[best];
+      if (a) say('bot', a.text, a.links);
+      else say('bot', '這個我還不會回答。可以點下面的按鈕，或直接寄信問老師。', answers.contact.links);
+    };
+    document.getElementById('chat-chips')!.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest('button');
+      if (!b) return;
+      say('me', b.textContent ?? '');
+      const a = answers[b.dataset.k!];
+      setTimeout(() => say('bot', a.text, a.links), 220);
+    });
+    document.getElementById('chat-form')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+      say('me', q);
+      input.value = '';
+      setTimeout(() => answer(q), 220);
+    });
+  }
+</script>
+
+<style>
+  .chat { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 60; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .chat-fab { display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--pine); color: #F2EFE8; font: inherit; font-size: 15px; box-shadow: 0 10px 24px rgba(30,28,24,.25); cursor: pointer; transition: transform .2s; }
+  .chat-fab:hover { transform: translateY(-2px); }
+  .chat.open .chat-fab span { display: none; }
+  .chat-panel { order: -1; width: min(360px, calc(100vw - 32px)); max-height: min(520px, 70vh); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 18px 48px rgba(30,28,24,.22); }
+  .chat-panel[hidden] { display: none; }
+  .chat-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--pine); color: #F2EFE8; }
+  .chat-head button { width: 32px; height: 32px; border: 0; background: transparent; color: inherit; font-size: 22px; cursor: pointer; }
+  .chat-log { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 88%; padding: 10px 12px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+  .msg.bot { align-self: flex-start; background: var(--bg); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .msg.me { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+  .msg-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .msg-links a { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--accent); color: var(--accent-ink); text-decoration: none; }
+  .chat-chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 14px 10px; }
+  .chat-chips button { flex: 0 0 auto; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .chat-chips button:hover { border-color: var(--accent); }
+  .chat-form { display: flex; gap: 8px; padding: 10px 14px 14px; border-top: 1px solid var(--line); }
+  .chat-form input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 8px 12px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--bg); color: var(--ink); }
+  .chat-form button { font: inherit; font-size: 14px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--coral); color: #fff; cursor: pointer; }
+  @media (max-width: 767px) { .chat-fab span { display: none; } .chat-fab { width: 48px; padding: 0; justify-content: center; } }
+  @media (prefers-reduced-motion: reduce) { .chat-fab { transition: none; } }
+</style>

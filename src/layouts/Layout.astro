@@ -3,6 +3,7 @@ import { u } from '../lib';
 import '../styles/global.css';
 import { nav } from '../config/nav';
 import { getSite } from '../lib';
+import ChatGuide from '../components/ChatGuide.astro';
 
 const site = await getSite();
 
@@ -96,6 +97,11 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
       btn.addEventListener('click', () => setOpen(!panel.classList.contains('open')));
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
     }
+  </script>
+  <ChatGuide />
+  <script>
+    import { mountEaster } from '../scripts/easter';
+    mountEaster();
   </script>
 </body>
 </html>
