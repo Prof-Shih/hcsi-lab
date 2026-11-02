@@ -48,17 +48,10 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
           <b style="font-size:18px">{m.name}</b>
           <span class="note">{m.role}</span>
           <div class="pop card" role="dialog" aria-label={m.name} style={`top:150px;width:min(300px,86vw);gap:14px;--tint:${pal[i % 6][0]};--tint-ink:${pal[i % 6][1]}`}>
-            {m.card_photo ? (
-              <div class="card-hero">
-                <img src={u(m.card_photo)} alt={`${m.name}的照片`} loading="lazy" />
-                <span class="stack card-hero-name"><b style="font-size:19px">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span>{m.role}</span></span>
-              </div>
-            ) : (
-              <div class="card-head">
-                {m.photo || m.lala ? <img class="mini" src={u(m.photo ?? m.lala)} alt="" loading="lazy" /> : <span class="mini">{initial(m.name)}</span>}
-                <span class="stack" style="gap:2px"><b style="font-size:17px">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span class="note">{m.role}</span></span>
-              </div>
-            )}
+            <div class="card-head">
+              {m.card_photo || m.photo || m.lala ? <img class="mini" src={u(m.card_photo ?? m.photo ?? m.lala)} alt="" loading="lazy" /> : <span class="mini">{initial(m.name)}</span>}
+              <span class="stack" style="gap:3px;min-width:0"><b style="font-size:18px;line-height:1.2">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span class="badge">{m.role}</span></span>
+            </div>
             {(m.edu || m.topic || m.interests.length > 0) && (
               <div class="stack" style="gap:4px;font-size:14px;line-height:1.6"><span style="font-size:12px;color:var(--muted)">學經歷</span>{m.edu && <span>{m.edu}</span>}{m.topic && <span>{m.topic}</span>}{m.interests.length > 0 && <span>{m.interests.join('、')}</span>}</div>
             )}
@@ -222,15 +215,14 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .face.lala-on { background: transparent !important; }
   .face.lala-on > img { visibility: hidden; }
   .face :global(.lala-canvas) { position: absolute; left: -100%; top: -100%; width: 300%; height: 300%; pointer-events: none; z-index: 3; }
-  .mini { width: 56px; height: 56px; border-radius: 50%; background: var(--surface); color: var(--tint-ink, #3D5A50); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 22px; flex: 0 0 56px; object-fit: cover; border: 3px solid var(--surface); box-shadow: 0 4px 12px rgba(30,28,24,.16); }
+  .mini { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; object-fit: cover; background: var(--surface); color: var(--tint-ink, #3D5A50); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 24px; border: 3px solid var(--surface); box-shadow: 0 0 0 2px var(--tint-ink, #3D5A50), 0 8px 18px rgba(30,28,24,.18); transition: transform .3s; }
+  .has-pop:hover .mini, .has-pop.open .mini { transform: rotate(-4deg) scale(1.04); }
   .card { padding-top: 0; overflow: hidden; }
-  .card-head { display: flex; align-items: center; gap: 14px; margin: 0 -20px; padding: 18px 20px 4px; background: linear-gradient(180deg, var(--tint, #DCE5E0) 0%, var(--tint, #DCE5E0) 45%, transparent 100%); }
-  .card-hero { position: relative; margin: 0 -20px; line-height: 0; background: var(--tint); }
-  .card-hero img { display: block; width: 100%; height: auto; max-height: min(400px, 52vh); object-fit: contain; }
-  .card-hero-name { position: absolute; left: 0; right: 0; bottom: 0; gap: 2px; padding: 40px 20px 14px; line-height: 1.35; color: #fff; background: linear-gradient(180deg, transparent, rgba(20,22,20,.72)); }
-  .card .card-hero-name .en { color: rgba(255,255,255,.85); }
-  .card-hero-name span:last-child { font-size: 13px; color: rgba(255,255,255,.85); }
-  .card .en {font-family: var(--latin); font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+  .card-head { position: relative; display: flex; align-items: center; gap: 16px; margin: 0 -20px; padding: 22px 20px 6px 22px; background: linear-gradient(160deg, var(--tint, #DCE5E0) 0%, var(--tint, #DCE5E0) 40%, transparent 100%); }
+  /* 右上角的淡色裝飾圓 */
+  .card-head::after { content: ''; position: absolute; right: -28px; top: -28px; width: 96px; height: 96px; border-radius: 50%; background: var(--tint-ink, #3D5A50); opacity: .08; pointer-events: none; }
+  .badge { align-self: flex-start; margin-top: 2px; padding: 2px 9px; border-radius: 999px; font-size: 12px; background: var(--surface); color: var(--tint-ink, #3D5A50); }
+  .card .en { font-family: var(--latin); font-size: 13px; color: var(--muted); letter-spacing: .02em; }
   .site { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--bg); color: var(--ink); text-decoration: none; transition: border-color .2s, transform .2s, box-shadow .2s; }
   .site:hover, .site:focus-visible { border-color: var(--tint-ink); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(30,28,24,.12); }
   .site-ico { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 9px; background: var(--tint); color: var(--tint-ink); display: flex; align-items: center; justify-content: center; }

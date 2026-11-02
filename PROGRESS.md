@@ -62,7 +62,7 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 
 新的放最上面：`- YYYY-MM-DD HH:mm <誰>：<做了什麼>（#issue／PR）`
 
-- 2026-11-03 02:20 黃予岑＋Claude：成員介紹卡改版（顯示英文名、個人網站連結卡、IG／信箱小膠囊）；成員新增 `website`、`card_photo` 欄位（schema、`.pages.yml`、手機頁 `/me/` 都可填）；有 `card_photo` 時卡片上方顯示完整照片，否則小圓圈用頭像（管理員已同意直推）
+- 2026-11-03 02:20 黃予岑＋Claude：成員介紹卡改版（顯示英文名、個人網站連結卡、IG／信箱小膠囊）；成員新增 `website`、`card_photo` 欄位（schema、`.pages.yml`、手機頁 `/me/` 都可填）；卡片左上小圓圈依序用 `card_photo`、頭像、拉拉看照片，都沒有才顯示名字最後一字（管理員已同意直推）
 - 2026-11-03 02:10 黃予岑＋Claude：成員頁介紹卡片在手機上超出畫面，打開時往內推回（`members.astro` 的 `keepIn`）；黃予岑檔名改 `huang-yu-tsen`（成員檔、profiles、頭像一起改），`team.json` 姓名錯字（管理員已同意直推）
 - 2026-11-03 01:55 黃予岑＋Claude：`/me/` 選照片拿掉 `capture="user"`，手機才能從相簿選（原本直接開前鏡頭）；修正黃予岑姓名錯字
 
