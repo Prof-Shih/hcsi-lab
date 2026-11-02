@@ -14,8 +14,16 @@ export async function getSite() {
   return s.data;
 }
 
+// 手機上傳頁（/lala/）收到的照片：public/lala/<成員檔名>.jpg。
+// 成員沒自己設定拉拉看時，有這張照片就自動改用拉拉看；不想用就刪掉照片。
+export const lalaUploaded = (id: string) => fs.existsSync(`public/lala/${id}.jpg`);
+
 export async function getMembers() {
-  const all = (await getCollection('members')).sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id));
+  const all = (await getCollection('members'))
+    .map((m) => m.data.avatar_style === '一般' && !m.data.lala_photo && lalaUploaded(m.id)
+      ? { ...m, data: { ...m.data, avatar_style: '拉拉看' as const, lala_photo: `/lala/${m.id}.jpg` } }
+      : m)
+    .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id));
   // 拉拉看照片要真的存在（避免填了路徑卻沒上傳）
   for (const m of all) {
     const p = m.data.avatar_style === '拉拉看' ? m.data.lala_photo : undefined;
