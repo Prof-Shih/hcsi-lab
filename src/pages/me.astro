@@ -1,0 +1,292 @@
+---
+// 「我的資料」頁（手機用）：成員自己設定個人資料與頭像，不需要後台或寫程式。
+// 個人資料：開 GitHub 新增檔案頁並預先填好 src/data/profiles/<成員檔名>/<時間>.json，按 Commit 即可（lib.ts 套用最新一份）。
+// 頭像：選拉拉看或一般照片 → 對位裁切 → 存成 <成員檔名>.jpg → 到 GitHub 上傳到 public/lala/ 或 public/avatars/。
+// 收集完把 src/data/me-page.json 的 open 改成 false 就關閉。
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import { NAV } from '../config/nav';
+import { MEMBER_ROLES } from '../content.config';
+import { avatarUploaded, getMembers, lalaUploaded, u } from '../lib';
+import cfg from '../data/me-page.json';
+
+const { current } = await getMembers();
+const people = current.map(({ id, data: d }) => ({
+  id, name: d.name, done: lalaUploaded(id) || avatarUploaded(id),
+  name_en: d.name_en ?? '', role: d.role, enroll_year: d.enroll_year ?? '', email: d.email ?? '',
+  edu: d.edu ?? '', topic: d.topic ?? '', interests: d.interests.join('、'), instagram: d.instagram ?? '',
+}));
+const gh = `https://github.com/${cfg.repo}`;
+const roles = MEMBER_ROLES.filter((r) => r !== '教授');
+---
+<Layout title="我的資料" active={NAV.members}>
+  <Hero eyebrow="My Profile" title="我的資料" lead="用手機設定自己在成員頁的資料和頭像。填完按送出，GitHub 會打開已經填好的頁面，按 Commit 就完成。" />
+
+  <section class="wrap lala-up">
+    {!cfg.open ? (
+      <p class="closed">資料收集已結束，謝謝大家。需要修改請找網站管理員。</p>
+    ) : (
+      <div id="lala-up" data-gh={gh} data-branch={cfg.branch} data-people={JSON.stringify(people)}>
+        <ol class="steps">
+          <li>
+            <h2>選自己的名字</h2>
+            <select id="who" required>
+              <option value="">— 選擇 —</option>
+              {people.map((p) => <option value={p.id}>{p.name}</option>)}
+            </select>
+            <p class="hint">名單上沒有你？請 AI 幫你在 <code>src/content/members/</code> 新增自己的資料，或找網站管理員。</p>
+          </li>
+        </ol>
+
+        <div id="me" hidden>
+        <h2 class="part">A. 個人資料</h2>
+        <form id="profile" class="form">
+          <label>英文姓名<input name="name_en" placeholder="Ming-An Chen" autocomplete="name" /></label>
+          <label>身分<select name="role">{roles.map((r) => <option>{r}</option>)}</select></label>
+          <label>入學年（西元）<input name="enroll_year" inputmode="numeric" pattern="\d{4}" placeholder="2025" /></label>
+          <label>信箱（會公開在成員頁）<input name="email" type="email" autocomplete="email" /></label>
+          <label>學歷<input name="edu" placeholder="中原大學 資訊管理學系" /></label>
+          <label>研究題目<input name="topic" /></label>
+          <label>研究興趣（用頓號或逗號分開）<input name="interests" placeholder="電腦視覺、運動科技" /></label>
+          <label>Instagram 帳號（不含 @）<input name="instagram" autocapitalize="off" /></label>
+          <p class="hint">空著的欄位不會顯示在成員頁。</p>
+          <button type="submit" class="btn btn-coral">送出個人資料 →</button>
+          <p class="hint" id="profile-after" hidden>GitHub 已開啟並填好內容：拉到最下面選 <b>Commit directly to the main branch</b>，按 <b>Commit changes</b>。約 2～5 分鐘後到 <a href={u('/members/')}>成員頁</a> 看結果。</p>
+        </form>
+
+        <h2 class="part">B. 頭像</h2>
+        <ol class="steps">
+          <li>
+            <h2>1. 選頭像風格</h2>
+            <div class="modes">
+              <label><input type="radio" name="mode" value="lala" checked /> <b>拉拉看</b><span>可以被拉長、會眨眼微笑；要對準紅點</span></label>
+              <label><input type="radio" name="mode" value="avatars" /> <b>一般照片</b><span>普通大頭照；臉放進圓圈就好</span></label>
+            </div>
+          </li>
+          <li>
+            <h2>2. 拍照或選照片</h2>
+            <p class="hint" id="has-photo" hidden>你已經上傳過頭像，再傳會覆蓋。</p>
+            <p class="hint" data-for="lala">正面、頭不要歪、雙眼睜開、嘴巴閉著不要笑，光線均勻。</p>
+            <p class="hint" data-for="avatars" hidden>正面或微側都可以，臉清楚、光線均勻。</p>
+            <label class="btn btn-ghost pick">拍照／選照片<input id="file" type="file" accept="image/*" capture="user" hidden /></label>
+          </li>
+          <li id="step-align" hidden>
+            <h2>3. 調整位置</h2>
+            <p class="hint" data-for="lala">一指拖曳移動，兩指縮放、旋轉，讓<b>兩眼</b>和<b>兩個嘴角</b>剛好落在紅點上。電腦可用滑鼠拖曳、滾輪縮放。</p>
+            <p class="hint" data-for="avatars" hidden>一指拖曳移動，兩指縮放、旋轉，讓臉在圓圈中間。成員頁會裁成圓形。</p>
+            <canvas id="stage" width="640" height="640"></canvas>
+            <div class="row">
+              <button type="button" class="btn btn-ghost" data-rot="-1">↺ 轉 1°</button>
+              <button type="button" class="btn btn-ghost" data-rot="1">↻ 轉 1°</button>
+              <button type="button" class="btn btn-ghost" id="reset">重來</button>
+            </div>
+          </li>
+          <li id="step-save" hidden>
+            <h2>4. 存檔並上傳</h2>
+            <button type="button" class="btn btn-coral" id="save">存下照片</button>
+            <div id="after" hidden>
+              <p>已存成 <b id="fname"></b>。接著：</p>
+              <ol class="sub">
+                <li>按下面的按鈕開啟 GitHub（用收到協作邀請的帳號登入）。</li>
+                <li>選 <b>choose your files</b>，挑剛存的 <b id="fname2"></b>（檔名不要改）。</li>
+                <li>拉到最下面，選 <b>Commit directly to the main branch</b>，按 <b>Commit changes</b>。</li>
+              </ol>
+              <a class="btn btn-coral" id="gh" href={`${gh}/upload/${cfg.branch}/public/lala`} target="_blank" rel="noopener">到 GitHub 上傳 →</a>
+              <p class="hint">約 2～5 分鐘後到 <a href={u('/members/')}>成員頁</a> 看結果。手機上 GitHub 沒有上傳按鈕時，瀏覽器選單切換成「電腦版網站」。</p>
+            </div>
+          </li>
+        </ol>
+        </div>
+      </div>
+    )}
+  </section>
+</Layout>
+
+<script>
+  import { T, EYES, MOUTH } from '../scripts/lala';
+
+  const root = document.getElementById('lala-up');
+  if (root) {
+    const $ = <E extends HTMLElement>(id: string) => document.getElementById(id) as E;
+    const who = $<HTMLSelectElement>('who');
+    const file = $<HTMLInputElement>('file');
+    const stage = $<HTMLCanvasElement>('stage');
+    const ctx = stage.getContext('2d')!;
+    // ---- 個人資料 ----
+    type Person = { id: string; name: string; done: boolean } & Record<string, string | number | boolean>;
+    const people: Person[] = JSON.parse(root.dataset.people ?? '[]');
+    const form = $<HTMLFormElement>('profile');
+    const FIELDS = ['name_en', 'role', 'enroll_year', 'email', 'edu', 'topic', 'interests', 'instagram'];
+    who.addEventListener('change', () => {
+      const p = people.find((q) => q.id === who.value);
+      $('me').hidden = !p;
+      if (!p) return;
+      for (const f of FIELDS) (form.elements.namedItem(f) as HTMLInputElement).value = String(p[f] ?? '');
+      $('has-photo').hidden = !p.done;
+      $('profile-after').hidden = true;
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const v = (f: string) => (form.elements.namedItem(f) as HTMLInputElement).value.trim();
+      const data: Record<string, unknown> = {};
+      for (const f of ['name_en', 'role', 'email', 'edu', 'topic']) data[f] = v(f);
+      data.instagram = v('instagram').replace(/^@/, '');
+      data.interests = v('interests').split(/[、,，;；]/).map((s) => s.trim()).filter(Boolean);
+      if (v('enroll_year')) data.enroll_year = Number(v('enroll_year'));
+      const d = new Date(), pad = (n: number) => String(n).padStart(2, '0');
+      const stamp = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+      const q = new URLSearchParams({
+        filename: `src/data/profiles/${who.value}/${stamp}.json`,
+        value: JSON.stringify(data, null, 2) + '\n',
+        message: `更新 ${who.selectedOptions[0].text} 的個人資料`,
+      });
+      window.open(`${root.dataset.gh}/new/${root.dataset.branch}?${q}`, '_blank', 'noopener');
+      $('profile-after').hidden = false;
+    });
+
+    // ---- 頭像 ----
+    let img: HTMLImageElement | null = null;
+    // lala：拉拉看（存到 public/lala/）；avatars：一般照片（存到 public/avatars/）
+    const mode = () => (root.querySelector<HTMLInputElement>('input[name="mode"]:checked')?.value ?? 'lala');
+    root.querySelectorAll<HTMLInputElement>('input[name="mode"]').forEach((el) => el.addEventListener('change', () => {
+      root.querySelectorAll<HTMLElement>('[data-for]').forEach((h) => { h.hidden = h.dataset.for !== mode(); });
+      $('after').hidden = true;
+      draw();
+    }));
+    // 照片在畫布上的位置：中心 (x, y)、縮放 s、旋轉 r（弧度）
+    let x = T / 2, y = T / 2, s = 1, r = 0;
+
+    const fit = () => { if (!img) return; s = T / Math.min(img.naturalWidth, img.naturalHeight); x = y = T / 2; r = 0; };
+    const drawPhoto = (c: CanvasRenderingContext2D) => {
+      c.save();
+      c.fillStyle = '#fff'; c.fillRect(0, 0, T, T);
+      c.translate(x, y); c.rotate(r); c.scale(s, s);
+      c.drawImage(img!, -img!.naturalWidth / 2, -img!.naturalHeight / 2);
+      c.restore();
+    };
+    const draw = () => {
+      if (!img) return;
+      drawPhoto(ctx);
+      ctx.save();
+      if (mode() === 'avatars') {
+        // 圓圈外變暗，示意成員頁的圓形裁切
+        ctx.fillStyle = 'rgba(0,0,0,.45)';
+        ctx.beginPath(); ctx.rect(0, 0, T, T); ctx.arc(T / 2, T / 2, T / 2 - 4, 0, Math.PI * 2, true); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(T / 2, T / 2, T / 2 - 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+        return;
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.setLineDash([8, 8]);
+      ctx.beginPath(); ctx.moveTo(0, EYES[0][1]); ctx.lineTo(T, EYES[0][1]);
+      ctx.moveTo(0, MOUTH[0][1]); ctx.lineTo(T, MOUTH[0][1]); ctx.moveTo(T / 2, 0); ctx.lineTo(T / 2, T); ctx.stroke();
+      ctx.setLineDash([]);
+      for (const [px, py] of [...EYES, ...MOUTH]) {
+        ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(224,48,48,.9)'; ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    file.addEventListener('change', () => {
+      const f = file.files?.[0];
+      if (!f) return;
+      const im = new Image();
+      im.onload = () => {
+        img = im; fit(); draw();
+        $('step-align').hidden = false; $('step-save').hidden = false; $('after').hidden = true;
+        $('step-align').scrollIntoView({ behavior: 'smooth' });
+      };
+      im.src = URL.createObjectURL(f);
+    });
+
+    // 手勢：一指移動；兩指縮放＋旋轉（以兩指中點為軸）
+    const pts = new Map<number, { x: number; y: number }>();
+    const pos = (e: PointerEvent) => {
+      const b = stage.getBoundingClientRect();
+      return { x: (e.clientX - b.left) * T / b.width, y: (e.clientY - b.top) * T / b.height };
+    };
+    const pair = () => {
+      const [a, b] = [...pts.values()];
+      return { cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, d: Math.hypot(b.x - a.x, b.y - a.y), ang: Math.atan2(b.y - a.y, b.x - a.x) };
+    };
+    // 以 (cx, cy) 為軸縮放 k 倍、旋轉 da
+    const around = (cx: number, cy: number, k: number, da: number) => {
+      const dx = (x - cx) * k, dy = (y - cy) * k;
+      x = cx + dx * Math.cos(da) - dy * Math.sin(da);
+      y = cy + dx * Math.sin(da) + dy * Math.cos(da);
+      s *= k; r += da;
+    };
+    stage.addEventListener('pointerdown', (e) => { stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, pos(e)); });
+    stage.addEventListener('pointermove', (e) => {
+      if (!img || !pts.has(e.pointerId)) return;
+      const before = pts.size === 2 ? pair() : null;
+      const old = pts.get(e.pointerId)!, now = pos(e);
+      pts.set(e.pointerId, now);
+      if (before) {
+        const after = pair();
+        x += after.cx - before.cx; y += after.cy - before.cy;
+        around(after.cx, after.cy, after.d / before.d, after.ang - before.ang);
+      } else if (pts.size === 1) {
+        x += now.x - old.x; y += now.y - old.y;
+      }
+      draw();
+    });
+    const up = (e: PointerEvent) => pts.delete(e.pointerId);
+    stage.addEventListener('pointerup', up);
+    stage.addEventListener('pointercancel', up);
+    stage.addEventListener('wheel', (e) => {
+      if (!img) return;
+      e.preventDefault();
+      const p = pos(e as unknown as PointerEvent);
+      around(p.x, p.y, Math.exp(-e.deltaY / 500), 0); draw();
+    }, { passive: false });
+    root.querySelectorAll<HTMLButtonElement>('[data-rot]').forEach((b) => b.addEventListener('click', () => {
+      around(T / 2, T / 2, 1, Number(b.dataset.rot) * Math.PI / 180); draw();
+    }));
+    $('reset').addEventListener('click', () => { fit(); draw(); });
+
+    $('save').addEventListener('click', () => {
+      if (!who.value) { alert('先在第 1 步選自己的名字'); who.focus(); return; }
+      if (!img) return;
+      const out = document.createElement('canvas');
+      out.width = out.height = T;
+      drawPhoto(out.getContext('2d')!);
+      out.toBlob((blob) => {
+        if (!blob) return;
+        const name = `${who.value}.jpg`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = name;
+        document.body.append(a); a.click(); a.remove();
+        $('fname').textContent = name; $('fname2').textContent = name;
+        $<HTMLAnchorElement>('gh').href = `${root.dataset.gh}/upload/${root.dataset.branch}/public/${mode()}`;
+        $('after').hidden = false;
+        $('after').scrollIntoView({ behavior: 'smooth' });
+      }, 'image/jpeg', 0.9);
+    });
+  }
+</script>
+
+<style>
+  .lala-up { padding-top: 48px; padding-bottom: 88px; max-width: 640px; }
+  .closed { font-size: 17px; color: var(--muted); }
+  .steps, .sub { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 36px; }
+  .sub { gap: 6px; padding-left: 1.2em; list-style: decimal; margin: 8px 0 16px; }
+  h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 10px; }
+  .hint { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 8px 0; }
+  select { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .pick { cursor: pointer; }
+  .part { font-size: 24px; margin: 56px 0 20px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .form { display: flex; flex-direction: column; gap: 14px; }
+  .form label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+  .form input { font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .form .btn { align-self: flex-start; }
+  .modes { display: flex; flex-direction: column; gap: 10px; }
+  .modes label { display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); cursor: pointer; }
+  .modes span { grid-column: 2; color: var(--muted); font-size: 13px; }
+  .modes label:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  canvas { width: 100%; max-width: 480px; aspect-ratio: 1; display: block; border-radius: 12px; border: 1px solid var(--line); touch-action: none; background: var(--surface); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+</style>

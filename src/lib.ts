@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { z } from 'astro/zod';
+import { MEMBER_ROLES } from './content.config';
 import undergrad from './data/undergrad-projects.json';
 
 export type Member = CollectionEntry<'members'>;
@@ -19,10 +21,37 @@ export async function getSite() {
 export const lalaUploaded = (id: string) => fs.existsSync(`public/lala/${id}.jpg`);
 export const avatarUploaded = (id: string) => fs.existsSync(`public/avatars/${id}.jpg`);
 
+// 手機「我的資料」頁（/me/）送出的個人資料：src/data/profiles/<成員檔名>/<時間>.json，取檔名最新的一份覆蓋成員檔欄位。
+// 這些檔案從 GitHub 網頁直接 commit、不經 pre-push 建置檢查，所以格式不符時只警告並略過，不讓建置失敗。
+const profileSchema = z.object({
+  name_en: z.string(),
+  role: z.enum(MEMBER_ROLES),
+  enroll_year: z.number().int(),
+  email: z.string(),
+  edu: z.string(),
+  topic: z.string(),
+  interests: z.array(z.string()),
+  instagram: z.string(),
+}).partial().strict();
+const profileFiles = import.meta.glob<unknown>('./data/profiles/*/*.json', { eager: true, import: 'default' });
+let profileCache: Record<string, z.infer<typeof profileSchema>> | undefined;
+export const latestProfiles = () => {
+  if (profileCache) return profileCache;
+  const out: Record<string, z.infer<typeof profileSchema>> = (profileCache = {});
+  for (const file of Object.keys(profileFiles).sort()) {
+    const id = file.split('/').at(-2)!;
+    const r = profileSchema.safeParse(profileFiles[file]);
+    if (r.success) out[id] = r.data;
+    else console.warn(`[profiles] 略過 src/${file.slice(2)}：${r.error.issues.map((i) => i.path.join('.') + ' ' + i.message).join('；')}`);
+  }
+  return out;
+};
+
 export async function getMembers() {
+  const profiles = latestProfiles();
   const all = (await getCollection('members'))
     .map((m) => {
-      const d = { ...m.data };
+      const d = { ...m.data, ...profiles[m.id] };
       if (d.avatar_style === '一般' && !d.lala_photo && lalaUploaded(m.id)) {
         d.avatar_style = '拉拉看';
         d.lala_photo = `/lala/${m.id}.jpg`;
