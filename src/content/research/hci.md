@@ -7,6 +7,12 @@ group: "多模態人機互動與即時資訊蒐集"
 tagline: "Kinect 手勢、VR 訓練、立體視覺"
 short: "RGB-D 相機、LiDAR、VR 即時動作擷取，目標是球場用的 LiDAR 鷹眼。"
 color: "#6B5A48"
+cover: "/images/mocap-3d.jpg"
+gallery:
+  - src: "/images/basketball.jpg"
+    cap: "即時人體動作擷取：籃球投籃（2005）"
+  - src: "/images/robot-sense.jpg"
+    cap: "Otto 機器人感測互動"
 skills:
   - "RGB-D / LiDAR"
   - "Unity / VR"
@@ -15,3 +21,9 @@ skills:
 keywords_zh: "擴增實境|VR|立體視覺|Lighthouse|手眼|Unity"
 keywords_en: "hand|gesture|kinect|RGB-D|depth|virtual reality|augmented|mixed reality|3D"
 ---
+
+## 影片：即時人體動作擷取
+
+<video class="video-embed" controls preload="none" poster="/hcsi-lab/videos/run-motion.jpg" src="/hcsi-lab/videos/run-motion.mp4"></video>
+
+雙視角攝影機擷取人體輪廓，即時重建 3D 骨架並辨識動作（2005–2012 研究成果）。

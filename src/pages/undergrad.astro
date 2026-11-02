@@ -3,13 +3,15 @@ import { u } from '../lib';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import { NAV } from '../config/nav';
-import { getSite, projectCats, undergradProjects } from '../lib';
+import { getSite, imagePicker, projectCats, undergradProjects } from '../lib';
 
 const site = await getSite();
 
+// 頁面上已固定使用的圖先標記，卡片就不會再重複
+const pick = imagePicker(new Set(['/images/arm.jpg', '/images/puzzle.jpg', '/images/baseball.jpg']));
 const projects = undergradProjects.map((p) => {
   const c = projectCats.find((c) => c.re.test(p.zh + p.en))!;
-  return { ...p, cat: c.key, tag: c.tag, img: c.img, bg: c.bg };
+  return { ...p, cat: c.key, tag: c.tag, img: pick(c.imgs), bg: c.bg };
 });
 const chips = [{ key: 'all', tag: '全部' }, ...projectCats];
 const wins = [
@@ -35,7 +37,7 @@ const wins = [
       <div class="gear">
         <figure><div class="gear-ph" style="background:#3E4A5A">Kneron NPU</div><figcaption>耐能 AI 加速棒／離線 NPU</figcaption></figure>
         <figure><div class="gear-ph" style="background:#7A3B3B">Raspberry Pi 4/5</div><figcaption>樹莓派邊緣運算</figcaption></figure>
-        <figure class="zoom"><img src={u('/images/arm.jpg')} alt="機械手臂" loading="lazy" /><figcaption>機械手臂</figcaption></figure>
+        <figure class="zoom"><img src={u('/images/puzzle.jpg')} alt="機械手臂拼圖" loading="lazy" /><figcaption>機械手臂</figcaption></figure>
         <figure class="zoom"><img src={u('/images/baseball.jpg')} alt="智慧棒球" loading="lazy" /><figcaption>自製感測棒球／球棒／手套</figcaption></figure>
       </div>
       <span class="note">設備照片待補拍：耐能、樹莓派、深度攝影機（Azure Kinect／ZED／RealSense）</span>

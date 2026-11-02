@@ -120,25 +120,34 @@ export function related(t: Topic, alumni: Member[], pubs: Pub[]) {
 
 // 專題分類（大學專題頁的篩選）
 export const projectCats = [
-  { key: 'wear', tag: '智慧運動穿戴', re: /棒球|IMU|槓鈴|手眼/, img: '/images/baseball.jpg', bg: '#5C4A37' },
-  { key: 'video', tag: '運動影像分析', re: /足球|籃球|高爾夫|姿態|好球帶|校準|VR/, img: '/images/pose.jpg', bg: '#2F3B36' },
-  { key: 'med', tag: '智慧醫療影像', re: /視網膜|阿茲海默|口罩|臉部/, img: '', bg: '#4A685D' },
-  { key: 'hci', tag: '人機互動與 3D', re: /擴增|Lighthouse|立體|門禁|Kinect|KINECT/, img: '', bg: '#6B5A48' },
-  { key: 'vision', tag: '影像辨識', re: /./, img: '', bg: '#3E4A5A' },
+  { key: 'wear', tag: '智慧運動穿戴', re: /棒球|IMU|槓鈴|手眼/, imgs: ['/images/baseball.jpg', '/images/glove2.jpg', '/images/bat-structure.jpg', '/images/ball-exploded.jpg', '/images/bat2.jpg', '/images/ball-module.jpg'], bg: '#5C4A37' },
+  { key: 'video', tag: '運動影像分析', re: /足球|籃球|高爾夫|姿態|好球帶|校準|VR/, imgs: ['/images/pose.jpg', '/images/soccer-lines.jpg', '/images/basketball.jpg', '/images/referee.jpg', '/images/baseball-frames.jpg', '/images/jersey.jpg'], bg: '#2F3B36' },
+  { key: 'med', tag: '智慧醫療影像', re: /視網膜|阿茲海默|口罩|臉部/, imgs: [], bg: '#4A685D' },
+  { key: 'hci', tag: '人機互動與 3D', re: /擴增|Lighthouse|立體|門禁|Kinect|KINECT/, imgs: ['/images/mocap-3d.jpg', '/images/robot-sense.jpg'], bg: '#6B5A48' },
+  { key: 'vision', tag: '影像辨識', re: /./, imgs: ['/images/scoreboard.jpg', '/images/baseball-gui.jpg'], bg: '#3E4A5A' },
 ];
 
 // 碩論分類（研究所頁的卡片圖）
 const masterCats = [
-  { re: /手套/, tag: '智慧運動穿戴', img: '/images/glove.jpg', bg: '#5C4A37' },
-  { re: /球棒/, tag: '智慧運動穿戴', img: '/images/bat.jpg', bg: '#5C4A37' },
-  { re: /棒球|FSR/, tag: '智慧運動穿戴', img: '/images/baseball.jpg', bg: '#5C4A37' },
-  { re: /球衣|軌跡/, tag: '運動影像分析', img: '/images/pose2.jpg', bg: '#2F3B36' },
-  { re: /拼圖|機械/, tag: '機器人與邊緣 AI', img: '/images/arm.jpg', bg: '#3E4A5A' },
-  { re: /視網膜/, tag: '智慧醫療影像', img: '', bg: '#4A685D' },
-  { re: /表情|輕量/, tag: '機器人與邊緣 AI', img: '', bg: '#3E4A5A' },
+  { re: /手套/, tag: '智慧運動穿戴', imgs: ['/images/glove.jpg', '/images/glove2.jpg'], bg: '#5C4A37' },
+  { re: /球棒/, tag: '智慧運動穿戴', imgs: ['/images/bat.jpg', '/images/bat-structure.jpg'], bg: '#5C4A37' },
+  { re: /棒球|FSR/, tag: '智慧運動穿戴', imgs: ['/images/baseball.jpg', '/images/ball-exploded.jpg', '/images/ball-module.jpg', '/images/baseball-frames.jpg'], bg: '#5C4A37' },
+  { re: /球衣|軌跡/, tag: '運動影像分析', imgs: ['/images/jersey.jpg', '/images/pose2.jpg'], bg: '#2F3B36' },
+  { re: /拼圖|機械/, tag: '機器人與邊緣 AI', imgs: ['/images/arm.jpg'], bg: '#3E4A5A' },
+  { re: /視網膜/, tag: '智慧醫療影像', imgs: [], bg: '#4A685D' },
+  { re: /表情|輕量/, tag: '機器人與邊緣 AI', imgs: [], bg: '#3E4A5A' },
 ];
 export const masterCat = (thesis = '') =>
-  masterCats.find((c) => c.re.test(thesis)) ?? { tag: '影像與訊號處理', img: '', bg: '#6B5A48' };
+  masterCats.find((c) => c.re.test(thesis)) ?? { tag: '影像與訊號處理', imgs: [] as string[], bg: '#6B5A48' };
+
+// 同一頁的卡片不重複用圖：依序取分類圖庫中還沒用過的；用完就不放圖（只顯示分類色塊）
+export function imagePicker(used = new Set<string>()) {
+  return (imgs: readonly string[]) => {
+    const img = imgs.find((i) => !used.has(i)) ?? '';
+    if (img) used.add(img);
+    return img;
+  };
+}
 
 export async function getCounts() {
   const [pubs, { alumni }] = await Promise.all([getPubs(), getMembers()]);

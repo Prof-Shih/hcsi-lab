@@ -5,5 +5,6 @@ authors:
   - "C. L. Huang"
 venue: "in Proc. IEEE Int. Conf. Consumer Electronics (ICCE 2005), Las Vegas, USA, Jan. 8-12, 2005. (Poster)"
 year: 2005
+pdf: "/papers/2005-content-based-multi-functional-video-retrieval-system.pdf"
 type: "conference"
 ---

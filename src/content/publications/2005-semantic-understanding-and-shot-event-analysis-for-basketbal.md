@@ -6,6 +6,7 @@ authors:
   - "C. L. Huang"
 venue: "in Proc. of CVGIP2005, Aug. 2005. (Oral)"
 year: 2005
+pdf: "/papers/2005-semantic-understanding-and-shot-event-analysis-for-basketbal.pdf"
 type: "conference"
 domestic: true
 ---

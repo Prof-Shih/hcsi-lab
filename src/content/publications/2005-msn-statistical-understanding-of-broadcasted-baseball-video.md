@@ -5,5 +5,6 @@ authors:
   - "C. L. Huang"
 venue: "IEEE Trans. on Broadcasting, vol. 51, issue 4, pp. 449-459, Dec. 2005"
 year: 2005
+pdf: "/papers/2005-msn-statistical-understanding-of-broadcasted-baseball-video.pdf"
 type: "journal"
 ---

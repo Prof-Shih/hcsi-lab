@@ -17,6 +17,8 @@ const { Content } = await render(entry);
 const hasBody = Boolean(entry.body?.trim());
 const projects = r.projects.slice(0, 6);
 const pubs = r.pubs.slice(0, 6);
+// 封面已當頁首背景，相簿不再重複
+const gallery = t.gallery.filter((g) => g.src !== t.cover);
 ---
 <Layout title={t.title} active={NAV.research} description={t.summary}>
   <section class="detail-hero" style={`background:${t.color}`}>
@@ -35,9 +37,9 @@ const pubs = r.pubs.slice(0, 6);
     <div class="col">
       {hasBody && <div class="prose"><Content /></div>}
       <h2>做出來的東西</h2>
-      {t.gallery.length ? (
+      {gallery.length ? (
         <div class="gal">
-          {t.gallery.map((im) => (
+          {gallery.map((im) => (
             <figure class="zoom"><img src={u(im.src)} alt={im.cap} loading="lazy" /><figcaption>{im.cap}</figcaption></figure>
           ))}
         </div>

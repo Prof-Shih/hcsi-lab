@@ -3,10 +3,15 @@ import { u } from '../lib';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import { NAV } from '../config/nav';
-import { getSite, getMembers, masterCat, initial } from '../lib';
+import { getSite, getMembers, imagePicker, masterCat, initial } from '../lib';
 
 const [site, { current, alumni }] = await Promise.all([getSite(), getMembers()]);
-const masters = alumni.filter((m) => m.data.thesis).map(({ data: m }) => ({ ...m, ...masterCat(m.thesis), year: m.grad_year, note: m.honor }));
+// 頁面上已固定使用的圖先標記，卡片就不會再重複
+const pick = imagePicker(new Set(['/images/pose.jpg', '/images/robot.jpg', '/images/glove.jpg']));
+const masters = alumni.filter((m) => m.data.thesis).map(({ data: m }) => {
+  const c = masterCat(m.thesis);
+  return { ...m, ...c, img: pick(c.imgs), year: m.grad_year, note: m.honor };
+});
 const steps = [
   ['碩一上', '修課、熟悉實驗室設備，跟著學長姐的計畫做'],
   ['碩一下', '定題目、做出第一版系統'],
