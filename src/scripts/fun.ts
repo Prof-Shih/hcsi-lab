@@ -1,6 +1,6 @@
 // 全站小趣味（減少動態效果時全部關閉）：
 // 1. 點站內連結：球棒在點擊處旁揮一棒，把球打到點擊位置，落點迸出波紋後才換頁（約半秒）。
-// 2. 背景骨架：姿態估測的 17 個關節點組成小人，在背景慢跑、偶爾揮棒；透明度低、在內容後面，不影響閱讀。
+// 2. 背景骨架：姿態估測的 17 個關節點組成小人，各自不同外型、跳不同的舞；點一下就揮棒並顯示偵測框。透明度低、在內容後面，不影響閱讀。
 import { drawBall } from './easter';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -85,32 +85,68 @@ function mountHit() {
 }
 
 // ---- 2. 背景骨架 ----
-// COCO 17 點的骨架連線
+// 每個小人外型、顏色、關節點形狀、舞步都不同；點一下他就拿起球棒揮擊，並顯示姿態偵測框與動作標籤。
+// COCO 17 點：0 鼻、5/6 肩、7/8 肘、9/10 腕、11/12 髖、13/14 膝、15/16 踝
 const BONES = [[5, 7], [7, 9], [6, 8], [8, 10], [5, 6], [5, 11], [6, 12], [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [0, 5], [0, 6]];
-
-function pose(t: number, swing: number) {
-  // 以骨盆為原點、身高約 1 的側面跑步姿勢；swing>0 時混入揮棒動作
-  const run = Math.sin(t), run2 = Math.sin(t + Math.PI);
-  const p: number[][] = [];
-  const hip = [0, 0], sh = [0.05, -0.42];
-  p[0] = [sh[0] + 0.06, sh[1] - 0.17];
+type Pt = [number, number];
+type Body = { arm: number; leg: number; torso: number };
+// 從 origin 出發畫兩節肢體；角度以「垂直向下」為 0、往前（+x）為正
+const limb = (o: Pt, a1: number, a2: number, l1: number, l2: number): [Pt, Pt] => {
+  const e: Pt = [o[0] + Math.sin(a1) * l1, o[1] + Math.cos(a1) * l1];
+  return [e, [e[0] + Math.sin(a1 + a2) * l2, e[1] + Math.cos(a1 + a2) * l2]];
+};
+type Angles = { lean?: number; dy?: number; hx?: number; ra: [number, number]; la: [number, number]; rl: [number, number]; ll: [number, number] };
+function build(b: Body, g: Angles): Pt[] {
+  const dy = g.dy ?? 0, hx = g.hx ?? 0;
+  const hip: Pt = [hx, dy], sh: Pt = [hx + (g.lean ?? 0) * b.torso, dy - b.torso];
+  const p: Pt[] = [];
+  p[0] = [sh[0] + 0.04, sh[1] - 0.17];
   p[1] = p[2] = p[3] = p[4] = p[0];
-  p[5] = [sh[0] - 0.02, sh[1]]; p[6] = [sh[0] + 0.02, sh[1]];
-  const arm = (s: number) => [[sh[0] + Math.sin(s) * 0.18, sh[1] + 0.2], [sh[0] + Math.sin(s) * 0.26 + 0.1, sh[1] + 0.3 - Math.cos(s) * 0.05]];
-  let [e1, w1] = arm(run * 0.9), [e2, w2] = arm(run2 * 0.9);
-  if (swing > 0) {
-    // 揮棒：兩手一起從後上方掃到前方
-    const s = -1.6 + swing * 3.2;
-    e1 = e2 = [sh[0] + Math.cos(s) * 0.16, sh[1] + Math.sin(s) * 0.16 + 0.05];
-    w1 = w2 = [sh[0] + Math.cos(s) * 0.3, sh[1] + Math.sin(s) * 0.3 + 0.05];
-  }
-  p[7] = e1; p[9] = w1; p[8] = e2; p[10] = w2;
-  p[11] = [hip[0] - 0.02, hip[1]]; p[12] = [hip[0] + 0.02, hip[1]];
-  const leg = (s: number) => [[Math.sin(s) * 0.2, 0.26 - Math.max(0, Math.cos(s)) * 0.04], [Math.sin(s) * 0.26 - (Math.cos(s) > 0 ? 0.12 : 0), 0.52 - Math.max(0, -Math.cos(s)) * 0.08]];
-  const [k1, a1] = leg(swing > 0 ? 0.3 : run), [k2, a2] = leg(swing > 0 ? -0.4 : run2);
-  p[13] = k1; p[15] = a1; p[14] = k2; p[16] = a2;
+  p[5] = [sh[0] - 0.07, sh[1]]; p[6] = [sh[0] + 0.07, sh[1]];
+  [p[7], p[9]] = limb(p[5], g.la[0], g.la[1], 0.16 * b.arm, 0.15 * b.arm);
+  [p[8], p[10]] = limb(p[6], g.ra[0], g.ra[1], 0.16 * b.arm, 0.15 * b.arm);
+  p[11] = [hip[0] - 0.05, hip[1]]; p[12] = [hip[0] + 0.05, hip[1]];
+  [p[13], p[15]] = limb(p[11], g.ll[0], g.ll[1], 0.25 * b.leg, 0.25 * b.leg);
+  [p[14], p[16]] = limb(p[12], g.rl[0], g.rl[1], 0.25 * b.leg, 0.25 * b.leg);
   return p;
 }
+const S = Math.sin, PI = Math.PI;
+const DANCES: Record<string, (t: number) => Angles> = {
+  disco: (t) => { const up = S(t * 1.5) > 0; const b = Math.abs(S(t * 3)); return { hx: S(t * 1.5) * 0.05, dy: -b * 0.03, ra: [up ? PI * 0.85 : PI * 0.25, 0], la: [-0.5, 1.6], rl: [0.15, -0.1 - b * 0.3], ll: [-0.15, 0.1] }; },
+  wave: (t) => ({ hx: S(t) * 0.04, ra: [PI * 0.85 + S(t * 3) * 0.35, S(t * 3) * 0.4], la: [-PI * 0.85 + S(t * 3 + 1) * 0.35, S(t * 3 + 1) * 0.4], rl: [0.12, 0], ll: [-0.12, 0] }),
+  jump: (t) => { const h = Math.max(0, S(t * 2.2)); return { dy: -h * 0.22, ra: [PI * (0.3 + 0.55 * h), 0.2], la: [-PI * (0.3 + 0.55 * h), -0.2], rl: [0.2 + h * 0.6, -h * 1.4], ll: [-0.2 + h * 0.6, -h * 1.4] }; },
+  twist: (t) => { const s = S(t * 2.4); return { hx: s * 0.06, lean: -s * 0.15, ra: [1.4, 1.3 + s * 0.4], la: [-1.4, -1.3 + s * 0.4], rl: [0.15 + s * 0.12, -0.25 - s * 0.15], ll: [-0.15 + s * 0.12, -0.25 + s * 0.15] }; },
+  robot: (t) => { const k = Math.floor(t * 1.3) % 4; const A = [[PI / 2, -PI / 2], [PI / 2, PI / 2], [0, PI / 2], [PI / 2, 0]][k]; return { ra: [A[0], A[1]], la: [-A[1], -A[0]], rl: [k % 2 ? 0.3 : 0, 0], ll: [k % 2 ? 0 : -0.3, 0] }; },
+};
+// 揮棒（側視）：雙手從後肩上方預備（0–0.45 秒）→ 胸前水平擊球（0.45–0.7）→ 收到前肩上方；手肘由肩與手的位置推算
+function batting(b: Body, s: number): { kp: Pt[]; bat: number } {
+  const ease = (x: number) => 1 - (1 - x) * (1 - x);
+  const u = ease(s < 0.45 ? 0 : Math.min(1, (s - 0.45) / 0.25)), f = ease(s > 0.7 ? Math.min(1, (s - 0.7) / 0.4) : 0);
+  const kp = build(b, { lean: 0.08 - u * 0.2, hx: -0.04 + u * 0.08, ra: [0, 0], la: [0, 0], rl: [0.35 - u * 0.25, -0.15], ll: [-0.32 + u * 0.12, 0.1 + u * 0.15] });
+  const lerp = (a: Pt, c: Pt, t: number): Pt => [a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t];
+  const top = kp[5][1];
+  const hand = lerp(lerp([-0.14, top - 0.16], [0.3, top + 0.08], u), [0.04, top - 0.16], f);
+  for (const [sh, el, wr] of [[5, 7, 9], [6, 8, 10]] as const) {
+    const S0 = kp[sh], m: Pt = [(S0[0] + hand[0]) / 2, (S0[1] + hand[1]) / 2 + 0.06 * b.arm];
+    kp[el] = m; kp[wr] = [hand[0] + (sh === 5 ? -0.015 : 0.015), hand[1]];
+  }
+  return { kp, bat: -2.7 + u * 4.27 + f * 2.6 };
+}
+
+type Shape = 'circle' | 'square' | 'diamond';
+type Person = {
+  x: number; y: number; h: number; dir: number; speed: number; dance: string;
+  body: Body; shape: Shape; bone: string; joint: string;
+  t: number; batT: number; conf: string; kp: Pt[];
+  ball?: { x: number; y: number; vx: number; vy: number; t: number };
+};
+const LOOKS: { body: Body; shape: Shape; bone: string; joint: string }[] = [
+  { body: { arm: 1, leg: 1, torso: 0.45 }, shape: 'circle', bone: '91,123,111', joint: '224,122,95' },
+  { body: { arm: 1.15, leg: 0.9, torso: 0.42 }, shape: 'square', bone: '160,112,63', joint: '91,123,111' },
+  { body: { arm: 0.9, leg: 1.15, torso: 0.48 }, shape: 'diamond', bone: '62,74,90', joint: '224,179,65' },
+  { body: { arm: 1.05, leg: 1.05, torso: 0.4 }, shape: 'circle', bone: '138,62,42', joint: '192,139,92' },
+  { body: { arm: 0.95, leg: 0.95, torso: 0.5 }, shape: 'square', bone: '74,104,93', joint: '210,70,58' },
+];
 
 function mountSkeletons() {
   const cv = document.createElement('canvas');
@@ -127,34 +163,89 @@ function mountSkeletons() {
   };
   size();
   addEventListener('resize', size);
-  const n = W < 768 ? 2 : 4;
-  const people = Array.from({ length: n }, (_, i) => ({
-    x: Math.random() * W, y: H * (0.25 + 0.6 * (i / Math.max(1, n - 1))),
-    dir: i % 2 ? -1 : 1, speed: 0.5 + Math.random() * 0.5, h: 70 + Math.random() * 40,
-    phase: Math.random() * 6, swingAt: 4000 + Math.random() * 9000,
+  const names = Object.keys(DANCES);
+  const n = W < 768 ? 3 : 5;
+  const people: Person[] = Array.from({ length: n }, (_, i) => ({
+    ...LOOKS[i % LOOKS.length],
+    x: (W / n) * (i + 0.5), y: H * (0.3 + 0.55 * (((i * 37) % 10) / 10)),
+    dir: i % 2 ? -1 : 1, speed: 0.15 + (i % 3) * 0.1, h: 80 + ((i * 13) % 4) * 14,
+    dance: names[i % names.length], t: i * 1.7, batT: -1, conf: '', kp: [],
   }));
+
+  // 點小人：拿球棒揮擊並顯示偵測框（點到連結、按鈕、輸入框或正在選字時不觸發）
+  document.addEventListener('click', (e) => {
+    const el = e.target as HTMLElement;
+    if (el.closest('a, button, input, textarea, select, label, [role="button"], .chat, .carousel') || !getSelection()?.isCollapsed) return;
+    for (const p of people) {
+      if (!p.kp.length || p.batT >= 0) continue;
+      const xs = p.kp.map((q) => q[0]), ys = p.kp.map((q) => q[1]);
+      if (e.clientX > Math.min(...xs) - 18 && e.clientX < Math.max(...xs) + 18 && e.clientY > Math.min(...ys) - 18 && e.clientY < Math.max(...ys) + 18) {
+        p.batT = 0; p.conf = (0.9 + Math.random() * 0.09).toFixed(2); p.ball = undefined;
+        break;
+      }
+    }
+  });
+
+  const dot = (x: number, y: number, r: number, shape: Shape) => {
+    c.beginPath();
+    if (shape === 'circle') c.arc(x, y, r, 0, PI * 2);
+    else if (shape === 'square') c.rect(x - r, y - r, r * 2, r * 2);
+    else { c.moveTo(x, y - r * 1.3); c.lineTo(x + r * 1.3, y); c.lineTo(x, y + r * 1.3); c.lineTo(x - r * 1.3, y); c.closePath(); }
+    c.fill();
+  };
+
   let last = performance.now();
   const frame = (now: number) => {
-    const dt = Math.min(50, now - last); last = now;
+    const dt = Math.min(50, now - last) / 1000; last = now;
     c.clearRect(0, 0, W, H);
     for (const p of people) {
-      p.swingAt -= dt;
-      let swing = 0;
-      if (p.swingAt < 0) {
-        swing = Math.min(1, -p.swingAt / 700);
-        if (p.swingAt < -1100) p.swingAt = 6000 + Math.random() * 10000;
+      let local: Pt[], bat: number | null = null;
+      if (p.batT >= 0) {
+        p.batT += dt;
+        const r = batting(p.body, Math.min(1.3, p.batT));
+        local = r.kp; bat = r.bat;
+        if (p.batT > 0.58 && !p.ball) p.ball = { x: NaN, y: NaN, vx: p.dir * (420 + Math.random() * 200), vy: -260 - Math.random() * 160, t: 0 };
+        if (p.batT > 2.2) { p.batT = -1; p.ball = undefined; }
       } else {
-        p.x += p.dir * p.speed * dt * 0.06;
-        p.phase += dt * 0.008 * p.speed;
+        p.t += dt;
+        p.x += p.dir * p.speed * 30 * dt;
+        if (p.x < -60) p.x = W + 50;
+        if (p.x > W + 60) p.x = -50;
+        local = build(p.body, DANCES[p.dance](p.t));
       }
-      if (p.x < -60) p.x = W + 40; if (p.x > W + 60) p.x = -40;
-      const kp = pose(p.phase, swing).map(([x, y]) => [p.x + x * p.h * p.dir, p.y + y * p.h]);
-      c.lineWidth = 2; c.lineCap = 'round';
-      c.strokeStyle = 'rgba(91,123,111,.22)';
-      for (const [a, b] of BONES) { c.beginPath(); c.moveTo(kp[a][0], kp[a][1]); c.lineTo(kp[b][0], kp[b][1]); c.stroke(); }
-      for (const i of [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]) {
-        c.fillStyle = i === 0 ? 'rgba(224,122,95,.35)' : 'rgba(192,139,92,.32)';
-        c.beginPath(); c.arc(kp[i][0], kp[i][1], i === 0 ? 5 : 3, 0, Math.PI * 2); c.fill();
+      p.kp = local.map(([x, y]) => [p.x + x * p.h * p.dir, p.y + y * p.h] as Pt);
+      const on = p.batT >= 0;
+      c.lineWidth = on ? 3 : 2; c.lineCap = 'round';
+      c.strokeStyle = `rgba(${p.bone},${on ? 0.85 : 0.24})`;
+      for (const [a, b] of BONES) { c.beginPath(); c.moveTo(p.kp[a][0], p.kp[a][1]); c.lineTo(p.kp[b][0], p.kp[b][1]); c.stroke(); }
+      if (bat !== null) {
+        // 球棒：從右手腕往外延伸
+        const w = p.kp[10], L = p.h * 0.42;
+        c.strokeStyle = 'rgba(192,139,92,.95)'; c.lineWidth = 5;
+        c.beginPath(); c.moveTo(w[0], w[1]); c.lineTo(w[0] + Math.sin(bat) * L * p.dir, w[1] + Math.cos(bat) * L); c.stroke();
+      }
+      for (let i = 0; i < 17; i++) {
+        if (i >= 1 && i <= 4) continue;
+        c.fillStyle = `rgba(${i === 0 ? '224,122,95' : p.joint},${on ? 0.95 : 0.34})`;
+        dot(p.kp[i][0], p.kp[i][1], i === 0 ? 5.5 : on ? 4 : 3, p.shape);
+      }
+      if (p.ball) {
+        const b = p.ball;
+        if (Number.isNaN(b.x)) { b.x = p.kp[10][0]; b.y = p.kp[10][1]; }
+        b.t += dt; b.x += b.vx * dt; b.vy += 500 * dt; b.y += b.vy * dt;
+        drawBall(c, b.x, b.y, 7, b.t * 20, b.t * 14);
+      }
+      if (on) {
+        // 姿態偵測框與動作標籤
+        const xs = p.kp.map((q) => q[0]), ys = p.kp.map((q) => q[1]);
+        const x0 = Math.min(...xs) - 10, y0 = Math.min(...ys) - 14, x1 = Math.max(...xs) + 10, y1 = Math.max(...ys) + 8;
+        c.setLineDash([6, 4]); c.strokeStyle = 'rgba(224,122,95,.9)'; c.lineWidth = 1.5;
+        c.strokeRect(x0, y0, x1 - x0, y1 - y0); c.setLineDash([]);
+        const label = `${p.batT < 0.45 ? 'stance' : p.batT < 0.75 ? 'batting' : 'follow-through'} ${p.conf}`;
+        c.font = '600 12px Inter, sans-serif';
+        const tw = c.measureText(label).width + 12;
+        c.fillStyle = 'rgba(224,122,95,.95)'; c.fillRect(x0, y0 - 20, tw, 18);
+        c.fillStyle = '#fff'; c.fillText(label, x0 + 6, y0 - 7);
       }
     }
     if (!document.hidden) requestAnimationFrame(frame);
