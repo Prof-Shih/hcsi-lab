@@ -1,5 +1,62 @@
 [
    {
+      "zh": "足球場景深度估算在球員實際距離量測應用",
+      "en": "Monocular Depth Estimation in Football Scenarios for Real-World Player Distance Measurement",
+      "names": [
+         "杜采鴒"
+      ],
+      "dept": "電機(甲)",
+      "sem": "1132",
+      "notes": ""
+   },
+   {
+      "zh": "基於語義分割之高爾夫球場道路偏移設計與模型效能比較",
+      "en": "Semantic Segmentation-Based Golf Road Deviation Detection and Model Performance Analysis",
+      "names": [
+         "謝季晴",
+         "黃昱綺",
+         "楊崇希"
+      ],
+      "dept": "電機(甲)",
+      "sem": "1132",
+      "notes": ""
+   },
+   {
+      "zh": "結合 YOLO 與 Stable Diffusion 之多階段握手圖片修復系統",
+      "en": "Hand Defect Detection and Repair in Handshake Images Using YOLO, MediaPipe, and Stable Diffusion",
+      "names": [
+         "步芷澐",
+         "朱葳榛",
+         "宋安庭"
+      ],
+      "dept": "電機(甲)",
+      "sem": "1132",
+      "notes": ""
+   },
+   {
+      "zh": "基於深度學習之瑜珈姿勢辨識與角度評分系統開發",
+      "en": "Development of Yoga Pose Recognition and Angle-Based Scoring System Using Deep Learning",
+      "names": [
+         "姜蘋珍",
+         "陳妤嫻",
+         "詹振浩"
+      ],
+      "dept": "電機(甲)",
+      "sem": "1132",
+      "notes": ""
+   },
+   {
+      "zh": "VR 網球最佳觀看視角推薦系統",
+      "en": "VR Tennis Best Viewing Angle Recommendation System",
+      "names": [
+         "梁洺熏",
+         "蘇冠宇"
+      ],
+      "dept": "電機(甲)",
+      "sem": "1132",
+      "notes": ""
+   },
+   {
       "notes" : "ICCE25 · CACS24 · ICCE25 best session presentation award · 大專學生研究計畫",
       "sem" : "1131",
       "dept" : "電通英專",
