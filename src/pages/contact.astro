@@ -6,6 +6,8 @@ import { NAV } from '../config/nav';
 import { getSite } from '../lib';
 
 const site = await getSite();
+const [phoneNumber, phoneExtension] = site.phone?.split(/\s*\*\s*/, 2) ?? [];
+const phoneHref = `tel:${phoneNumber}${phoneExtension ? `;ext=${phoneExtension}` : ''}`;
 
 const q = encodeURIComponent(site.map_query);
 const mapEmbed = `https://www.google.com/maps?q=${q}&output=embed`;
@@ -19,8 +21,8 @@ const mapLink = `https://www.google.com/maps/search/?api=1&query=${q}`;
       <div class="info">
         <div><span>地址</span>{site.address}<br>{site.dept} {site.room}</div>
         <div><span>指導教授</span><a href={`mailto:${site.email}`}>施皇嘉 {site.email}</a></div>
+        {phoneNumber && <div><span>聯絡電話</span><a href={phoneHref}><strong>{phoneNumber}</strong>{phoneExtension && ` *${phoneExtension}`}</a></div>}
         <div><span>實驗室</span>{site.lab_room}</div>
-        {site.phone && <div><span>電話</span><a href={`tel:${site.phone}`}>{site.phone}</a></div>}
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:12px">
         <a class="btn btn-coral" href={`mailto:${site.email}`}>寄信給老師</a>
