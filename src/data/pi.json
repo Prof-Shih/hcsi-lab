@@ -48,7 +48,7 @@
     { "kind": "國際學界", "name": "Hokkaido University", "what": "Prof. Takahiro Ogawa · 團隊運動分析" },
     { "kind": "產業", "name": "智匯創育（耐能科技子公司）", "what": "AIoT 課程、邊緣 AI 應用" },
     { "kind": "產業", "name": "智之視 IdeasLab", "what": "高爾夫／棒球 AI 顧問" },
-    { "kind": "產業", "name": "神經元科技", "what": "眼震儀瞳孔追蹤" },
+    { "kind": "醫院", "name": "壢新國際醫院", "what": "復健治療科" },
     { "kind": "醫院", "name": "亞東紀念醫院", "what": "視網膜影像智慧醫療" }
   ],
   "grants": [
