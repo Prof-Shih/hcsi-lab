@@ -18,7 +18,27 @@ const gradeOf = (role: string, y?: number) => {
   if (n < 1 || n > 9) return role;
   return role === '碩士生' ? `碩${'一二三四五六七八九'[n - 1]}` : role === '博士生' ? `博${'一二三四五六七八九'[n - 1]}` : role;
 };
-const people = [...pi, ...current].map(({ data }) => ({ ...data, role: gradeOf(data.role, data.enroll_year), lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
+const people = [...pi, ...current].map(({ data }) => ({ ...data, ...(data.role === '教授' ? { photo: '/images/pi-suit.jpg' } : {}), role: gradeOf(data.role, data.enroll_year), lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
+// 依年級分區：高年級在前，推算不出年級的（沒填入學年）放最後
+const rank = (r: string) => '博碩'.indexOf(r[0]) * 10 - '一二三四五六七八九'.indexOf(r[1]);
+const key = (r: string) => (r === '教授' ? -99 : /^[博碩][一二三四五六七八九]$/.test(r) ? rank(r) : 99);
+const groups = [...new Set(people.map((m) => m.role))]
+  .sort((a, b) => key(a) - key(b))
+  .map((role) => {
+    const list = people.filter((m) => m.role === role);
+    const y = list.find((m) => m.enroll_year)?.enroll_year;
+    const n = '一二三四五六七八九'.indexOf(role[1]) + 1;
+    return { role: role === '教授' ? '指導教授' : role, pi: role === '教授', list, code: role === '教授' ? 'PI' : n > 0 ? `${role[0] === '博' ? 'D' : 'M'}${n}` : '', sub: role === '教授' ? 'Principal Investigator' : y && n > 0 ? `${y} 入學` : '年級請到「我的資料」填入學年' };
+  });
+// 教授卡的身分象徵只取 pi.json 裡有記載的頭銜與獎項，不自行加
+const crest = [
+  { k: 'IEEE', v: 'Senior Member' },
+  { k: '副編輯', v: 'IEEE Trans. on Consumer Electronics' },
+  { k: '副編輯', v: 'IEEE Trans. on CSVT（2022–2025）' },
+  { k: 'Program Co-Chair', v: 'ICCE-TW 2026' },
+  { k: '2019', v: '科技部 未來科技獎' },
+  { k: '2014', v: 'ACM 李國鼎青年研究獎' },
+];
 
 // 介紹卡顯示的網址：去掉 https:// 與結尾斜線
 const siteLabel = (s: string) => {
@@ -39,20 +59,46 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
 
   <section id="people" class="wrap" style="padding-top:56px;padding-bottom:72px;display:flex;flex-direction:column;gap:24px">
     <div class="sec-head"><h2>目前成員</h2><span>{people.length} 位 · 中央大學</span></div>
+    {groups.map((g) => (
+    <div class:list={['grade reveal', { 'grade-pi': g.pi }]}>
+      <div class="grade-head">
+        {g.code && <span class="grade-code" aria-hidden="true">{g.code}</span>}
+        <span class="stack" style="gap:2px"><b>{g.role}</b><span>{g.sub} · {g.list.length} 位</span></span>
+      </div>
     <div class="people">
-      {people.map((m, i) => (
-        <div class="person has-pop">
+      {g.list.map((m) => people.indexOf(m)).map((i) => [people[i], i] as const).map(([m, i]) => (
+        <div class:list={['person has-pop', `tier-${g.code || 'x'}`]}>
+          <div class="frame" data-tilt={m.lala ? undefined : ''}>
+          {g.pi && (
+            <svg class="laurel" viewBox="0 0 220 220" aria-hidden="true">
+              {Array.from({ length: 8 }, (_, k) => [-1, 1].map((sd) => (
+                <ellipse rx="12" ry="5" transform={`translate(${110 + sd * 100 * Math.cos(0.5 + k * 0.29)} ${110 + 100 * Math.sin(0.5 + k * 0.29)}) rotate(${sd * (70 - k * 17)})`} />
+              )))}
+            </svg>
+          )}
+          <span class="ring" aria-hidden="true"></span>
+          {g.pi && <span class="orbit" aria-hidden="true"><i></i></span>}
           <button type="button" class:list={['face', { lala: m.lala }]} data-lala={u(m.lala)} aria-label={m.lala ? `${m.name} 介紹（拉拉看：可以拉長頭像）` : `${m.name} 介紹`} style={`background:${pal[i % 6][0]};color:${pal[i % 6][1]}`}>
             {m.lala || m.photo ? <img src={u(m.lala ?? m.photo)} alt="" /> : initial(m.name)}
+            <span class="shine" aria-hidden="true"></span>
           </button>
+          {g.pi && <span class="seal" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M3 18h18l-1.6-10-4.9 4.2L12 5l-2.5 7.2L4.6 8z" fill="currentColor" /></svg></span>}
+          </div>
           <b style="font-size:18px">{m.name}</b>
-          <span class="note">{m.role}</span>
+          <span class="note">{g.pi ? '指導教授 · 副教授' : m.role}</span>
           <div class="pop card" role="dialog" aria-label={m.name} style={`top:150px;width:min(300px,86vw);gap:14px;--tint:${pal[i % 6][0]};--tint-ink:${pal[i % 6][1]}`}>
             <div class="card-head">
               {m.card_photo || m.photo || m.lala ? <img class="mini" src={u(m.card_photo ?? m.photo ?? m.lala)} alt="" loading="lazy" /> : <span class="mini">{initial(m.name)}</span>}
-              <span class="stack" style="gap:3px;min-width:0"><b style="font-size:18px;line-height:1.2">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span class="badge">{m.role}</span></span>
+              <span class="stack" style="gap:3px;min-width:0"><b style="font-size:18px;line-height:1.2">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span class="badge">{g.pi ? '指導教授' : m.role}</span></span>
             </div>
-            {(m.edu || m.topic || m.interests.length > 0) && (
+            {g.pi && (
+              <div class="stack" style="gap:6px;font-size:13.5px;line-height:1.5">
+                <span style="font-size:12px;color:var(--muted)">國立中央大學 資訊管理學系 副教授</span>
+                <ul class="crest">{crest.map((c) => <li><b>{c.k}</b><span>{c.v}</span></li>)}</ul>
+                <a class="crest-more" href={u('/pi/')}>完整學經歷與獎項 →</a>
+              </div>
+            )}
+            {!g.pi && (m.edu || m.topic || m.interests.length > 0) && (
               <div class="stack" style="gap:4px;font-size:14px;line-height:1.6"><span style="font-size:12px;color:var(--muted)">學經歷</span>{m.edu && <span>{m.edu}</span>}{m.topic && <span>{m.topic}</span>}{m.interests.length > 0 && <span>{m.interests.join('、')}</span>}</div>
             )}
             {m.website && (
@@ -70,6 +116,8 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
         </div>
       ))}
     </div>
+    </div>
+    ))}
     <span class="note">成員資料由後台「成員」維護（照片、身分、信箱、學經歷）。</span>
   </section>
 
@@ -169,6 +217,25 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
     h.addEventListener('focusin', () => keepIn(h));
   });
 
+  // 頭像 3D 傾斜（只有滑鼠；拉拉看頭像要拖曳，不加）
+  if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.frame[data-tilt]').forEach((f) => {
+      f.addEventListener('pointermove', (e) => {
+        const r = f.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        f.classList.add('tilting');
+        f.style.setProperty('--ry', `${(x - 0.5) * 24}deg`);
+        f.style.setProperty('--rx', `${(0.5 - y) * 24}deg`);
+        f.style.setProperty('--mx', `${x * 100}%`);
+        f.style.setProperty('--my', `${y * 100}%`);
+      });
+      f.addEventListener('pointerleave', () => {
+        f.classList.remove('tilting');
+        ['--rx', '--ry', '--mx', '--my'].forEach((k) => f.style.removeProperty(k));
+      });
+    });
+  }
+
   // 實驗室日常篩選
   const fbtns = [...document.querySelectorAll('.life-filters button')];
   const tiles = [...document.querySelectorAll('.tile')];
@@ -206,9 +273,38 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .sec-head span { font-size: 15px; color: var(--muted); }
   .people { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 45%), 1fr)); gap: 28px 20px; }
   .person { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-  .face { width: 168px; height: 168px; max-width: 100%; border-radius: 50%; border: 0; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 56px; overflow: hidden; transition: transform .3s, box-shadow .3s; }
+  /* 年級分區 */
+  .grade { display: flex; flex-direction: column; gap: 20px; padding-top: 8px; }
+  .grade-head { display: flex; align-items: center; gap: 14px; }
+  .grade-head b { font-size: 20px; }
+  .grade-head .stack > span { font-size: 13px; color: var(--muted); }
+  .grade-code { min-width: 48px; height: 48px; padding: 0 10px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 24px; font-weight: 700; letter-spacing: .04em; color: #fff; background: var(--accent); box-shadow: 0 6px 14px rgba(30,28,24,.14); }
+  .grade:has(.tier-M1) .grade-code { background: var(--wood); }
+  .grade-pi .grade-code { color: #3A2C12; background: linear-gradient(135deg, #F3DE9C, #C79A3E 55%, #9C7428); }
+  /* 頭像相框：大小一律相同，只換框與小特效；滑鼠移上去 3D 傾斜 */
+  .frame { --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%; position: relative; width: 168px; height: 168px; max-width: 100%; transform-style: preserve-3d; transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
+  .frame.tilting { transition: transform .08s linear; }
+  .person:hover .frame, .person.open .frame { translate: 0 -6px; }
+  .ring { position: absolute; inset: -7px; border-radius: 50%; background: var(--line-2); transform: translateZ(-1px); box-shadow: 0 12px 26px rgba(30,28,24,.14); }
+  .tier-M1 .ring { background: conic-gradient(from 210deg, #C08B5C, #EBD3B3, #C08B5C 50%, #8E6440, #C08B5C); }
+  .tier-M2 .ring, .tier-M3 .ring { background: conic-gradient(from 210deg, #5B7B6F, #CFE0D8, #5B7B6F 50%, #2F3B36, #5B7B6F); }
+  .tier-PI .ring { inset: -9px; background: conic-gradient(#9C7428, #F7E7B0, #C79A3E, #FFF6D6, #9C7428, #E9C977, #9C7428); animation: spin 9s linear infinite; box-shadow: 0 0 0 2px rgba(199,154,62,.25), 0 16px 34px rgba(156,116,40,.32); }
+  .face { position: relative; width: 168px; height: 168px; max-width: 100%; border-radius: 50%; border: 0; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 56px; overflow: hidden; transform: translateZ(18px); box-shadow: 0 0 0 3px var(--surface); }
   .face img { width: 100%; height: 100%; object-fit: cover; }
-  .person:hover .face, .person.open .face { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(30,28,24,.2); }
+  .shine { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; opacity: 0; transition: opacity .3s; background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.45), rgba(255,255,255,0) 55%); }
+  .frame[data-tilt]:hover .shine { opacity: 1; }
+  .tier-PI .frame { margin-bottom: 18px; }
+  .laurel { position: absolute; left: -26px; top: -26px; width: calc(100% + 52px); height: calc(100% + 52px); fill: #C79A3E; opacity: .85; transform: translateZ(-6px); pointer-events: none; }
+  .orbit { position: absolute; inset: -20px; border-radius: 50%; border: 1.5px solid rgba(199,154,62,.6); transform-style: preserve-3d; animation: orbit 7s linear infinite; pointer-events: none; }
+  .orbit i { position: absolute; left: calc(50% - 5px); top: -5px; width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFF6D6, #C79A3E); box-shadow: 0 0 10px 2px rgba(247,231,176,.8); }
+  .seal { position: absolute; right: 4px; bottom: 6px; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #3A2C12; background: linear-gradient(135deg, #FFF1C2, #C79A3E 60%, #9C7428); border: 3px solid var(--surface); box-shadow: 0 6px 14px rgba(156,116,40,.4); transform: translateZ(40px); pointer-events: none; }
+  @keyframes spin { to { rotate: 360deg; } }
+  @keyframes orbit { from { transform: rotateX(72deg) rotateZ(0deg); } to { transform: rotateX(72deg) rotateZ(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .tier-PI .ring, .orbit { animation: none; } .frame { transform: none; } }
+  .crest { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+  .crest li { display: flex; gap: 8px; align-items: baseline; }
+  .crest b { flex: 0 0 auto; font-size: 11px; padding: 1px 7px; border-radius: 999px; color: #5A4214; background: linear-gradient(135deg, #FBEBB8, #E2BE6A); }
+  .crest-more { align-self: flex-start; font-size: 13px; font-weight: 700; color: var(--accent-ink); }
   .face.lala { position: relative; overflow: visible; touch-action: none; cursor: grab; }
   .face.lala:active { cursor: grabbing; }
   .face.lala > img { border-radius: 50%; }
@@ -257,7 +353,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .alum:hover .alum-face, .alum:focus .alum-face { transform: translateY(-6px); }
   .ug { font-size: 14px; padding: 7px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--ink); }
   @media (max-width: 767px) {
-    .face { width: 128px; height: 128px; font-size: 44px; }
+    .face, .frame { width: 128px; height: 128px; font-size: 44px; }
     .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 130px; }
   }
 </style>
