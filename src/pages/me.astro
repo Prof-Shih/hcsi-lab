@@ -19,7 +19,7 @@ const people = current.map(({ id, data: d }) => ({
 const gh = `https://github.com/${cfg.repo}`;
 const roles = MEMBER_ROLES.filter((r) => r !== '教授');
 ---
-<Layout title="我的資料" active={NAV.members}>
+<Layout title="我的資料" active={NAV.members} i18n={false}>
   <Hero eyebrow="My Profile" title="我的資料" lead="用手機設定自己在成員頁的資料和頭像。填完按送出，GitHub 會打開已經填好的頁面，按 Commit 就完成。" />
 
   <section class="wrap lala-up">
