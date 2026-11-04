@@ -215,9 +215,9 @@
   },
 
   "theses": {
-    "基於影像增強方法池與SAM3遮罩優化之夜間道路分割及道路遮罩輔助車輛生成": "Nighttime Road Segmentation with an Image-Enhancement Method Pool and SAM3 Mask Refinement, and Road-Mask-Guided Vehicle Generation",
-    "基於運動與外觀線索的高速微小物體軌跡復原架構": "A Trajectory Recovery Framework for High-Speed Tiny Objects Based on Motion and Appearance Cues",
-    "電腦視覺深度學習演算法在邊緣裝置推論之效能比較": "Performance Comparison of Deep Learning Computer Vision Algorithms for Inference on Edge Devices",
+    "基於影像增強方法池與SAM3遮罩優化之夜間道路分割及道路遮罩輔助車輛生成之應用": "Nighttime Road Segmentation via an Image Enhancement Method Pool and SAM3-Based Mask Optimization and Its Application to Road-Mask-Assisted Vehicle Generation",
+    "基於運動與外觀線索的高速微小物體軌跡復原架構": "A Trajectory Recovery Framework for High Speed Tiny Objects Using Motion and Appearance Cues",
+    "電腦視覺深度學習演算法在邊緣裝置推論之效能比較": "Performance Comparison of Computer Vision Deep Learning Algorithms for Inference on Edge Devices",
     "利用旋轉角度的權重修正進行多任務學習的通用球衣號碼識別": "Generalized Jersey Number Recognition via Multi-Task Learning with Rotation-Angle Weight Correction",
     "棒球投擲手指施力趨勢多通道 FSR 同步取樣系統": "A Multi-Channel FSR Synchronous Sampling System for Finger Force Trends in Baseball Pitching",
     "一個用於關鍵軌跡恢復系統之混合框架": "A Hybrid Framework for a Key Trajectory Recovery System",

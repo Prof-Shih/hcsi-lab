@@ -134,6 +134,9 @@ export const projectCats = [
 // imgs 只放「就是這篇論文做的東西」的圖（依老師〈5. IoT works〉：智慧棒球、球棒、打擊手套、機械手臂拼圖）。
 // 只是主題相近、但不是該論文成果的圖不要放（例：球衣辨識論文不放老師 2005 年的球衣圖）。
 const masterCats = [
+  { re: /夜間道路分割/, tag: '影像與訊號處理', imgs: ['/images/theses/cao-night-road.jpg'], bg: '#6B5A48' },
+  { re: /高速微小物體軌跡/, tag: '運動影像分析', imgs: ['/images/theses/chen-trajectory.jpg'], bg: '#2F3B36' },
+  { re: /邊緣裝置推論/, tag: '機器人與邊緣 AI', imgs: ['/images/theses/tu-edge-devices.jpg'], bg: '#3E4A5A' },
   { re: /手套/, tag: '智慧運動穿戴', imgs: ['/images/glove.jpg', '/images/glove2.jpg'], bg: '#5C4A37' },
   { re: /球棒/, tag: '智慧運動穿戴', imgs: ['/images/bat.jpg', '/images/bat-structure.jpg'], bg: '#5C4A37' },
   { re: /FSR|壓力感測/, tag: '智慧運動穿戴', imgs: ['/images/baseball.jpg', '/images/ball-exploded.jpg', '/images/ball-module.jpg'], bg: '#5C4A37' },
