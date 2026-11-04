@@ -9,47 +9,47 @@ const link = (label: string, href: string) => ({ label, href: u(href) });
 type Answer = { keys: string[]; text: string; links: { label: string; href: string }[] };
 const answers: Record<string, Answer> = {
   grad: {
-    keys: ['碩士', '研究所', '推甄', '考試', '碩班', '讀碩', '面試', '入學', '學長姐'],
+    keys: ['碩士', '研究所', '推甄', '考試', '碩班', '讀碩', '面試', '入學', '學長姐', 'master', 'graduate', 'admission'],
     text: '想讀碩士：研究所頁有「碩士兩年怎麼過」和學長姐的碩論。推甄面試前歡迎先寄信給老師約時間，來實驗室參觀。',
     links: [link('研究所', '/graduate/'), link('寄信給老師', `mailto:${site.email}`)],
   },
   ug: {
-    keys: ['專題', '大學', '大三', '大四', '招募', '加入', '招生'],
+    keys: ['專題', '大學', '大三', '大四', '招募', '加入', '招生', 'undergrad', 'project', 'join', 'recruit'],
     text: '想做專題：今年收 3 組、每組 5 人。大學專題頁有招募說明和歷屆題目。',
     links: [link('專題生招募', '/undergrad/#recruit'), link('歷屆專題', '/undergrad/')],
   },
   research: {
-    keys: ['研究', '主題', '做什麼', '領域', '方向', 'AI', '論文題目'],
+    keys: ['研究', '主題', '做什麼', '領域', '方向', 'AI', '論文題目', 'research', 'topic'],
     text: `實驗室有 ${topics.length} 個研究主題：${topics.map((t) => t.data.title).join('、')}。想看哪一個？`,
     links: topics.map((t) => link(t.data.title, `/research/${t.id}/`)),
   },
   pubs: {
-    keys: ['論文', '著作', '發表', 'paper', '期刊', '會議', 'pdf'],
+    keys: ['論文', '著作', '發表', 'paper', '期刊', '會議', 'pdf', 'publication'],
     text: '著作頁可以依年份、類型篩選，也能只看得獎論文；部分早期論文有 PDF。',
     links: [link('著作', '/publications/')],
   },
   contact: {
-    keys: ['聯絡', '信箱', 'email', 'mail', '地址', '在哪', '位置', '研究室', '怎麼去', 'I-717'],
+    keys: ['聯絡', '信箱', 'email', 'mail', '地址', '在哪', '位置', '研究室', '怎麼去', 'I-717', 'contact', 'address', 'where', 'phone'],
     text: `實驗室在 ${site.lab_room ?? site.room ?? site.dept}，${site.address}。老師信箱：${site.email}。`,
     links: [link('聯絡與地圖', '/contact/'), link('寄信給老師', `mailto:${site.email}`)],
   },
   pi: {
-    keys: ['老師', '教授', '施皇嘉', '指導', '經歷', '學歷', '計畫'],
+    keys: ['老師', '教授', '施皇嘉', '指導', '經歷', '學歷', '計畫', 'professor', 'advisor', 'shih'],
     text: '指導教授施皇嘉：中央資管副教授，IEEE Trans. on Consumer Electronics 副編輯，2020–2024 在 IEEE ICME 舉辦 AI-Sports 國際工作坊。',
     links: [link('指導教授', '/pi/')],
   },
   news: {
-    keys: ['消息', '最新', '新聞', '公告', 'workshop', '工作坊', 'ai-sports', '報導', '影片'],
+    keys: ['消息', '最新', '新聞', '公告', 'workshop', '工作坊', 'ai-sports', '報導', '影片', 'news', 'video'],
     text: `最新消息：${news.slice(0, 3).map((n) => n.data.title).join('；')}。`,
     links: [...news.slice(0, 3).map((n) => link(n.data.title.slice(0, 18) + (n.data.title.length > 18 ? '…' : ''), `/news/${n.id}/`)), link('全部消息', '/news/')],
   },
   members: {
-    keys: ['成員', '學生', '誰', '團隊', '同學', '畢業'],
+    keys: ['成員', '學生', '誰', '團隊', '同學', '畢業', 'member', 'student', 'alumni'],
     text: '成員頁有目前的研究生與專題生，還有實驗室日常照片。',
     links: [link('成員', '/members/')],
   },
   me: {
-    keys: ['我的資料', '頭像', '拉拉看', '照片', '個人資料', '上傳'],
+    keys: ['我的資料', '頭像', '拉拉看', '照片', '個人資料', '上傳', 'profile', 'avatar'],
     text: '實驗室成員可以用手機在「我的資料」頁設定個人資料和頭像（含會眨眼的拉拉看）。',
     links: [link('我的資料', '/me/')],
   },

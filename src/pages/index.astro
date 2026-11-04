@@ -203,6 +203,7 @@ const strip = [...home.strip, ...home.strip];
   .home-title .lab { font-family: var(--display); font-size: 76px; font-weight: 600; letter-spacing: -.01em; }
   .home-zh { font-family: var(--serif); font-size: 22px; font-weight: 600; }
   .home-words { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; }
+  :global(html[lang="en"]) .home-words { flex-wrap: wrap; gap: 0 10px; }
   .word-window { display: inline-block; height: 36px; overflow: hidden; }
   .word-track { display: flex; flex-direction: column; transition: transform .6s cubic-bezier(.6,0,.2,1); }
   .word-track span { height: 36px; line-height: 36px; color: #E8B98A; white-space: nowrap; }

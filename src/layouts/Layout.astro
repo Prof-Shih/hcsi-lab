@@ -7,8 +7,9 @@ import ChatGuide from '../components/ChatGuide.astro';
 
 const site = await getSite();
 
-interface Props { title: string; description?: string; active: number }
-const { title, description = `${site.lab_name}（${site.short_name}）· ${site.dept}`, active } = Astro.props;
+interface Props { title: string; description?: string; active: number; i18n?: boolean }
+const { title, description = `${site.lab_name}（${site.short_name}）· ${site.dept}`, active, i18n = true } = Astro.props;
+const i18nUrl = u('/i18n/en.json');
 const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${title} · ${site.short_name}`;
 ---
 <!doctype html>
@@ -18,12 +19,27 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{fullTitle}</title>
   <meta name="description" content={description}>
+  <!-- 語言：選英文時先把畫面藏起來，等譯文套用完再顯示，避免先閃一下中文（最多等 1.5 秒） -->
+  <script is:inline>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        if (q === 'en' || q === 'zh') localStorage.setItem('hcsi-lang', q);
+        if (localStorage.getItem('hcsi-lang') === 'en') {
+          var r = document.documentElement;
+          r.classList.add('i18n-wait');
+          setTimeout(function () { r.classList.remove('i18n-wait'); }, 1500);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style is:inline>html.i18n-wait body { visibility: hidden; }</style>
   <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-i18n-off={i18n ? undefined : ""} data-i18n-url={i18nUrl}>
   <a class="sr-only" href="#main">跳到主要內容</a>
   <header class="site-header">
     <div class="inner">
@@ -35,6 +51,7 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
         {nav.map((n, i) => <a href={u(n.href)} aria-current={i === active ? 'page' : undefined} data-i={i}>{n.label}</a>)}
         <span class="nav-line" aria-hidden="true"></span>
       </nav>
+      <button class="lang-btn" type="button" data-lang-toggle lang="en" aria-label="Switch to English 切換為英文">EN</button>
       <button class="menu-btn" type="button" aria-label="開啟選單" aria-expanded="false" aria-controls="mobile-nav">
         <svg class="ic-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
         <svg class="ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="1.6" aria-hidden="true" style="display:none"><path d="M5 5l14 14M19 5L5 19"></path></svg>
@@ -108,5 +125,20 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
     mountFun();
     mountCursors();
   </script>
+  <script>
+    import { mountI18n } from '../scripts/i18n';
+    mountI18n(document.body.dataset.i18nUrl!);
+  </script>
 </body>
 </html>
+
+<style is:global>
+  .lang-btn { flex: none; margin-left: auto; min-width: 44px; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); font: 600 12px/1 var(--latin), var(--sans); letter-spacing: .04em; cursor: pointer; transition: color .2s, border-color .2s; }
+  .lang-btn:hover, .lang-btn:focus-visible { color: var(--ink); border-color: var(--accent); }
+  .site-header .nav { margin-left: auto; }
+  .site-header .nav + .lang-btn { margin-left: 0; }
+  @media (max-width: 1023px) { .site-header .nav + .lang-btn { margin-left: auto; } }
+  /* 英文較長：品牌副標換行、選單字小一點，維持 84px 一格（滑動底線依此計算） */
+  html[lang="en"] .brand-text span { max-width: 190px; }
+  html[lang="en"] .nav a { font-size: 13px; letter-spacing: -.01em; }
+</style>
