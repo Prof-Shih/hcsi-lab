@@ -4,13 +4,16 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import { NAV } from '../config/nav';
 import { getSite, getMembers, imagePicker, masterCat, initial } from '../lib';
+import details from '../data/project-details.json';
 
 const [site, { current, alumni }] = await Promise.all([getSite(), getMembers()]);
 // 頁面上已固定使用的圖先標記，卡片就不會再重複
 const pick = imagePicker(new Set(['/images/pose.jpg', '/images/robot.jpg', '/images/glove.jpg']));
-const masters = alumni.filter((m) => m.data.thesis).map(({ data: m }) => {
+const theses = details.theses as Record<string, { slug: string; hook: string }>;
+const masters = alumni.filter((x) => x.data.thesis).map(({ id, data: m }) => {
   const c = masterCat(m.thesis);
-  return { ...m, ...c, img: pick(c.imgs), year: m.grad_year, note: m.honor };
+  const d = theses[id];
+  return { ...m, ...c, img: pick(c.imgs), year: m.grad_year, note: m.honor, href: d ? u(`/graduate/${d.slug}/`) : '', hook: d?.hook ?? '' };
 });
 // 依 115 學年資管所碩士班科目表（共同必修、英文門檻、口試條件）與實驗室慣例整理
 const steps: [string, string, string[]][] = [
@@ -59,14 +62,16 @@ const steps: [string, string, string[]][] = [
     </div>
   </section>
 
-  <section class="wrap section reveal">
+  <section class="wrap section reveal" id="theses">
     <div class="row-between">
       <h2 class="h2">學長姐做了什麼 <small>{masters.length} 篇碩士論文</small></h2>
       <span class="note" style="font-size:14px">元智電機時期 · 畢業去向待補</span>
     </div>
     <div class="grid-auto">
-      {masters.map((m) => (
-        <div class="card zoom">
+      {masters.map((m) => {
+        const Card = m.href ? 'a' : 'div';
+        return (
+        <Card class="card zoom thesis" href={m.href || undefined}>
           <div style={`position:relative;aspect-ratio:16/9;background:${m.bg}`}>
             {m.img && <img src={u(m.img)} alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />}
             <span class="tag" style="left:12px">{m.tag}</span>
@@ -76,9 +81,12 @@ const steps: [string, string, string[]][] = [
             <span style="font-size:14px;color:var(--muted)">{m.name} · {m.year} 畢業</span>
             {m.note && <span class="star">★ {m.note}</span>}
             {m.job && <span style="font-size:13px;color:var(--accent-ink)">→ {m.job}</span>}
+            {m.hook && <span class="hook">{m.hook}</span>}
+            {m.href && <span class="more">看詳細 →</span>}
           </div>
-        </div>
-      ))}
+        </Card>
+        );
+      })}
     </div>
   </section>
 
@@ -110,6 +118,9 @@ const steps: [string, string, string[]][] = [
 </Layout>
 
 <style>
+  a.thesis { color: inherit; text-decoration: none; }
+  .thesis .hook { font-size: 14px; line-height: 1.6; color: var(--accent-ink); }
+  .thesis .more { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--accent-ink); }
   .why { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 20px; }
   .why-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
   .why-fill { color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; }

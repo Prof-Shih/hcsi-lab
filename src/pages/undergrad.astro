@@ -3,14 +3,17 @@ import { u } from '../lib';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import { NAV } from '../config/nav';
-import { getSite, projectCats, undergradProjects } from '../lib';
+import { getSite, projectCats, undergradProjects, projectSlug } from '../lib';
+import details from '../data/project-details.json';
 
 const site = await getSite();
 
 // 只顯示該組自己的成果圖（JSON 的 img）；沒有就顯示分類色塊
 const projects = undergradProjects.map((p) => {
   const c = projectCats.find((c) => c.re.test(p.zh + p.en))!;
-  return { ...p, cat: c.key, tag: c.tag, img: (p as { img?: string }).img ?? '', bg: c.bg };
+  const slug = projectSlug(p);
+  const d = (details.undergrad as Record<string, { hook: string }>)[slug];
+  return { ...p, cat: c.key, tag: c.tag, img: (p as { img?: string }).img ?? '', bg: c.bg, slug: d ? slug : '', hook: d?.hook ?? '' };
 });
 const chips = [{ key: 'all', tag: '全部' }, ...projectCats];
 const wins = [
@@ -69,14 +72,16 @@ const wins = [
     </div>
   </section>
 
-  <section class="wrap section" style="gap:20px">
+  <section class="wrap section" id="projects" style="gap:20px">
     <h2 class="h2">歷屆專題 <small class="count"><span id="shown">{projects.length}</span> / {projects.length} 組</small></h2>
     <div class="filters" role="group" aria-label="依主題篩選">
       {chips.map((c, i) => <button class="pill" type="button" data-f={c.key} aria-pressed={i === 0 ? 'true' : 'false'}>{c.tag}</button>)}
     </div>
     <div class="grid-auto">
-      {projects.map((p) => (
-        <div class="card zoom proj" data-cat={p.cat}>
+      {projects.map((p) => {
+        const Card = p.slug ? 'a' : 'div';
+        return (
+        <Card class="card zoom proj" data-cat={p.cat} href={p.slug ? u(`/undergrad/${p.slug}/`) : undefined}>
           <div style={`position:relative;aspect-ratio:16/9;background:${p.bg}`}>
             {p.img && <img src={u(p.img)} alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />}
             <span class="tag" style="left:12px">{p.tag}</span>
@@ -86,10 +91,13 @@ const wins = [
             <b style="font-size:16px;line-height:1.5">{p.zh}</b>
             <span class="proj-en" style="font-family:var(--latin);font-size:13px;color:var(--muted);line-height:1.5">{p.en}</span>
             <span style="font-size:14px;color:#3F3F3F">{p.names.join('、')}</span>
+            {p.hook && <span class="hook">{p.hook}</span>}
             {p.notes && <span class="star">★ {p.notes}</span>}
+            {p.slug && <span class="more">看詳細 →</span>}
           </div>
-        </div>
-      ))}
+        </Card>
+        );
+      })}
     </div>
     <span class="note">元智電機／電通英專時期；中央資管專題生名單老師更新中。</span>
   </section>
@@ -106,6 +114,9 @@ const wins = [
 </Layout>
 
 <style>
+  a.proj { color: inherit; text-decoration: none; }
+  .proj .hook { font-size: 14px; line-height: 1.6; color: var(--accent-ink); }
+  .proj .more { margin-top: auto; font-size: 13px; font-weight: 600; color: var(--accent-ink); }
   :global(html[lang="en"]) .proj-en { display: none; }
   .recruit { border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, #2F3B36, #4A685D); color: #F2EFE8; }
   .recruit-head { padding: 32px 32px 8px; display: flex; flex-direction: column; gap: 10px; }

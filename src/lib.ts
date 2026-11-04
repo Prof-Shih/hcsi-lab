@@ -92,6 +92,10 @@ export async function getTopics() {
 }
 
 export const undergradProjects = undergrad;
+// 專題的詳細頁網址代號：取該組成果圖的檔名（/images/projects/<slug>.jpg）；沒有成果圖就沒有詳細頁
+export const projectSlug = (p: { img?: string }) => p.img?.match(/\/images\/projects\/([\w-]+)\.jpg$/)?.[1] ?? '';
+// 學期代碼 1132 → 113 學年第 2 學期
+export const termLabel = (sem: string) => (/^\d{4}$/.test(sem) ? `${sem.slice(0, 3)} 學年第 ${sem[3]} 學期` : sem);
 
 // ---- 小工具 ----
 // 站內網址加上 base（例如 /hcsi-lab）。外部網址、mailto:、tel:、undefined 原樣回傳。

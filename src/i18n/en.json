@@ -664,6 +664,23 @@
     "依主題篩選": "Filter by area"
   },
 
+  "work_detail": {
+    "想解決什麼問題": "The problem",
+    "怎麼做": "How it works",
+    "做出了什麼": "What they achieved",
+    "成果圖": "Figures",
+    "內容與圖片皆取自該組的成果報告或論文。": "All text and images are drawn from the team's own report or paper.",
+    "← 全部專題": "← All projects",
+    "← 全部碩士論文": "← All master's theses",
+    "看詳細 →": "Details →",
+    "碩士論文": "Master's thesis",
+    "大學專題 ·": "Undergraduate project ·",
+    "碩士論文 ·": "Master's thesis ·",
+    "電機(甲)": "EE (Track A)",
+    "電機系": "Dept. of EE",
+    "電通英專": "International Bachelor Program in EE & Comm."
+  },
+
   "terms": {
     "1132 學期": "Spring 2025",
     "1131 學期": "Fall 2024",
@@ -692,6 +709,7 @@
     { "zh": "^(.+) · (\\d{4} 學期)$", "en": "$1 · $2" },
     { "zh": "^(.+) · (照片|影片)$", "en": "$1 · $2" },
     { "zh": "^\\[(照片|影片)待補\\]$", "en": "[$1 coming soon]" },
+    { "zh": "^(\\d{4}) 畢業$", "en": "Class of $1" },
     { "zh": "^共 (\\d+) 篇$", "en": "$1 papers" },
     { "zh": "^第 (\\d+) 則$", "en": "Slide $1" },
     { "zh": "^碩士論文 · (\\d{4})$", "en": "Master's thesis · $1" },
