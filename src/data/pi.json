@@ -7,14 +7,16 @@
   ],
   "exp": [
     { "y": "2025/08 – 現在", "t": "國立中央大學 資訊管理學系 副教授", "now": true },
+    { "y": "2025/08 – 2026/01", "t": "元智大學 電機工程學系 兼任教授" },
+    { "y": "2020/08 – 2022/07", "t": "元智大學 人工智慧應用創新中心 副主任" },
     { "y": "2019/08 – 2025/07", "t": "元智大學 電機工程學系 教授" },
     { "y": "2019/08 – 2023/01", "t": "元智大學 電機通訊國際學士學位學程 主任" },
     { "y": "2016/02 – 2019/07", "t": "元智大學 電機工程學系 副教授" },
     { "y": "2010/08 – 2016/01", "t": "元智大學 電機工程學系 助理教授" },
-    { "y": "2013 夏", "t": "University of Washington 電機系 訪問教授（美國）" },
-    { "y": "2011 夏", "t": "Óbuda University 資訊學院 訪問教授（匈牙利）" },
-    { "y": "2008", "t": "工研院 資訊與通訊研究所" },
-    { "y": "2006 – 2007", "t": "University of Washington 訪問學者（Prof. Jenq-Neng Hwang）" }
+    { "y": "2013/07 – 2013/09", "t": "University of Washington 電機系 訪問教授（美國）" },
+    { "y": "2011/07 – 2011/09", "t": "Óbuda University 資訊學院 訪問教授（匈牙利）" },
+    { "y": "2008/01 – 2008/12", "t": "工研院 資訊與通訊研究所 助理工程師" },
+    { "y": "2006/09 – 2007/04", "t": "University of Washington 電機系 Information Processing Lab 訪問學者（Prof. Jenq-Neng Hwang）" }
   ],
   "honors": [
     { "y": "2024", "t": "IWAIT 2024 最佳論文獎" },
@@ -40,6 +42,7 @@
     { "k": "Workshop 主辦", "v": "IEEE ICME AI-Sports 2020–2024、AVSS CAVA 2019、AIVR ETXR 2018" },
     { "k": "大會職務", "v": "ICCE-TW26 Program Co-Chair、GCCE19–21 International Coordinator、ICCE-TW20/21 Publication Chair" },
     { "k": "Area Chair", "v": "VCIP18、ICME20、TANET22、TANET24" },
+    { "k": "Session Chair", "v": "Organized Session：ICCE11、SMC14、GCCE15–18、ISCAS18、GCCE19、ACM MMSports19；Special Session：ICCE-TW19、CVGIP24、GEM24" },
     { "k": "審稿／TPC", "v": "ICME、ICASSP、ISCAS、ACM MM、ACM MMSports、ICCE 等" },
     { "k": "學會", "v": "IEEE Senior Member；IPPR、CIEE、TAAI、TaiwanCHI 會員" }
   ],
@@ -48,6 +51,7 @@
     { "kind": "國際學界", "name": "Hokkaido University", "what": "Prof. Takahiro Ogawa · 團隊運動分析" },
     { "kind": "產業", "name": "智匯創育（耐能科技子公司）", "what": "AIoT 課程、邊緣 AI 應用" },
     { "kind": "產業", "name": "智之視 IdeasLab", "what": "高爾夫／棒球 AI 顧問" },
+    { "kind": "產業", "name": "匯陽百貨（臺北市網球中心）", "what": "網球賽事分析計畫合作" },
     { "kind": "醫院", "name": "壢新國際醫院", "what": "復健治療科" },
     { "kind": "醫院", "name": "亞東紀念醫院", "what": "視網膜影像智慧醫療" }
   ],
@@ -59,5 +63,5 @@
     { "y": "2020–2021", "t": "基於深度學習之車輛三維可變外觀模型及其應用", "s": "科技部" },
     { "y": "2018–2020", "t": "群模共舞：互動藝術擴增實境劇院—舞者與機器人同步互動", "s": "科技部" }
   ],
-  "courses": ["計算機概論", "數位邏輯設計", "程式語言", "人機互動導論", "影像處理", "影像處理演算法", "即時多媒體人機互動", "行動裝置相機應用開發", "電機通訊導論", "系統設計與實作", "畢業專題"]
+  "courses": ["計算機概論", "數位邏輯設計", "程式語言", "人機互動導論", "影像處理", "影像處理演算法", "即時多媒體人機互動", "行動裝置相機應用開發", "電機通訊導論", "系統設計與實作", "畢業專題", "數位邏輯設計實驗", "專題討論（Seminar for EE students）"]
 }

@@ -1,0 +1,27 @@
+---
+// 碩士論文詳細內容頁：/graduate/<slug>/（資料：src/data/project-details.json 的 theses，以成員檔名對應）
+import Layout from '../../layouts/Layout.astro';
+import WorkDetail from '../../components/WorkDetail.astro';
+import { NAV } from '../../config/nav';
+import { getMembers } from '../../lib';
+import details from '../../data/project-details.json';
+
+export async function getStaticPaths() {
+  const { alumni } = await getMembers();
+  const t = details.theses as Record<string, any>;
+  return alumni.filter((m) => t[m.id]).map((m) => ({ params: { slug: t[m.id].slug }, props: { m: m.data, d: t[m.id] } }));
+}
+const { m, d } = Astro.props;
+---
+<Layout title={m.thesis ?? m.name} active={NAV.graduate} description={d.hook}>
+  <WorkDetail
+    kind="碩士論文"
+    title={m.thesis ?? ''}
+    people={m.name}
+    meta={[`${m.grad_year} 畢業`, ...(m.honor ? [`★ ${m.honor}`] : [])]}
+    advisors={d.advisors}
+    d={d}
+    slug={d.slug}
+    back={{ href: '/graduate/#theses', label: '← 全部碩士論文' }}
+  />
+</Layout>

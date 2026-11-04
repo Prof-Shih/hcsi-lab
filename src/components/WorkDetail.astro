@@ -1,0 +1,110 @@
+---
+// 大學專題／碩士論文的詳細內容頁（資料：src/data/project-details.json，依各組報告逐篇整理）
+import { u } from '../lib';
+
+interface Stat { num: string; label: string }
+interface Fig { cap: string }
+interface Props {
+  kind: string; // 「大學專題」或「碩士論文」
+  title: string;
+  titleEn?: string;
+  people: string;
+  meta: string[];
+  venue?: string;
+  advisors?: string;
+  d: { hook: string; problem: string; method: string[]; results: string[]; stats: Stat[]; figures: Fig[]; videos?: { src: string; cap: string }[] };
+  slug: string;
+  back: { href: string; label: string };
+}
+const { kind, title, titleEn, people, meta, venue, advisors, d, slug, back } = Astro.props;
+const figs = d.figures.map((f, i) => ({ ...f, src: u(`/images/details/${slug}-${i + 1}.jpg`) }));
+---
+<article class="work">
+  <header class="work-hero">
+    <div class="wrap">
+      <a class="work-back" href={u(back.href)}>{back.label}</a>
+      <span class="eyebrow">{kind}{venue && <> · <b>{venue}</b></>}</span>
+      <p class="work-hook">{d.hook}</p>
+      <h1 class="work-title">{title}</h1>
+      {titleEn && <p class="work-en">{titleEn}</p>}
+      <p class="work-people">{people}</p>
+      <p class="work-meta">{meta.map((m) => <span>{m}</span>)}{advisors && <span><span>指導教授</span> <span>{advisors}</span></span>}</p>
+    </div>
+  </header>
+
+  <div class="wrap work-body">
+    <figure class="work-lead"><img src={figs[0].src} alt={figs[0].cap} /><figcaption>{figs[0].cap}</figcaption></figure>
+
+    <ul class="work-stats">
+      {d.stats.map((s) => <li><b>{s.num}</b><span>{s.label}</span></li>)}
+    </ul>
+
+    <section>
+      <h2>想解決什麼問題</h2>
+      <p>{d.problem}</p>
+    </section>
+
+    <section>
+      <h2>怎麼做</h2>
+      <ol class="work-steps">{d.method.map((m) => <li>{m}</li>)}</ol>
+    </section>
+
+    <section>
+      <h2>做出了什麼</h2>
+      <ul class="work-results">{d.results.map((r) => <li>{r}</li>)}</ul>
+    </section>
+
+    {figs.length > 1 && (
+      <section>
+        <h2>成果圖</h2>
+        <div class="work-figs">
+          {figs.slice(1).map((f) => <figure><img src={f.src} alt={f.cap} loading="lazy" /><figcaption>{f.cap}</figcaption></figure>)}
+        </div>
+      </section>
+    )}
+
+    {d.videos && (
+      <section>
+        <h2>影片</h2>
+        <div class="work-figs">
+          {d.videos.map((v) => <figure><video controls preload="none" poster={u(`/videos/${v.src}.jpg`)} src={u(`/videos/${v.src}.mp4`)}></video><figcaption>{v.cap}</figcaption></figure>)}
+        </div>
+      </section>
+    )}
+
+    <p class="work-src">內容與圖片皆取自該組的成果報告或論文。</p>
+    <a class="btn" href={u(back.href)}>{back.label}</a>
+  </div>
+</article>
+
+<style>
+  .work-hero { background: var(--pine); color: #F2EFE8; padding: 48px 0 40px; }
+  .work-hero .wrap { display: flex; flex-direction: column; gap: 10px; }
+  .work-back { color: #CFE0D8; font-size: 14px; text-decoration: none; }
+  .work-back:hover { color: #fff; }
+  .eyebrow { font-size: 13px; letter-spacing: .08em; color: #CFE0D8; }
+  .eyebrow b { color: #E8B98A; font-weight: 600; }
+  .work-hook { margin: 6px 0 0; font-size: clamp(22px, 3.2vw, 32px); font-weight: 700; line-height: 1.4; color: #fff; max-width: 30em; }
+  .work-title { margin: 4px 0 0; font-family: var(--serif); font-size: clamp(18px, 2.2vw, 22px); font-weight: 600; line-height: 1.5; color: #F2EFE8; }
+  :global(html[lang="en"]) .work-en { display: none; }
+  .work-en { margin: 0; font-family: var(--latin); font-size: 14px; color: #CFE0D8; line-height: 1.5; }
+  .work-people { margin: 6px 0 0; font-size: 15px; }
+  .work-meta { margin: 0; font-size: 13px; color: #CFE0D8; display: flex; flex-wrap: wrap; gap: 4px 0; }
+  .work-meta > span + span::before { content: '·'; margin: 0 8px; }
+  .work-body { display: flex; flex-direction: column; gap: 32px; padding-top: 40px; padding-bottom: 72px; max-width: 860px; }
+  .work-lead { margin: 0; }
+  .work-lead img, .work-figs img, .work-figs video { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: block; }
+  figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .work-stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .work-stats li { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+  .work-stats b { font-family: var(--latin); font-size: 28px; color: var(--accent-ink); line-height: 1.1; }
+  .work-stats span { font-size: 13px; color: var(--muted); }
+  .work-body h2 { font-family: var(--serif); font-size: 22px; margin: 0 0 12px; }
+  .work-body p, .work-body li { font-size: 16px; line-height: 1.85; }
+  .work-body section p { margin: 0; }
+  .work-steps, .work-results { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 8px; }
+  .work-figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .work-figs figure { margin: 0; }
+  .work-src { font-size: 13px; color: var(--muted); margin: 0; }
+  .work-body .btn { align-self: flex-start; }
+</style>

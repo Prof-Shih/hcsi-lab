@@ -4,6 +4,6 @@ authors:
   - "H. C. Shih*"
 venue: "IPPR Image and Recognition (影像與識別), vol. 25, no. 1, pp. 48-69, March 2019. (Invited, in Chinese)"
 year: 2019
-type: "other"
+type: "journal"
 domestic: true
 ---

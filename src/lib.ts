@@ -92,6 +92,10 @@ export async function getTopics() {
 }
 
 export const undergradProjects = undergrad;
+// 專題的詳細頁網址代號：取該組成果圖的檔名（/images/projects/<slug>.jpg）；沒有成果圖就沒有詳細頁
+export const projectSlug = (p: { img?: string }) => p.img?.match(/\/images\/projects\/([\w-]+)\.jpg$/)?.[1] ?? '';
+// 學期代碼 1132 → 113 學年第 2 學期
+export const termLabel = (sem: string) => (/^\d{4}$/.test(sem) ? `${sem.slice(0, 3)} 學年第 ${sem[3]} 學期` : sem);
 
 // ---- 小工具 ----
 // 站內網址加上 base（例如 /hcsi-lab）。外部網址、mailto:、tel:、undefined 原樣回傳。
@@ -119,21 +123,29 @@ export function related(t: Topic, alumni: Member[], pubs: Pub[]) {
   };
 }
 
-// 專題分類（大學專題頁的篩選）
+// 專題分類（大學專題頁的篩選）。只決定分類標籤與色塊，不配圖：
+// 以前從分類圖庫依序挑圖，結果圖片和題目對不上（老師 11/3 指正）。
+// 要放圖，請在 src/data/undergrad-projects.json 該筆加 img（必須是那組專題自己的成果圖）。
 export const projectCats = [
-  { key: 'wear', tag: '智慧運動穿戴', re: /棒球|IMU|槓鈴|手眼/, imgs: ['/images/baseball.jpg', '/images/glove2.jpg', '/images/bat-structure.jpg', '/images/ball-exploded.jpg', '/images/bat2.jpg', '/images/ball-module.jpg'], bg: '#5C4A37' },
-  { key: 'video', tag: '運動影像分析', re: /足球|籃球|高爾夫|姿態|好球帶|校準|VR/, imgs: ['/images/pose.jpg', '/images/soccer-lines.jpg', '/images/basketball.jpg', '/images/referee.jpg', '/images/baseball-frames.jpg', '/images/jersey.jpg'], bg: '#2F3B36' },
-  { key: 'med', tag: '智慧醫療影像', re: /視網膜|阿茲海默|口罩|臉部/, imgs: [], bg: '#4A685D' },
-  { key: 'hci', tag: '人機互動與 3D', re: /擴增|Lighthouse|立體|門禁|Kinect|KINECT/, imgs: ['/images/mocap-3d.jpg', '/images/robot-sense.jpg'], bg: '#6B5A48' },
-  { key: 'vision', tag: '影像辨識', re: /./, imgs: ['/images/scoreboard.jpg', '/images/baseball-gui.jpg'], bg: '#3E4A5A' },
+  { key: 'wear', tag: '智慧運動穿戴', re: /棒球|IMU|槓鈴|手眼/, bg: '#5C4A37' },
+  { key: 'video', tag: '運動影像分析', re: /足球|籃球|高爾夫|姿態|好球帶|校準|VR/, bg: '#2F3B36' },
+  { key: 'med', tag: '智慧醫療影像', re: /視網膜|阿茲海默/, bg: '#4A685D' },
+  { key: 'hci', tag: '人機互動與 3D', re: /擴增|Lighthouse|立體|門禁|Kinect|KINECT/, bg: '#6B5A48' },
+  { key: 'vision', tag: '影像辨識', re: /./, bg: '#3E4A5A' },
 ];
 
 // 碩論分類（研究所頁的卡片圖）
+// imgs 只放「就是這篇論文做的東西」的圖（依老師〈5. IoT works〉：智慧棒球、球棒、打擊手套、機械手臂拼圖）。
+// 只是主題相近、但不是該論文成果的圖不要放（例：球衣辨識論文不放老師 2005 年的球衣圖）。
 const masterCats = [
+  { re: /夜間道路分割/, tag: '影像與訊號處理', imgs: ['/images/theses/cao-night-road.jpg'], bg: '#6B5A48' },
+  { re: /高速微小物體軌跡/, tag: '運動影像分析', imgs: ['/images/theses/chen-trajectory.jpg'], bg: '#2F3B36' },
+  { re: /邊緣裝置推論/, tag: '機器人與邊緣 AI', imgs: ['/images/theses/tu-edge-devices.jpg'], bg: '#3E4A5A' },
   { re: /手套/, tag: '智慧運動穿戴', imgs: ['/images/glove.jpg', '/images/glove2.jpg'], bg: '#5C4A37' },
   { re: /球棒/, tag: '智慧運動穿戴', imgs: ['/images/bat.jpg', '/images/bat-structure.jpg'], bg: '#5C4A37' },
-  { re: /棒球|FSR/, tag: '智慧運動穿戴', imgs: ['/images/baseball.jpg', '/images/ball-exploded.jpg', '/images/ball-module.jpg', '/images/baseball-frames.jpg'], bg: '#5C4A37' },
-  { re: /球衣|軌跡/, tag: '運動影像分析', imgs: ['/images/jersey.jpg', '/images/pose2.jpg'], bg: '#2F3B36' },
+  { re: /FSR|壓力感測/, tag: '智慧運動穿戴', imgs: ['/images/baseball.jpg', '/images/ball-exploded.jpg', '/images/ball-module.jpg'], bg: '#5C4A37' },
+  { re: /棒球/, tag: '智慧運動穿戴', imgs: [], bg: '#5C4A37' },
+  { re: /球衣|軌跡/, tag: '運動影像分析', imgs: [], bg: '#2F3B36' },
   { re: /拼圖|機械/, tag: '機器人與邊緣 AI', imgs: ['/images/arm.jpg'], bg: '#3E4A5A' },
   { re: /視網膜/, tag: '智慧醫療影像', imgs: [], bg: '#4A685D' },
   { re: /表情|輕量/, tag: '機器人與邊緣 AI', imgs: [], bg: '#3E4A5A' },

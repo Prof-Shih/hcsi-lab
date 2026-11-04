@@ -1,0 +1,938 @@
+{
+  "_說明": "大學專題與碩士論文的詳細內容頁資料。每一篇都依該組成果報告／論文原文整理（2026-11-04 逐篇閱讀），數字皆出自原文。中英文對照：*_en 由 AI 專業翻譯，供英文版使用。",
+  "undergrad": {
+    "soccer-depth": {
+      "hook": "一台轉播攝影機、不用校正，就能量出球員之間的真實距離",
+      "hook_en": "One broadcast camera, no calibration: real distances between players",
+      "venue": "CVGIP 2025",
+      "problem": "傳統要量球員在場上的位置，得架好幾台同步攝影機、事先量好相機參數，比賽現場很難做到。本專題只用單一畫面，就推估每位球員離鏡頭多遠、彼此距離多少。",
+      "problem_en": "Locating players on the pitch usually requires several synchronized, pre-calibrated cameras, which is hard to set up at a real match. This project estimates how far each player is from the camera, and from each other, using a single frame.",
+      "method": [
+        "用 Depth Anything V2（Transformer 架構）從單張畫面估出整張深度圖，不需要相機內外參數",
+        "用 RF-DETR 偵測每位球員，取框中心的深度當作球員位置",
+        "計算球員兩兩之間的 3D 距離；同隊連綠線、對手連紅線，直接畫在畫面上"
+      ],
+      "method_en": [
+        "Depth Anything V2 (a Transformer model) predicts a full depth map from one frame, with no camera parameters needed",
+        "RF-DETR detects every player; the depth at each box centre gives the player's position",
+        "3D distances are computed for every pair of players and drawn on the frame: green lines for teammates, red for opponents"
+      ],
+      "stats": [
+        {
+          "num": "0.0097",
+          "label": "相對深度誤差 Abs Rel",
+          "label_en": "Abs Rel depth error"
+        },
+        {
+          "num": "0",
+          "label": "需要的相機參數",
+          "label_en": "camera parameters needed"
+        }
+      ],
+      "results": [
+        "在 SoccerNet-Depth 2025 測試集（以 eFootball、NBA 2K 遊戲畫面合成）上：Abs Rel 0.0097、RMSE 0.0085、SILog 1.235",
+        "可應用於戰術分析、VR 觀賽與 AR 轉播"
+      ],
+      "results_en": [
+        "On the SoccerNet-Depth 2025 test set (synthesized from eFootball and NBA 2K footage): Abs Rel 0.0097, RMSE 0.0085, SILog 1.235",
+        "Applications include tactical analysis, VR viewing and AR-enhanced broadcasts"
+      ],
+      "figures": [
+        {
+          "cap": "原始比賽畫面",
+          "cap_en": "Original match frame"
+        },
+        {
+          "cap": "Depth Anything V2 估出的深度圖（越亮越近）",
+          "cap_en": "Depth map from Depth Anything V2 (brighter = closer)"
+        },
+        {
+          "cap": "球員偵測與兩兩距離：同隊綠線、對手紅線",
+          "cap_en": "Player detection and pairwise distances: green for teammates, red for opponents"
+        }
+      ]
+    },
+    "golf-lane": {
+      "hook": "沒有車道線的高爾夫球場，AI 也知道球車有沒有開偏",
+      "hook_en": "No lane markings on a golf course — the AI still knows when the cart drifts",
+      "venue": "CVGIP 2025",
+      "problem": "一般車道偏移偵測靠白線，但高爾夫球場、鄉間小路、山路根本沒有標線。自動駕駛球車、校園巡邏車、服務機器人都需要在這種路上判斷自己有沒有偏離。",
+      "problem_en": "Lane-departure systems rely on painted lines, but golf courses, country lanes and mountain roads have none. Autonomous golf carts, campus patrol vehicles and service robots still need to know when they are drifting.",
+      "method": [
+        "組員到南峰高爾夫球場實地拍攝 2,260 張道路影像，自己標註道路、草地、車、人、背景五類",
+        "比較 DeepLabV3+（MobileNet／ResNet-50／ResNet-101）與輕量 STDC-Seg（STDC1／STDC2）五種模型",
+        "提出兩種偏移估計：40 條掃描線擬合道路兩側曲線求中心（偏移超過 20% 就警告）；以及梯形視野四象限統計非道路像素，直接建議左轉、右轉或緊急警告"
+      ],
+      "method_en": [
+        "The team photographed 2,260 road images at Nanfeng Golf Course and labelled five classes: road, grass, car, person and background",
+        "Five models were compared: DeepLabV3+ (MobileNet / ResNet-50 / ResNet-101) and the lightweight STDC-Seg (STDC1 / STDC2)",
+        "Two deviation estimators: fitting both road edges along 40 scanlines to find the centre (warning above 20% offset), and a trapezoidal field-of-view split into quadrants that recommends turning left, right, or an emergency warning"
+      ],
+      "stats": [
+        {
+          "num": "0.951",
+          "label": "道路＋草地 mIoU",
+          "label_en": "road + grass mIoU"
+        },
+        {
+          "num": "2,260",
+          "label": "張自拍標註影像",
+          "label_en": "self-collected images"
+        }
+      ],
+      "results": [
+        "測試集上 DeepLabV3+ ResNet-50／ResNet-101 的 mIoU 約 0.951，ResNet-101 整體準確率 0.9785 最高",
+        "STDC2 模型輕量、速度快，適合球車上即時運算；換到紐西蘭、挪威、法國等沒看過的道路，ResNet-101 最穩定",
+        "兩種偏移估計方法互補：邊界清楚時用曲線擬合算出精確偏移量，邊界模糊時用梯形重心法給出方向建議"
+      ],
+      "results_en": [
+        "On the test set, DeepLabV3+ with ResNet-50 / ResNet-101 reached about 0.951 mIoU; ResNet-101 had the best overall accuracy (0.9785)",
+        "STDC2 is light and fast enough for on-cart real-time use; on unseen roads in New Zealand, Norway and France, ResNet-101 was the most robust",
+        "The two estimators complement each other: curve fitting gives precise offsets when edges are clear, and the trapezoid method gives direction advice when they are blurred"
+      ],
+      "figures": [
+        {
+          "cap": "球場實拍：沒有任何車道線的道路",
+          "cap_en": "On-site footage: roads with no lane markings at all"
+        },
+        {
+          "cap": "語意分割結果與偏移百分比",
+          "cap_en": "Segmentation output with offset percentages"
+        },
+        {
+          "cap": "梯形重心法給出「右轉」「警告」等建議",
+          "cap_en": "The trapezoid method suggests \"turn right\", \"warning\", and more"
+        }
+      ]
+    },
+    "handshake": {
+      "hook": "AI 生圖最怕畫手：自動找出六根手指的握手並修好",
+      "hook_en": "AI art's weak spot is hands: auto-detecting and fixing six-fingered handshakes",
+      "venue": "CVGIP 2025",
+      "problem": "生成式 AI 畫的手常常多一根、少一根或扭曲變形，兩人握手的畫面最容易出錯。現有修復方法多半要人工圈選範圍，大量圖片根本修不完。",
+      "problem_en": "Generative AI often draws hands with extra, missing or twisted fingers, and handshakes are the hardest case. Existing fixes usually need someone to mark the region by hand, which does not scale.",
+      "method": [
+        "YOLOv8 分類器先挑出「握手」的圖片",
+        "MediaPipe 找出手部 21 個關鍵點，裁出 512×512 的手部區域；偵測失敗就自動調亮度、銳化，最多重試 5 次",
+        "第二個 YOLOv8 分類器判斷這隻手正常還是異常",
+        "異常的手交給 Stable Diffusion＋ControlNet，依手部骨架重畫，再精準貼回原圖"
+      ],
+      "method_en": [
+        "A YOLOv8 classifier first picks out the handshake images",
+        "MediaPipe finds 21 hand keypoints and crops a 512×512 hand region, automatically brightening and sharpening up to five times if detection fails",
+        "A second YOLOv8 classifier decides whether each hand is normal or abnormal",
+        "Abnormal hands are redrawn by Stable Diffusion + ControlNet guided by the hand skeleton, then pasted back exactly in place"
+      ],
+      "stats": [
+        {
+          "num": "99.2%",
+          "label": "手勢分類準確率",
+          "label_en": "gesture classification accuracy"
+        },
+        {
+          "num": "94.7%",
+          "label": "異常手判斷準確率",
+          "label_en": "abnormal-hand accuracy"
+        }
+      ],
+      "results": [
+        "621 張圖中 593 張成功找到手（95.5%），全部貼回原圖、沒有錯位",
+        "全自動流程每張約 7–10 秒，可以批次處理",
+        "測試 10 組提示詞，第 5 組能同時修好扭曲、少指、多指三種缺陷"
+      ],
+      "results_en": [
+        "Hands were found in 593 of 621 images (95.5%), and every repaired hand was pasted back without misalignment",
+        "The fully automatic pipeline takes about 7–10 seconds per image and supports batch processing",
+        "Of ten prompt sets tested, set 5 fixed all three defect types: distorted, missing and extra fingers"
+      ],
+      "figures": [
+        {
+          "cap": "全自動修復流程",
+          "cap_en": "The fully automatic repair pipeline"
+        },
+        {
+          "cap": "系統判定為異常的手",
+          "cap_en": "A hand flagged as abnormal"
+        },
+        {
+          "cap": "修復完成、貼回原圖的握手畫面",
+          "cap_en": "The handshake after repair, pasted back into the image"
+        }
+      ]
+    },
+    "yoga": {
+      "hook": "在家練瑜珈也有教練：一台攝影機即時幫你打分數",
+      "hook_en": "A yoga coach at home: one camera scores your pose in real time",
+      "venue": "CVGIP 2025",
+      "problem": "瑜珈講究姿勢精準，角度錯了容易受傷，但在家或遠距練習時沒有老師即時糾正；穿戴式感測器又貴又不方便。",
+      "problem_en": "Yoga depends on precise alignment, and poor angles can cause injury, yet nobody corrects you when you practise at home. Wearable sensors are costly and inconvenient.",
+      "method": [
+        "MediaPipe Pose 抓出全身 33 個關鍵點",
+        "ResNet18 看整張畫面辨認 10 種常見姿勢（橋式、下犬式、眼鏡蛇、戰士一二三式等），訓練資料約 7,500 張",
+        "依專業教學影片建立每個姿勢的標準角度，用餘弦定理算出膝、肩、身體線等關節角度",
+        "非線性評分：誤差 20° 內只輕扣分，誤差越大扣越重，超過 60° 為 0 分"
+      ],
+      "method_en": [
+        "MediaPipe Pose extracts 33 body keypoints",
+        "ResNet18 recognises 10 common poses (bridge, downward dog, cobra, warrior I–III and more) from the full frame, trained on about 7,500 images",
+        "Reference angles for each pose come from expert instruction videos; joint angles (knee, shoulder, body line) are computed with the law of cosines",
+        "Non-linear scoring: small penalties within 20°, heavier ones as error grows, and zero beyond 60°"
+      ],
+      "stats": [
+        {
+          "num": "10",
+          "label": "種瑜珈姿勢",
+          "label_en": "yoga poses"
+        },
+        {
+          "num": "61→99",
+          "label": "橋式分數進步",
+          "label_en": "bridge pose score, start to finish"
+        }
+      ],
+      "results": [
+        "影片上即時疊出骨架、姿勢名稱、各關節角度與誤差，另輸出逐幀 CSV 報告",
+        "示範中橋式從過渡動作的 61.2 分，逐步調整到 98.7 分",
+        "分類模型訓練準確率 91.5%、驗證 82%，並以 8,475 幀影片測試；只需要一般攝影機，CPU 就能跑"
+      ],
+      "results_en": [
+        "The video is overlaid in real time with the skeleton, pose name, joint angles and errors, plus a frame-by-frame CSV report",
+        "In the demo, the bridge pose rises from 61.2 during the transition to 98.7 once aligned",
+        "The classifier reached 91.5% training and 82% validation accuracy and was tested on 8,475 video frames; it needs only an ordinary camera and runs on a CPU"
+      ],
+      "figures": [
+        {
+          "cap": "MediaPipe 標出的全身關鍵點",
+          "cap_en": "Full-body keypoints from MediaPipe"
+        },
+        {
+          "cap": "橋式即時評分",
+          "cap_en": "Real-time scoring of the bridge pose"
+        },
+        {
+          "cap": "戰士三式：畫面右上顯示分數與角度",
+          "cap_en": "Warrior III: score and angles shown at the top right"
+        }
+      ]
+    },
+    "vr-tennis": {
+      "hook": "戴上 VR，從 Djokovic 的眼睛看澳網八強",
+      "hook_en": "Put on VR and watch the Australian Open quarter-final through Djokovic's eyes",
+      "venue": "CVGIP 2025",
+      "problem": "網球轉播多半只有中場一個固定視角，看不出球員站位、擊球角度與戰術；YouTube 360 影片也只能轉頭，不能自己走到想看的位置。",
+      "problem_en": "Tennis broadcasts mostly use one fixed mid-court camera, hiding player positioning, shot angles and tactics. Even YouTube 360 videos only let you turn your head, not move where you want.",
+      "method": [
+        "自製 Python＋OpenCV 標記工具，逐幀標出球與兩位球員的位置（擊球、最高點、落地三個關鍵點）",
+        "在 Unity 依重力公式重建球的 3D 拋物線，把整段比賽還原成 3D 場景",
+        "以 HTC VIVE Pro Eye＋SteamVR 提供 9 種視角：兩位球員第一人稱、跟著球飛、球場四個角落、轉播視角與自由移動"
+      ],
+      "method_en": [
+        "A custom Python + OpenCV tool labels the ball and both players frame by frame (contact, apex and landing)",
+        "Unity rebuilds the ball's 3D parabola from the physics of gravity, turning the rally into a 3D scene",
+        "HTC VIVE Pro Eye + SteamVR offers 9 viewpoints: each player's first-person view, a ride-along ball view, four court corners, the broadcast view and free movement"
+      ],
+      "stats": [
+        {
+          "num": "9",
+          "label": "種觀看視角",
+          "label_en": "viewing angles"
+        },
+        {
+          "num": "8.3/10",
+          "label": "使用者整體評分",
+          "label_en": "overall user rating"
+        }
+      ],
+      "results": [
+        "以 2025 澳網男單八強 Djokovic 對 Alcaraz 的 10 段來回重建（素材來自愛爾達體育 YouTube）",
+        "11 位使用者試用：真實感 4/5、視角操作 4.3/5、流暢度 4.8/5、整體 8.3/10",
+        "坦白的限制：原影片是斜角拍攝，部分軌跡有透視誤差；跟球飛的視角有人會暈"
+      ],
+      "results_en": [
+        "Ten rallies from the 2025 Australian Open men's quarter-final, Djokovic vs. Alcaraz, were rebuilt (footage from ELTA Sports on YouTube)",
+        "Eleven users rated realism 4/5, view control 4.3/5, smoothness 4.8/5 and the overall experience 8.3/10",
+        "Honest limitations: the source footage is shot at an angle, causing some perspective errors, and a few users felt dizzy in the ball view"
+      ],
+      "figures": [
+        {
+          "cap": "自製逐幀標記工具",
+          "cap_en": "The custom frame-by-frame labelling tool"
+        },
+        {
+          "cap": "五種預設球場視角",
+          "cap_en": "Five preset court viewpoints"
+        },
+        {
+          "cap": "VR 大廳：選片段、選視角",
+          "cap_en": "The VR lobby: choose a rally and a viewpoint"
+        }
+      ]
+    },
+    "pose-lite": {
+      "hook": "姿態估測模型瘦身：計算量少約三成，準確率只差 0.1%",
+      "hook_en": "A slimmer pose model: about 30% less computation, only 0.1% less accurate",
+      "venue": "MIPR 2024",
+      "problem": "準確的人體姿態估測模型通常很肥，難以在手機上即時跑。本專題以 Google BlazePose 為基礎，挑戰在不犧牲準確率的前提下把模型變輕。",
+      "problem_en": "Accurate human pose estimators are usually too heavy to run in real time on a phone. Starting from Google's BlazePose, this project slims the model down without losing accuracy.",
+      "method": [
+        "移除座標回歸分支，只用熱圖輸出關節位置（LBH 架構）",
+        "膨脹卷積：維持 3×3 的計算量，卻有 5×5 的視野",
+        "PixelShuffle 取代「卷積＋雙線性插值」的上採樣",
+        "加入 SENet 注意力機制，用極少計算量把準確率補回來"
+      ],
+      "method_en": [
+        "The coordinate-regression branch is removed; joints are read from heatmaps only (the LBH architecture)",
+        "Dilated convolution: a 5×5 field of view at the cost of a 3×3 kernel",
+        "PixelShuffle replaces convolution plus bilinear interpolation for upsampling",
+        "A Squeeze-and-Excitation (SENet) block recovers accuracy at almost no extra cost"
+      ],
+      "stats": [
+        {
+          "num": "79.13%",
+          "label": "PCKh@0.5（原模型 79.23%）",
+          "label_en": "PCKh@0.5 (original: 79.23%)"
+        },
+        {
+          "num": "45→38 ms",
+          "label": "推論延遲",
+          "label_en": "inference latency"
+        }
+      ],
+      "results": [
+        "參數量從 904K 降到 773K，計算量約減少 30%，延遲從 45 ms 降到 38 ms",
+        "以 COCO 訓練、MPII 測試：左腳被擋住時，只有加了 SENet 的版本不會把右腳誤認成左腳",
+        "延伸示範：高爾夫揮桿姿勢檢測"
+      ],
+      "results_en": [
+        "Parameters dropped from 904K to 773K, computation fell by about 30%, and latency went from 45 ms to 38 ms",
+        "Trained on COCO and tested on MPII: when the left leg is hidden, only the SENet version avoids mistaking the right foot for the left",
+        "Extended demo: golf swing posture analysis"
+      ],
+      "figures": [
+        {
+          "cap": "MPII 測試：四種模型在遮擋情況下的比較",
+          "cap_en": "MPII tests: four models compared under occlusion"
+        },
+        {
+          "cap": "訓練準確率曲線",
+          "cap_en": "Training accuracy curves"
+        },
+        {
+          "cap": "應用：高爾夫揮桿姿勢估測",
+          "cap_en": "Application: golf swing pose estimation"
+        }
+      ]
+    },
+    "strike-zone": {
+      "hook": "把雙眼攝影機埋進本壘板，讓好壞球不再靠主審的眼睛",
+      "hook_en": "A stereo camera buried in home plate, so balls and strikes no longer rest on the umpire's eyes",
+      "venue": "",
+      "problem": "好球壞球靠主審主觀判斷，常引發爭議；職棒用的鷹眼系統要在球場四周架多台高速攝影機，成本高又難安裝。",
+      "problem_en": "Ball and strike calls depend on the umpire's judgement and often cause disputes; the Hawk-Eye systems used in pro baseball need several high-speed cameras around the stadium.",
+      "method": [
+        "把雙目攝影機（oCamS-1MGN-U，60 fps）埋在本壘板裡朝上拍攝",
+        "棋盤格雙目標定、立體校正後，用 YOLOv7 偵測棒球",
+        "以 SGBM 演算法產生視差圖、WLS 濾波去雜訊，推算棒球每一幀的 3D 座標",
+        "畫出 3D 軌跡與好球帶，球經過好球帶就顯示 Strike!，否則顯示 Ball"
+      ],
+      "method_en": [
+        "A stereo camera (oCamS-1MGN-U, 60 fps) is embedded in home plate, looking upward",
+        "After checkerboard stereo calibration and rectification, YOLOv7 detects the ball",
+        "SGBM disparity maps, cleaned with WLS filtering, give the ball's 3D position in each frame",
+        "The 3D trajectory is drawn against the strike zone: \"Strike!\" if the ball passes through it, otherwise \"Ball\""
+      ],
+      "stats": [
+        {
+          "num": "146 mm",
+          "label": "進壘位置平均誤差（約兩顆球）",
+          "label_en": "mean position error (about two balls)"
+        },
+        {
+          "num": "60 fps",
+          "label": "攝影機幀率",
+          "label_en": "camera frame rate"
+        }
+      ],
+      "results": [
+        "請元智棒球隊同學實際投球，在草地、空地與壘球場錄製；好球帶以 180 公分打者為準（離地 52 cm、高 62 cm）",
+        "6 次示範，球經過好球帶的位置平均誤差 145.97 mm",
+        "坦白的限制：球速超過約 90 km/h 時，60 fps 每趟拍不到 3 幀；誤差主要來自標定，未來換高速攝影機與彩色影像改善"
+      ],
+      "results_en": [
+        "Pitches were thrown by Yuan Ze University baseball players on grass, open ground and a softball field; the strike zone matched a 180 cm batter (52 cm above ground, 62 cm tall)",
+        "Across six demos, the mean error of the ball's position at the zone was 145.97 mm",
+        "Honest limitations: above about 90 km/h, 60 fps captures fewer than 3 frames per pitch, and most error comes from calibration; faster colour cameras are the next step"
+      ],
+      "figures": [
+        {
+          "cap": "埋進本壘板的雙目攝影機",
+          "cap_en": "The stereo camera embedded in home plate"
+        },
+        {
+          "cap": "從本壘板往上看：一顆投球的連續位置",
+          "cap_en": "Looking up from home plate: a pitch frame by frame"
+        },
+        {
+          "cap": "3D 軌跡穿過好球帶，判定 Strike!",
+          "cap_en": "The 3D trajectory crosses the zone: Strike!"
+        }
+      ]
+    },
+    "vr-batting": {
+      "hook": "VR 打擊練習機：160 km/h 的球，你按得剛剛好嗎？",
+      "hook_en": "A VR batting trainer: can you time a 160 km/h pitch?",
+      "venue": "",
+      "problem": "手眼協調決定運動員反應快慢，但訓練費時，受傷或無法到場時更難練。本專題做了一套在家也能練的 VR 手眼協調訓練。",
+      "problem_en": "Hand–eye coordination decides how fast athletes react, yet training it takes time and becomes harder when injured or away from the field. This project builds VR training you can do at home.",
+      "method": [
+        "Unity 3D＋SteamVR，搭配內建 Tobii 眼動追蹤的 HTC VIVE Pro Eye",
+        "關卡一：在閃爍背景中只點藍球、避開紅球，練反應速度（依頻閃視覺訓練研究設計）",
+        "關卡二：9 個圓圈中找出淡色同心圓，練知覺速度，並用眼動追蹤量「看到」到「碰到」的時間",
+        "關卡三：虛擬投手投出 100／135／160 km/h 或隨機球速，球進好球帶時按下，系統顯示太早、太晚或剛好，並提供多角度慢動作回放"
+      ],
+      "method_en": [
+        "Unity 3D + SteamVR on an HTC VIVE Pro Eye with built-in Tobii eye tracking",
+        "Level 1: tap only the blue balls against a flickering background, avoiding red ones, to train reaction speed (based on stroboscopic training research)",
+        "Level 2: find the faint concentric target among nine circles to train perceptual speed, with eye tracking timing the gap between seeing and touching",
+        "Level 3: a virtual pitcher throws at 100 / 135 / 160 km/h or random speeds; press as the ball enters the zone to see early, late or perfect, with multi-angle slow-motion replays"
+      ],
+      "stats": [
+        {
+          "num": "3",
+          "label": "個訓練關卡",
+          "label_en": "training levels"
+        },
+        {
+          "num": "160 km/h",
+          "label": "最高球速",
+          "label_en": "top pitch speed"
+        }
+      ],
+      "results": [
+        "5 位受測者（1 位棒球專長生、4 位一般大學生）訓練前後比較：一般學生的進壘時機與位置判斷都進步",
+        "棒球專長生原本就最好，訓練後進壘位置更準",
+        "VR 版以手把射線取代滑鼠，並設置虛擬牆面模擬伸手觸碰"
+      ],
+      "results_en": [
+        "Before-and-after tests with five people (one varsity baseball player and four regular students): the regular students improved in both timing and location",
+        "The baseball player started strongest and became more accurate on location",
+        "The VR version replaces the mouse with controller rays and uses virtual walls to simulate reaching out"
+      ],
+      "figures": [
+        {
+          "cap": "關卡一：只點藍球",
+          "cap_en": "Level 1: tap only the blue balls"
+        },
+        {
+          "cap": "關卡二：找出淡色同心圓",
+          "cap_en": "Level 2: find the faint concentric target"
+        },
+        {
+          "cap": "關卡三：判斷進壘時機（畫面顯示 good）",
+          "cap_en": "Level 3: timing the pitch (\"good\" on screen)"
+        }
+      ],
+      "videos": [
+        {
+          "src": "vr-batting-level1",
+          "cap": "關卡一實機錄影：只點藍球",
+          "cap_en": "Level 1 recording: tap only the blue balls"
+        },
+        {
+          "src": "vr-batting-level2",
+          "cap": "關卡二實機錄影：找出淡色同心圓",
+          "cap_en": "Level 2 recording: find the faint concentric target"
+        },
+        {
+          "src": "vr-batting-level3",
+          "cap": "關卡三實機錄影：判斷進壘時機",
+          "cap_en": "Level 3 recording: timing the pitch"
+        }
+      ]
+    },
+    "lighthouse": {
+      "hook": "拆解 VR 定位黑科技，自己畫電路板做出 3D 追蹤器",
+      "hook_en": "Reverse-engineering VR tracking: a home-made circuit board that tracks in 3D",
+      "venue": "",
+      "problem": "HTC VIVE 的 Lighthouse 定位精度很高，但只能搭配官方的手把與頭盔。本專題想做一個小型的自製接收器，不改基站就能讓任何東西被定位。",
+      "problem_en": "HTC VIVE's Lighthouse tracking is very precise but only works with official controllers and headsets. This project builds a small DIY receiver so anything can be tracked without touching the base stations.",
+      "method": [
+        "研究基站原理：每秒 120 次先發出全向紅外線脈衝，再以轉輪掃過 ±60° 的雷射平面，從時間差就能算出角度",
+        "自己設計電路與 PCB：光電二極體 BPW34S＋官方 TS4231 晶片，把紅外線轉成 0／1 訊號",
+        "Nordic nRF52 開發板以 PPI 硬體直接記錄訊號時間，不經過 CPU，可同時讀 4 個感測點，再用藍牙傳到電腦",
+        "把兩台基站當作針孔相機，用 6 個已知點解出投影矩陣，三角定位求出 3D 座標"
+      ],
+      "method_en": [
+        "Studying the base station: 120 times a second it flashes an omnidirectional infrared pulse and then sweeps a laser plane across ±60°, so timing gives angle",
+        "A self-designed circuit and PCB: a BPW34S photodiode plus the official TS4231 chip turns infrared into 0/1 signals",
+        "A Nordic nRF52 board timestamps signals in hardware via PPI (no CPU involved), reads 4 sensors at once and sends data over Bluetooth",
+        "Treating both base stations as pinhole cameras, six known points solve the projection matrices, and triangulation gives 3D coordinates"
+      ],
+      "stats": [
+        {
+          "num": "120 Hz",
+          "label": "基站掃描頻率",
+          "label_en": "base station sweep rate"
+        },
+        {
+          "num": "4",
+          "label": "個感測點同時讀取",
+          "label_en": "sensors read at once"
+        }
+      ],
+      "results": [
+        "6 個測量點的 3D 座標與實際位置大致吻合",
+        "拿著自製感測器在空中畫正方形、直線、圓，3D 軌跡都清楚看得出形狀"
+      ],
+      "results_en": [
+        "The 3D coordinates of six test points closely matched their true positions",
+        "Drawing a square, a line and a circle in the air with the sensor produced clearly recognisable 3D trajectories"
+      ],
+      "figures": [
+        {
+          "cap": "自己畫的感測器 PCB",
+          "cap_en": "The self-designed sensor PCB"
+        },
+        {
+          "cap": "完成的感測器電路板",
+          "cap_en": "The finished sensor board"
+        },
+        {
+          "cap": "拿感測器在空中畫圖，系統還原的 3D 軌跡",
+          "cap_en": "A shape drawn in the air, reconstructed as a 3D trajectory"
+        }
+      ]
+    },
+    "pitch-tunneling": {
+      "hook": "破解太空人隊的奪冠武器：投手的「共軌效應」",
+      "hook_en": "Decoding the Astros' championship weapon: pitch tunnelling",
+      "venue": "",
+      "problem": "共軌效應是讓不同球種的出手點與前段軌跡幾乎重疊，打者在不到一秒內很難分辨。2017 年太空人隊靠它奪冠，大谷翔平也擅長。台灣投手在球速球質上較吃虧，更需要這種投球設計。",
+      "problem_en": "Pitch tunnelling makes different pitches share the same release point and early flight path, so batters cannot tell them apart in under a second. The Astros rode it to the 2017 title, and Shohei Ohtani excels at it. Taiwanese pitchers, often giving up velocity, need this kind of pitch design even more.",
+      "method": [
+        "從轉播畫面追蹤棒球：影像相減、去背、光流、TrackNet 都試過，最後選用 Detectron2 的 Faster R-CNN",
+        "自行標註 380 張比賽畫面中的棒球，避開「球剛好飛過白色球褲」這類容易誤判的畫面",
+        "把兩次投球以不同顏色疊在同一畫面，看出手點重合、到哪裡才分開",
+        "分析紅襪投手 Chris Sale 三種主力球路（四縫線快速球、滑曲球、變速球）各 200 球：兩球球心距離超過一顆球直徑，即為「分裂點」"
+      ],
+      "method_en": [
+        "Tracking the ball in broadcast footage: frame differencing, background subtraction, optical flow and TrackNet were all tried before settling on Detectron2's Faster R-CNN",
+        "380 broadcast frames were hand-labelled, avoiding confusing cases such as a ball crossing white uniform pants",
+        "Two pitches are overlaid in different colours on one frame to show where shared release points split apart",
+        "200 pitches each of Red Sox ace Chris Sale's four-seam fastball, slurve and changeup were analysed: the split point is where the balls' centres differ by more than one ball diameter"
+      ],
+      "stats": [
+        {
+          "num": "67→80%",
+          "label": "棒球偵測準確度",
+          "label_en": "ball detection accuracy"
+        },
+        {
+          "num": "200",
+          "label": "每種球路分析的投球數",
+          "label_en": "pitches analysed per pitch type"
+        }
+      ],
+      "results": [
+        "變速球比滑曲球更晚才與快速球分開，共軌持續更久，打者更難反應",
+        "滑曲球分開後的下墜與橫移幅度都比變速球大",
+        "未來可加入左右投、風向與濕度等因素"
+      ],
+      "results_en": [
+        "The changeup splits from the fastball later than the slurve, so it stays tunnelled longer and is harder to read",
+        "After splitting, the slurve drops and breaks more than the changeup",
+        "Next steps include handedness and weather factors such as wind and humidity"
+      ],
+      "figures": [
+        {
+          "cap": "偵測到的棒球與軌跡標記",
+          "cap_en": "Detected ball with trajectory markers"
+        },
+        {
+          "cap": "分裂後的垂直位移比較",
+          "cap_en": "Vertical movement after the split"
+        },
+        {
+          "cap": "分裂後的水平位移比較",
+          "cap_en": "Horizontal movement after the split"
+        }
+      ]
+    },
+    "motion-texture": {
+      "hook": "戴著口罩也能刷臉：只看你眨眼的樣子",
+      "hook_en": "Face unlock with a mask on: it only needs the way you blink",
+      "venue": "",
+      "problem": "疫情期間大家都戴口罩，加上瀏海遮住額頭，人臉辨識常常失效，得拿下口罩，既麻煩又增加感染風險。",
+      "problem_en": "With masks during the pandemic, plus fringes covering the forehead, face recognition often failed and people had to remove their masks, which was inconvenient and risky.",
+      "method": [
+        "從 MediaPipe Face Mesh 的 468 個點中，挑出 52 個不會被口罩遮住、眨眼時變化大的點，各取 15×15 的小圖",
+        "用眼睛縱橫比（EAR）偵測眨眼，擷取眨眼前後各 1 秒、共 50 幀的「動態紋理」",
+        "以 LBP、HOG 描述紋理，再用 RNN、雙向 LSTM 學習時間變化，並與只看單張照片的 CNN 比較",
+        "置信度超過 90% 才算本人，否則視為陌生人"
+      ],
+      "method_en": [
+        "From MediaPipe Face Mesh's 468 points, 52 that a mask never covers and that move most during a blink are selected, each cropped to 15×15",
+        "The eye aspect ratio (EAR) detects a blink, capturing one second before and after: a 50-frame 'motion texture'",
+        "LBP and HOG describe the texture; RNN and bidirectional LSTM learn its change over time, compared with a single-image CNN",
+        "Only a confidence above 90% counts as the owner; anything else is treated as a stranger"
+      ],
+      "stats": [
+        {
+          "num": "95.6%",
+          "label": "強雜訊下的辨識率（靜態 72.6%）",
+          "label_en": "accuracy under heavy noise (static: 72.6%)"
+        },
+        {
+          "num": "1.00",
+          "label": "擋下陌生人的特異度",
+          "label_en": "specificity against strangers"
+        }
+      ],
+      "results": [
+        "改變光照強度、角度、色溫並翻轉畫面的 90 筆測試：動態 LBP-RNN 準確率 95.6%，靜態 CNN 只有 72.6%",
+        "加入理想條件共 180 筆：97.8% 對 86.3%",
+        "60 筆陌生人測試：LBP-RNN 全部擋下（特異度 1.00、F1 0.94），靜態 CNN 只擋下 60%"
+      ],
+      "results_en": [
+        "In 90 tests with altered light intensity, angle, colour temperature and flipping: dynamic LBP-RNN scored 95.6% versus 72.6% for the static CNN",
+        "Across 180 tests including ideal conditions: 97.8% versus 86.3%",
+        "Against 60 strangers, LBP-RNN rejected every one (specificity 1.00, F1 0.94); the static CNN rejected only 60%"
+      ],
+      "figures": [
+        {
+          "cap": "系統流程：從攝影機到身分判定",
+          "cap_en": "System flow: from webcam to identity decision"
+        },
+        {
+          "cap": "模型訓練的準確率與損失曲線",
+          "cap_en": "Training accuracy and loss curves"
+        }
+      ]
+    },
+    "stereo": {
+      "hook": "兩台攝影機變成一雙眼睛：重建 3D 場景、追蹤飛行的球",
+      "hook_en": "Two cameras become a pair of eyes: rebuilding 3D scenes and tracking a ball in flight",
+      "venue": "",
+      "problem": "人類靠兩眼視差感受深度。本專題用兩台一般攝影機模仿雙眼，算出深度、重建立體場景，並追蹤空中飛行的球。",
+      "problem_en": "Humans perceive depth from the difference between two eyes. This project mimics that with two ordinary cameras to measure depth, rebuild 3D scenes and track a ball through the air.",
+      "method": [
+        "棋盤格單目與雙目標定（OpenCV 有時抓不到格點，改用 Matlab 標定工具箱）",
+        "立體校正後產生視差圖，調整參數並濾波補洞，再轉成深度圖與 3D 點雲（加門檻濾掉誤差過大的點）",
+        "YOLOv5 偵測球，再結合點雲得到球在每一幀的 3D 位置，連成軌跡"
+      ],
+      "method_en": [
+        "Single and stereo checkerboard calibration (switching to Matlab's toolbox when OpenCV missed corners)",
+        "After rectification, disparity maps are tuned and filtered to fill holes, then turned into depth maps and 3D point clouds, with outliers thresholded out",
+        "YOLOv5 detects the ball and the point cloud gives its 3D position in every frame, linked into a trajectory"
+      ],
+      "stats": [
+        {
+          "num": "2",
+          "label": "台一般攝影機",
+          "label_en": "ordinary cameras"
+        },
+        {
+          "num": "3D",
+          "label": "點雲重建＋球軌跡",
+          "label_en": "point clouds + ball trajectories"
+        }
+      ],
+      "results": [
+        "成功重建背包、植物、雜物堆等場景的 3D 點雲",
+        "畫出拋球的 3D 飛行軌跡",
+        "發現適度加大兩台攝影機的距離與夾角能減少深度誤差；目前計算還不夠快，未來搭配硬體加速可望即時追蹤"
+      ],
+      "results_en": [
+        "3D point clouds of scenes such as a backpack, plants and a pile of objects were reconstructed",
+        "3D flight paths of thrown balls were plotted",
+        "Widening the camera spacing and angle reduced depth error; computation is not yet real-time, which hardware acceleration could fix"
+      ],
+      "figures": [
+        {
+          "cap": "拍攝的場景",
+          "cap_en": "The captured scene"
+        },
+        {
+          "cap": "同一場景的 3D 點雲重建",
+          "cap_en": "3D point-cloud reconstruction of the same scene"
+        },
+        {
+          "cap": "拋球的 3D 軌跡",
+          "cap_en": "3D trajectory of a thrown ball"
+        }
+      ]
+    },
+    "hand-eye": {
+      "hook": "運動完馬上練反應？數據說：先休息 15 分鐘",
+      "hook_en": "Train reactions right after exercise? The data says rest 15 minutes first",
+      "venue": "",
+      "problem": "手眼協調影響拿杯子、接球到運動表現，會隨年紀退化，部分兒童也有協調困難。本專題設計一套可量化的手眼協調訓練遊戲。",
+      "problem_en": "Hand–eye coordination affects everything from picking up a cup to catching a ball; it declines with age, and some children struggle with it. This project designs measurable hand–eye training games.",
+      "method": [
+        "先用網路攝影機＋Dlib 臉部特徵點自製瞳孔追蹤，準確度不夠，改用 Tobii 紅外線眼動儀",
+        "Unity 設計三關：整體反應時間（同時量手與眼）、專注力、對比敏感度",
+        "6 位學生分三組：只休息、劇烈運動後直接測、運動後休息 15 分鐘再測"
+      ],
+      "method_en": [
+        "A webcam-based pupil tracker built with Dlib facial landmarks was not accurate enough, so a Tobii infrared eye tracker was used instead",
+        "Three Unity levels: total reaction time (hand and eye together), concentration and contrast sensitivity",
+        "Six students in three groups: rest only, tested right after intense exercise, and exercise followed by 15 minutes of rest"
+      ],
+      "stats": [
+        {
+          "num": "3",
+          "label": "個測驗關卡",
+          "label_en": "test levels"
+        },
+        {
+          "num": "15 min",
+          "label": "運動後建議休息",
+          "label_en": "rest recommended after exercise"
+        }
+      ],
+      "results": [
+        "運動確實能縮短反應時間，但剛運動完直接訓練，進步幅度變小甚至變差",
+        "剛運動完點擊正確率略降，需要專注的訓練應先休息片刻",
+        "未來可改用 HoloLens 直接用手指點擊，並自動產生評比"
+      ],
+      "results_en": [
+        "Exercise does shorten reaction time, but training immediately afterwards reduces or even reverses the gain",
+        "Click accuracy dips right after exercise, so focus-heavy training should follow a short rest",
+        "Future work: finger input with HoloLens and automatic scoring"
+      ],
+      "figures": [
+        {
+          "cap": "反應測驗畫面",
+          "cap_en": "Reaction test screen"
+        },
+        {
+          "cap": "專注力測驗：找出原本的紅球",
+          "cap_en": "Concentration test: find the original red balls"
+        }
+      ]
+    },
+    "hand-eye-chen": {
+      "hook": "一天中什麼時候反應最快？連測 7 天找答案",
+      "hook_en": "When in the day are your reactions fastest? Seven days of testing to find out",
+      "venue": "",
+      "problem": "運動員的反應時間會受動機、疲勞與時段影響。本研究想知道：一天之中，什麼時候、做了什麼事之後，反應最快、最專注？",
+      "problem_en": "Athletes' reaction time depends on motivation, fatigue and time of day. This study asks when in the day, and after what activity, reactions and focus are best.",
+      "method": [
+        "Unity 測驗一：一堆空心圓中隨機出現紅色實心圓，量總反應時間（TRT）",
+        "測驗二：9 個圓中有 3 個紅圓，旋轉加速後停下，要點出原本的紅圓，量視覺追蹤與專注力",
+        "連續 7 天，每天 9:00 到 21:00 每 2 小時測一次，另外記錄起床、運動後與睡前"
+      ],
+      "method_en": [
+        "Test 1 in Unity: a solid red circle appears among hollow ones; measures total reaction time (TRT)",
+        "Test 2: three of nine circles are red; after spinning faster and stopping, pick the original red ones to measure visual tracking and focus",
+        "Seven days of tests every two hours from 9:00 to 21:00, plus after waking, after exercise and before bed"
+      ],
+      "stats": [
+        {
+          "num": "7",
+          "label": "天連續測試",
+          "label_en": "consecutive days"
+        },
+        {
+          "num": "2 h",
+          "label": "測一次",
+          "label_en": "between tests"
+        }
+      ],
+      "results": [
+        "運動能維持並提升反應能力與專注力",
+        "睡前反應與專注最差，剛起床和下午 3 點左右也較不專心，推測與血糖變化有關",
+        "結論：選對時段、做對準備，訓練更有效"
+      ],
+      "results_en": [
+        "Exercise maintains and improves both reaction and focus",
+        "Reactions and focus are worst before bed and also dip after waking and around 3 p.m., possibly linked to blood sugar",
+        "Conclusion: training works better at the right time with the right preparation"
+      ],
+      "figures": [
+        {
+          "cap": "測驗一：點出出現的紅色實心圓",
+          "cap_en": "Test 1: tap the solid red circle"
+        },
+        {
+          "cap": "測驗二：追蹤旋轉後的紅圓",
+          "cap_en": "Test 2: track the red circles after spinning"
+        }
+      ]
+    }
+  },
+  "theses": {
+    "cao-qing-yu": {
+      "slug": "cao-night-road",
+      "hook": "40 種影像增強＋SAM3，讓 AI 在黑夜裡也看得清楚道路",
+      "hook_en": "40 enhancement recipes plus SAM3 help AI see the road at night",
+      "advisors": "施皇嘉、李宇軒",
+      "problem": "夜間光線不足、路燈與車燈眩光，讓道路分割模型的表現大幅下降，而道路區域正是自駕與監控系統最基本的資訊。",
+      "problem_en": "Darkness and glare from street and car lights sharply degrade road segmentation, even though the road area is the most basic input for self-driving and surveillance systems.",
+      "method": [
+        "建立 40 種影像增強組合的「方法池」：色彩校正、對比增強、深度導引、不同 CLAHE 參數，替每張夜間影像產生多種候選版本",
+        "用 SAM3 從每個候選版本產生道路遮罩",
+        "比較三種遮罩挑選／融合策略：整張挑最好（PoolBest）、片段拼接（GlobalGreedy）、像素加權投票（WMF Vote）",
+        "形態學後處理（Closing 最關鍵）補起裂縫、孔洞與鋸齒邊界",
+        "延伸應用：把優化後的道路遮罩當作提示，請 ChatGPT 在道路上生成車輛"
+      ],
+      "method_en": [
+        "A 'method pool' of 40 enhancement combinations (colour correction, contrast enhancement, depth guidance and CLAHE settings) creates many candidate versions of each night image",
+        "SAM3 produces a road mask from every candidate",
+        "Three selection/fusion strategies are compared: best whole mask (PoolBest), fragment stitching (GlobalGreedy) and pixel-weighted voting (WMF Vote)",
+        "Morphological post-processing, mainly closing, repairs cracks, holes and jagged edges",
+        "Extension: the refined road mask is used as a prompt for ChatGPT to generate vehicles on the road"
+      ],
+      "stats": [
+        {
+          "num": "0.950",
+          "label": "Dark Zurich Night mIoU",
+          "label_en": "Dark Zurich Night mIoU"
+        },
+        {
+          "num": "40",
+          "label": "種影像增強組合",
+          "label_en": "enhancement combinations"
+        }
+      ],
+      "results": [
+        "四個夜間資料集上，GlobalGreedy 的 mIoU：ACDC Night 0.933、Dark Zurich Night 0.950、Nighttime Driving 0.933、NightCity 0.866（此方法需標準答案，代表可達上限）",
+        "不需標準答案的 WMF Vote 在四個資料集都改善了道路邊界（Boundary IoU）",
+        "車輛生成：車輛位置示意圖在 SSIM、CLIP、DINO 表現較好，道路遮罩在 PSNR、LPIPS 較好，兩者各有所長"
+      ],
+      "results_en": [
+        "GlobalGreedy mIoU on four night datasets: ACDC Night 0.933, Dark Zurich Night 0.950, Nighttime Driving 0.933 and NightCity 0.866 (it uses ground truth, so it marks an upper bound)",
+        "WMF Vote, which needs no ground truth, improved road boundaries (Boundary IoU) on all four datasets",
+        "Vehicle generation: position sketches scored better on SSIM, CLIP and DINO, road masks on PSNR and LPIPS"
+      ],
+      "figures": [
+        {
+          "cap": "整體架構：道路分割與遮罩優化，再到車輛生成",
+          "cap_en": "Overview: road segmentation and mask refinement, then vehicle generation"
+        },
+        {
+          "cap": "不同增強方法下的夜間道路遮罩",
+          "cap_en": "Night road masks under different enhancements"
+        },
+        {
+          "cap": "夜間道路影像",
+          "cap_en": "Night road images"
+        }
+      ]
+    },
+    "chen-yu-qi": {
+      "slug": "chen-trajectory",
+      "hook": "高爾夫球飛遠後只剩 5 個像素，也追得到，誤差約 1 個像素",
+      "hook_en": "Tracking a golf ball down to 5 pixels wide, within about one pixel",
+      "advisors": "",
+      "problem": "高爾夫球被擊出後，先因高速而模糊成一道亮線，飛遠後只剩約 3 到 7 個像素，一般的偵測模型與追蹤器很容易跟丟。",
+      "problem_en": "After impact a golf ball first blurs into a streak, then shrinks to just 3–7 pixels as it flies away; ordinary detectors and trackers easily lose it.",
+      "method": [
+        "Stage 1 發射判斷：用影格差分與短時間運動歷史，加上方向線帶與跨影格連續性，建立擊球後的初段軌跡",
+        "Stage 2 微小目標追蹤：在動態搜尋區內融合外觀、運動、方向與位置分數；比較 LBP、LTP、CSWC 三種局部外觀特徵，LTP 最好",
+        "Stage 3 軌跡補足：以下落段的可靠點擬合曲線，補上看不清楚的影格",
+        "每一格都標記 OK、HOLD 或 MISS，輸出結果可以追溯來源"
+      ],
+      "method_en": [
+        "Stage 1, launch detection: frame differencing and short-term motion history, with direction bands and cross-frame continuity, build the early trajectory",
+        "Stage 2, tiny-target tracking: appearance, motion, direction and position scores are fused in a dynamic search window; of LBP, LTP and CSWC local features, LTP works best",
+        "Stage 3, trajectory completion: a curve fitted to reliable descent points fills unclear frames",
+        "Each frame is labelled OK, HOLD or MISS, so every output can be traced to its source"
+      ],
+      "stats": [
+        {
+          "num": "1.28 px",
+          "label": "微小目標平均誤差",
+          "label_en": "mean error on the tiny ball"
+        },
+        {
+          "num": "15/15",
+          "label": "部影片全部追完",
+          "label_en": "videos fully tracked"
+        }
+      ],
+      "results": [
+        "Stage 1 平均誤差 2.19 像素（扣除初始化前 3 點為 0.75 像素），96.4% 落在 5 像素內；交接點誤差 0.81 像素",
+        "Stage 2（LTP）平均誤差 1.28 像素，95.5% 在 2 像素內；Stage 3 平均 1.19 像素，98.3% 在 5 像素內",
+        "比較方法只完成 7 到 11 部影片，本方法 15 部全部完成",
+        "坦白的限制：目前只到 2D 影像座標，還不能算出球速、發射角與落點"
+      ],
+      "results_en": [
+        "Stage 1: mean error 2.19 px (0.75 px excluding the first three initialisation points), with 96.4% within 5 px; the hand-over point is off by 0.81 px",
+        "Stage 2 (LTP): mean error 1.28 px, 95.5% within 2 px; Stage 3: 1.19 px, 98.3% within 5 px",
+        "Baseline methods finished only 7–11 of the videos; this method finished all 15",
+        "Honest limitation: results are in 2D image coordinates, not yet ball speed, launch angle or landing point"
+      ],
+      "figures": [
+        {
+          "cap": "三階段高速小球追蹤架構",
+          "cap_en": "The three-stage high-speed ball tracking framework"
+        },
+        {
+          "cap": "還原的完整飛行軌跡",
+          "cap_en": "The recovered full flight trajectory"
+        },
+        {
+          "cap": "Stage 1 誤差：排除初始化點後大幅下降",
+          "cap_en": "Stage 1 error drops sharply once initialisation points are excluded"
+        }
+      ]
+    },
+    "tu-rui-qi": {
+      "slug": "tu-edge-devices",
+      "hook": "6 種邊緣 AI 平台 × 10 個模型實測：買哪一片最划算？",
+      "hook_en": "6 edge AI platforms × 10 models, benchmarked: which board is worth it?",
+      "advisors": "施皇嘉、李宇軒",
+      "problem": "邊緣 AI 平台百百種，速度、功耗、溫度、模型支援度差很多，單看廠商規格很難選。本研究在同樣條件下實測比較。",
+      "problem_en": "Edge AI boards differ widely in speed, power, heat and model support, and spec sheets alone cannot guide the choice. This study benchmarks them under identical conditions.",
+      "method": [
+        "平台：Jetson Orin Nano、Raspberry Pi 4、Kneron Kneo Pi、Raspberry Pi 5、Raspberry Pi 5＋AI HAT+ 2，以及桌上型 GPU 作為基準",
+        "四類任務 10 個模型：影像分類（RegNetX、ResNet18、EfficientNetV2、MobileNetV2）、物件偵測（YOLOv5、YOLOv8）、語意分割（DeepLabV3+、PIDNet）、目標追蹤（ByteTrack、FairMOT）",
+        "量測 FPS、準確率、記憶體、功耗、溫度，並比較 FP32／FP16／INT8 精度、模型大小、輸入解析度與 Batch Size"
+      ],
+      "method_en": [
+        "Platforms: Jetson Orin Nano, Raspberry Pi 4, Kneron Kneo Pi, Raspberry Pi 5, Raspberry Pi 5 + AI HAT+ 2, and a desktop GPU as the baseline",
+        "Ten models across four tasks: classification (RegNetX, ResNet18, EfficientNetV2, MobileNetV2), detection (YOLOv5, YOLOv8), segmentation (DeepLabV3+, PIDNet) and tracking (ByteTrack, FairMOT)",
+        "Measured FPS, accuracy, memory, power and temperature, comparing FP32 / FP16 / INT8 precision, model size, input resolution and batch size"
+      ],
+      "stats": [
+        {
+          "num": "6",
+          "label": "種平台",
+          "label_en": "platforms"
+        },
+        {
+          "num": "10",
+          "label": "個模型 × 4 類任務",
+          "label_en": "models × 4 tasks"
+        }
+      ],
+      "results": [
+        "Raspberry Pi 5＋AI HAT+ 2：邊緣平台中速度與省電平衡最好，FPS/W 最佳",
+        "Jetson Orin Nano：最穩定、模型支援最廣（TensorRT）；Kneo Pi：最省電、溫度最低，但模型轉換與批次大小受限",
+        "沒有加速器的 Pi 4／Pi 5 只適合輕量任務，Pi 4 沒裝散熱片溫度最高；INT8 量化能加速，但部分模型準確率下降",
+        "結論：沒有單一最佳平台，要依速度、功耗、模型彈性的需求來挑"
+      ],
+      "results_en": [
+        "Raspberry Pi 5 + AI HAT+ 2 offered the best balance of speed and power among edge boards, with the highest FPS per watt",
+        "Jetson Orin Nano was the most stable with the widest model support (TensorRT); Kneo Pi used the least power and ran coolest but limited model conversion and batch size",
+        "Pi 4 / Pi 5 without accelerators suit only light tasks, and the heatsink-less Pi 4 ran hottest; INT8 speeds things up but costs accuracy on some models",
+        "Bottom line: there is no single best board; choose by your needs for speed, power and model flexibility"
+      ],
+      "figures": [
+        {
+          "cap": "測試平台之一：Jetson Orin Nano",
+          "cap_en": "Test platform: Jetson Orin Nano"
+        },
+        {
+          "cap": "測試平台之一：Raspberry Pi 5",
+          "cap_en": "Test platform: Raspberry Pi 5"
+        },
+        {
+          "cap": "各平台各模型的 FPS 比較（對數刻度）",
+          "cap_en": "FPS of each model on each platform (log scale)"
+        }
+      ]
+    }
+  }
+}

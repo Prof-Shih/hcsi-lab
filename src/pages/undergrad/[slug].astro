@@ -1,0 +1,31 @@
+---
+// 大學專題詳細內容頁：/undergrad/<slug>/（slug 即該組成果圖檔名，見 src/data/project-details.json）
+import Layout from '../../layouts/Layout.astro';
+import WorkDetail from '../../components/WorkDetail.astro';
+import { NAV } from '../../config/nav';
+import { undergradProjects, projectSlug, termLabel } from '../../lib';
+import details from '../../data/project-details.json';
+
+export function getStaticPaths() {
+  const d = details.undergrad as Record<string, unknown>;
+  return undergradProjects
+    .filter((p) => d[projectSlug(p)])
+    .map((p) => ({ params: { slug: projectSlug(p) }, props: { p } }));
+}
+const { p } = Astro.props;
+const slug = projectSlug(p);
+const d = (details.undergrad as Record<string, any>)[slug];
+---
+<Layout title={p.zh} active={NAV.undergrad} description={d.hook}>
+  <WorkDetail
+    kind="大學專題"
+    title={p.zh}
+    titleEn={p.en}
+    people={p.names.join('、')}
+    meta={[termLabel(p.sem), p.dept, ...(p.notes ? [`★ ${p.notes}`] : [])]}
+    venue={d.venue}
+    d={d}
+    slug={slug}
+    back={{ href: '/undergrad/#projects', label: '← 全部專題' }}
+  />
+</Layout>
