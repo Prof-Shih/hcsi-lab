@@ -3,15 +3,14 @@ import { u } from '../lib';
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import { NAV } from '../config/nav';
-import { getSite, imagePicker, projectCats, undergradProjects } from '../lib';
+import { getSite, projectCats, undergradProjects } from '../lib';
 
 const site = await getSite();
 
-// 頁面上已固定使用的圖先標記，卡片就不會再重複
-const pick = imagePicker(new Set(['/images/arm.jpg', '/images/puzzle.jpg', '/images/baseball.jpg']));
+// 只顯示該組自己的成果圖（JSON 的 img）；沒有就顯示分類色塊
 const projects = undergradProjects.map((p) => {
   const c = projectCats.find((c) => c.re.test(p.zh + p.en))!;
-  return { ...p, cat: c.key, tag: c.tag, img: pick(c.imgs), bg: c.bg };
+  return { ...p, cat: c.key, tag: c.tag, img: (p as { img?: string }).img ?? '', bg: c.bg };
 });
 const chips = [{ key: 'all', tag: '全部' }, ...projectCats];
 const wins = [
@@ -85,7 +84,7 @@ const wins = [
           </div>
           <div class="card-body">
             <b style="font-size:16px;line-height:1.5">{p.zh}</b>
-            <span style="font-family:var(--latin);font-size:13px;color:var(--muted);line-height:1.5">{p.en}</span>
+            <span class="proj-en" style="font-family:var(--latin);font-size:13px;color:var(--muted);line-height:1.5">{p.en}</span>
             <span style="font-size:14px;color:#3F3F3F">{p.names.join('、')}</span>
             {p.notes && <span class="star">★ {p.notes}</span>}
           </div>
@@ -107,6 +106,7 @@ const wins = [
 </Layout>
 
 <style>
+  :global(html[lang="en"]) .proj-en { display: none; }
   .recruit { border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, #2F3B36, #4A685D); color: #F2EFE8; }
   .recruit-head { padding: 32px 32px 8px; display: flex; flex-direction: column; gap: 10px; }
   .recruit-head p { margin: 0; color: #DCE5E0; line-height: 1.7; }

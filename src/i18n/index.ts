@@ -1,6 +1,7 @@
 // 多語系字典：src/i18n/<語言>.json → 扁平化成 { strings, patterns } 給瀏覽器端使用。
 // JSON 結構說明見 en.json 的 _meta.rules。
 import en from './en.json';
+import undergrad from '../data/undergrad-projects.json';
 
 export type Pattern = { zh: string; en: string };
 export type Dict = { lang: string; label: string; back: string; strings: Record<string, string>; patterns: Pattern[] };
@@ -20,9 +21,12 @@ function flatten(obj: Record<string, unknown>, out: Record<string, string>) {
   return out;
 }
 
+// 大學專題題目的英文以老師資料（undergrad-projects.json 的 en）為準，不另外翻譯
+const projectTitles = () => Object.fromEntries(undergrad.filter((p) => p.en).map((p) => [norm(p.zh), p.en]));
+
 export function buildDict(locale: Locale): Dict {
   const src = LOCALES[locale] as unknown as Record<string, unknown> & { _meta: { html_lang: string; label: string; switch_to_source_label: string }; patterns: Pattern[] };
   // 先檢查 pattern 都是合法的正規表示式，壞掉就讓建置失敗
   for (const p of src.patterns) new RegExp(p.zh);
-  return { lang: src._meta.html_lang, label: src._meta.label, back: src._meta.switch_to_source_label, strings: flatten(src, {}), patterns: src.patterns };
+  return { lang: src._meta.html_lang, label: src._meta.label, back: src._meta.switch_to_source_label, strings: { ...flatten(src, {}), ...projectTitles() }, patterns: src.patterns };
 }
