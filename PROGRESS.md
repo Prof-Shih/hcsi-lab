@@ -3,7 +3,7 @@
 給所有 AI 助理與成員：**開工前讀這份，做完一件事就更新**。時間一律台灣時間（`TZ=UTC-8 date '+%Y-%m-%d %H:%M'`）。
 Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「做到哪、為什麼這樣做、卡在哪」。
 
-最後更新：2026-11-04 16:21（Claude）
+最後更新：2026-11-04 16:28（Claude）
 
 ## 現況
 
@@ -63,6 +63,8 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 ## 進度紀錄
 
 新的放最上面：`- YYYY-MM-DD HH:mm <誰>：<做了什麼>（#issue／PR）`
+
+- 2026-11-04 16:28 Claude：全面比對老師雲端「新網頁」所有可讀檔案。著作 119 篇與 c302 逐筆核對全數在站上，修正 Energy and Buildings 出處文字、4 篇國內邀稿類型；教授頁依 CV 補兼任教授、AI 創新中心副主任、各職務起訖月份、Session Chair、專利與論文數，依 Teaching 補 2 門課，依〈8〉補網球計畫合作單位；多模態 LLM 主題依〈7. Research〉改寫；新增 8 支影片（拼圖重組 2、注意力模型 3、VR 手眼訓練 3）。超過 10MB 無法下載：project demo 兩份簡報與 MOV、2022 兩份簡報。
 
 - 2026-11-04 16:21 Claude：逐篇讀完 14 份專題報告／論文與 3 本 2026 碩論，新增詳細內容頁 `/undergrad/<slug>/`、`/graduate/<slug>/`（`src/components/WorkDetail.astro`，資料 `src/data/project-details.json`：一句吸睛標語、問題、做法、成果數字、2–3 張報告原圖，中英對照）；卡片顯示標語並可點進詳細頁。所有數字皆出自原文。
 

@@ -34,3 +34,19 @@ skills:
 keywords_zh: "足球|籃球|網球|高爾夫|姿態|校準|校正|好球帶|球衣|軌跡"
 keywords_en: "soccer|basketball|tennis|golf|sports|jersey|trajectory|calibration|pose|release point|yoga"
 ---
+
+## 影片：棒球轉播的視覺注意力模型
+
+施老師博士論文〈A Study on Content-based Attention Ranking and In-game Stats Tagging for Sports Videos〉（2008）的研究：模擬觀眾看轉播時「眼睛會被什麼吸引」，用來找出精彩畫面並排序。
+
+<video class="video-embed" controls preload="none" poster="/hcsi-lab/videos/attention-spatial.jpg" src="/hcsi-lab/videos/attention-spatial.mp4"></video>
+
+空間注意力模型：結合色彩、亮度、方向三種特徵圖。
+
+<video class="video-embed" controls preload="none" poster="/hcsi-lab/videos/attention-temporal.jpg" src="/hcsi-lab/videos/attention-temporal.mp4"></video>
+
+時間注意力圖：畫面中正在動的區域。
+
+<video class="video-embed" controls preload="none" poster="/hcsi-lab/videos/attention-skin.jpg" src="/hcsi-lab/videos/attention-skin.mp4"></video>
+
+膚色注意力圖：找出畫面中的球員。

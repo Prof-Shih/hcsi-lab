@@ -43,7 +43,7 @@ const detailTexts = () => {
       const zh = d[k] as string[]; const en = d[`${k}_en`] as string[];
       zh.forEach((t, i) => pair(t, en[i]));
     }
-    for (const x of [...(d.stats as Detail[]), ...(d.figures as Detail[])]) { pair(x.label, x.label_en); pair(x.cap, x.cap_en); }
+    for (const x of [...(d.stats as Detail[]), ...(d.figures as Detail[]), ...((d.videos ?? []) as Detail[])]) { pair(x.label, x.label_en); pair(x.cap, x.cap_en); }
   }
   return out;
 };

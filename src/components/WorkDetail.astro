@@ -12,7 +12,7 @@ interface Props {
   meta: string[];
   venue?: string;
   advisors?: string;
-  d: { hook: string; problem: string; method: string[]; results: string[]; stats: Stat[]; figures: Fig[] };
+  d: { hook: string; problem: string; method: string[]; results: string[]; stats: Stat[]; figures: Fig[]; videos?: { src: string; cap: string }[] };
   slug: string;
   back: { href: string; label: string };
 }
@@ -63,6 +63,15 @@ const figs = d.figures.map((f, i) => ({ ...f, src: u(`/images/details/${slug}-${
       </section>
     )}
 
+    {d.videos && (
+      <section>
+        <h2>影片</h2>
+        <div class="work-figs">
+          {d.videos.map((v) => <figure><video controls preload="none" poster={u(`/videos/${v.src}.jpg`)} src={u(`/videos/${v.src}.mp4`)}></video><figcaption>{v.cap}</figcaption></figure>)}
+        </div>
+      </section>
+    )}
+
     <p class="work-src">內容與圖片皆取自該組的成果報告或論文。</p>
     <a class="btn" href={u(back.href)}>{back.label}</a>
   </div>
@@ -84,7 +93,7 @@ const figs = d.figures.map((f, i) => ({ ...f, src: u(`/images/details/${slug}-${
   .work-meta > span + span::before { content: '·'; margin: 0 8px; }
   .work-body { display: flex; flex-direction: column; gap: 32px; padding-top: 40px; padding-bottom: 72px; max-width: 860px; }
   .work-lead { margin: 0; }
-  .work-lead img, .work-figs img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: block; }
+  .work-lead img, .work-figs img, .work-figs video { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: #fff; display: block; }
   figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); }
   .work-stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
   .work-stats li { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }

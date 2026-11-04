@@ -431,6 +431,23 @@
           "cap": "關卡三：判斷進壘時機（畫面顯示 good）",
           "cap_en": "Level 3: timing the pitch (\"good\" on screen)"
         }
+      ],
+      "videos": [
+        {
+          "src": "vr-batting-level1",
+          "cap": "關卡一實機錄影：只點藍球",
+          "cap_en": "Level 1 recording: tap only the blue balls"
+        },
+        {
+          "src": "vr-batting-level2",
+          "cap": "關卡二實機錄影：找出淡色同心圓",
+          "cap_en": "Level 2 recording: find the faint concentric target"
+        },
+        {
+          "src": "vr-batting-level3",
+          "cap": "關卡三實機錄影：判斷進壘時機",
+          "cap_en": "Level 3 recording: timing the pitch"
+        }
       ]
     },
     "lighthouse": {

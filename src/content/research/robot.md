@@ -28,3 +28,13 @@ skills:
 keywords_zh: "拼圖|機械|輕量|門禁|表情"
 keywords_en: "puzzle|jigsaw|robot|edge|lightweight|fragment"
 ---
+
+## 影片：破碎碎片自動重組
+
+<video class="video-embed" controls preload="none" poster="/hcsi-lab/videos/puzzle-reconstruction-1.jpg" src="/hcsi-lab/videos/puzzle-reconstruction-1.mp4"></video>
+
+不規則的破碎圖片碎片，依紋理與邊緣比對自動找出相鄰關係並拼回原圖。
+
+<video class="video-embed" controls preload="none" poster="/hcsi-lab/videos/puzzle-reconstruction-2.jpg" src="/hcsi-lab/videos/puzzle-reconstruction-2.mp4"></video>
+
+撕碎的紙鈔碎片自動重組。

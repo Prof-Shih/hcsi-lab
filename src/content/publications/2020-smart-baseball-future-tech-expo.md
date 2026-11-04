@@ -4,6 +4,6 @@ authors:
   - "施皇嘉*"
 venue: "人文與社會科學簡訊, pp. 41-45, Mar. 2020. (Invited, in Chinese)"
 year: 2020
-type: "other"
+type: "journal"
 domestic: true
 ---
