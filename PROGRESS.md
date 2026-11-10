@@ -64,6 +64,8 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 
 新的放最上面：`- YYYY-MM-DD HH:mm <誰>：<做了什麼>（#issue／PR）`
 
+- 2026-11-10 14:54 黃予岑＋Claude：新增徐啟翔成員頭像（`public/avatars/xu-qi-xiang.jpg`，本人同意）
+
 - 2026-11-10 14:39 黃予岑＋Claude：新增李秉霖成員頭像（`public/avatars/li-bing-lin.jpg`，本人同意，已轉正裁切）
 
 - 2026-11-09 00:42 陳洺安＋Claude：AI-Sports 2026 投稿延長：投稿 11/11、錄取 11/19、定稿與註冊 11/26；更新消息、首頁倒數與英文版（workshop 官網另開 Prof-Shih/ai-sports26 PR #1 待老師合併）
