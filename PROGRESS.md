@@ -68,6 +68,8 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 
 - 2026-11-10 14:56 黃予岑＋Claude：徐啟翔頭像改成完整畫面（含立牌與動作），背景路人模糊
 
+- 2026-11-10 23:09 陳洺安＋Claude：AI-Sports 2026 消息頁原日期加刪除線、新日期紅字；英文版字典改成逐段對應；workshop 官網兩個 repo 同步改完並上線（PR #1 不再需要）
+
 - 2026-11-10 14:54 黃予岑＋Claude：新增徐啟翔成員頭像（`public/avatars/xu-qi-xiang.jpg`，本人同意）
 
 - 2026-11-10 14:39 黃予岑＋Claude：新增李秉霖成員頭像（`public/avatars/li-bing-lin.jpg`，本人同意，已轉正裁切）
