@@ -8,7 +8,7 @@ date: "2026-11-02"
 - 投稿截止：~~2026 年 11 月 7 日~~ <span style="color:#d32f2f;font-weight:700">2026 年 11 月 11 日（延長）</span>
 - 錄取通知：~~2026 年 11 月 15 日~~ <span style="color:#d32f2f;font-weight:700">2026 年 11 月 19 日</span>
 - 定稿與註冊截止：~~2026 年 11 月 21 日~~ <span style="color:#d32f2f;font-weight:700">2026 年 11 月 26 日</span>
-- Workshop 日期：待大會公布
+- Workshop 日期：<span style="color:#d32f2f;font-weight:700">2026 年 12 月 14 日</span>
 
 徵稿與議程：<https://prof-shih.github.io/ai-sports26/>
 
