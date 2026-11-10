@@ -3,7 +3,7 @@
 給所有 AI 助理與成員：**開工前讀這份，做完一件事就更新**。時間一律台灣時間（`TZ=UTC-8 date '+%Y-%m-%d %H:%M'`）。
 Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「做到哪、為什麼這樣做、卡在哪」。
 
-最後更新：2026-11-09 00:42（陳洺安＋Claude）
+最後更新：2026-11-11 01:29（李秉霖＋Claude）
 
 ## 現況
 
@@ -63,6 +63,8 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 ## 進度紀錄
 
 新的放最上面：`- YYYY-MM-DD HH:mm <誰>：<做了什麼>（#issue／PR）`
+
+- 2026-11-11 01:29 李秉霖＋Claude：李秉霖新增介紹卡小照片（`public/uploads/members/li-bing-lin-card.jpg`，本人提供，裁成 400×400）
 
 - 2026-11-10 15:03 黃予岑＋Claude：徐啟翔頭像改回只裁臉
 
