@@ -64,6 +64,8 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 
 新的放最上面：`- YYYY-MM-DD HH:mm <誰>：<做了什麼>（#issue／PR）`
 
+- 2026-11-10 14:39 黃予岑＋Claude：新增李秉霖成員頭像（`public/avatars/li-bing-lin.jpg`，本人同意，已轉正裁切）
+
 - 2026-11-09 00:42 陳洺安＋Claude：AI-Sports 2026 投稿延長：投稿 11/11、錄取 11/19、定稿與註冊 11/26；更新消息、首頁倒數與英文版（workshop 官網另開 Prof-Shih/ai-sports26 PR #1 待老師合併）
 
 - 2026-11-04 16:28 Claude：全面比對老師雲端「新網頁」所有可讀檔案。著作 119 篇與 c302 逐筆核對全數在站上，修正 Energy and Buildings 出處文字、4 篇國內邀稿類型；教授頁依 CV 補兼任教授、AI 創新中心副主任、各職務起訖月份、Session Chair、專利與論文數，依 Teaching 補 2 門課，依〈8〉補網球計畫合作單位；多模態 LLM 主題依〈7. Research〉改寫；新增 8 支影片（拼圖重組 2、注意力模型 3、VR 手眼訓練 3）。超過 10MB 無法下載：project demo 兩份簡報與 MOV、2022 兩份簡報。
