@@ -78,7 +78,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
           )}
           <span class="ring" aria-hidden="true"></span>
           {g.pi && <span class="orbit" aria-hidden="true"><i></i></span>}
-          <button type="button" class:list={['face', { lala: m.lala }]} data-lala={u(m.lala)} aria-label={m.lala ? `${m.name} 介紹（拉拉看：可以拉長頭像）` : `${m.name} 介紹`} style={`background:${pal[i % 6][0]};color:${pal[i % 6][1]}`}>
+          <button type="button" class:list={['face', { lala: m.lala }]} data-lala={u(m.lala)} aria-label={m.lala ? `${m.name} 介紹（拉拉看：可以拉長頭像）` : `${m.name} 介紹`} style={`background:${pal[i % 6][0]};color:${pal[i % 6][1]}`} data-zoom={u(m.lala ?? m.photo)} data-name={m.name}>
             {m.lala || m.photo ? <img src={u(m.lala ?? m.photo)} alt="" /> : initial(m.name)}
             <span class="shine" aria-hidden="true"></span>
           </button>
@@ -88,7 +88,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
           <span class="note">{g.pi ? '指導教授 · 副教授' : m.role}</span>
           <div class="pop card" role="dialog" aria-label={m.name} style={`top:150px;width:min(300px,86vw);gap:14px;--tint:${pal[i % 6][0]};--tint-ink:${pal[i % 6][1]}`}>
             <div class="card-head">
-              {m.card_photo || m.photo || m.lala ? <img class="mini" src={u(m.card_photo ?? m.photo ?? m.lala)} alt="" loading="lazy" /> : <span class="mini">{initial(m.name)}</span>}
+              {m.card_photo || m.photo || m.lala ? <img class="mini" src={u(m.card_photo ?? m.photo ?? m.lala)} data-zoom={u(m.card_photo ?? m.photo ?? m.lala)} data-name={m.name} alt="" loading="lazy" title="點兩下放大" /> : <span class="mini">{initial(m.name)}</span>}
               <span class="stack" style="gap:3px;min-width:0"><b style="font-size:18px;line-height:1.2">{m.name}</b>{m.name_en && <span class="en">{m.name_en}</span>}<span class="badge">{g.pi ? '指導教授' : m.role}</span></span>
             </div>
             {g.pi && (
@@ -146,6 +146,17 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
       <span style="font-size:13px;color:#B9C4BF">大家的照片、影片放進 src/data/gallery.json 就會出現在這裡。</span>
     </div>
   </section>
+
+  <dialog class="avatar-view" aria-label="頭像">
+    <img alt="" />
+    <div class="av-bar">
+      <b class="av-name"></b>
+      <span style="display:flex;gap:8px">
+        <a class="av-dl" download><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" /></svg>下載</a>
+        <button type="button" class="av-close">關閉</button>
+      </span>
+    </div>
+  </dialog>
 
   <dialog class="lightbox" aria-label="照片檢視">
     <div class="lb-frame"><img alt="" /><span class="lb-ph"></span></div>
@@ -236,6 +247,31 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
     });
   }
 
+  // 頭貼（大頭貼與介紹卡小頭像）點兩下放大，可下載。
+  // 自己算兩次點擊的間隔，手機點兩下也有效（手機瀏覽器不一定會送 dblclick）
+  const av = document.querySelector('.avatar-view');
+  const avImg = av.querySelector('img');
+  const avDl = av.querySelector('.av-dl');
+  const openAvatar = (src, name) => {
+    document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open'));
+    avImg.src = src; avImg.alt = `${name} 的頭像`;
+    av.querySelector('.av-name').textContent = name;
+    avDl.href = src;
+    avDl.download = `${name}${(src.match(/\.\w+$/) || ['.jpg'])[0]}`;
+    av.showModal();
+  };
+  document.querySelectorAll('[data-zoom]').forEach((el) => {
+    let last = 0;
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const now = Date.now();
+      if (now - last < 350) { last = 0; openAvatar(el.dataset.zoom, el.dataset.name); }
+      else last = now;
+    });
+  });
+  av.querySelector('.av-close').addEventListener('click', () => av.close());
+  av.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === av) av.close(); });
+
   // 實驗室日常篩選
   const fbtns = [...document.querySelectorAll('.life-filters button')];
   const tiles = [...document.querySelectorAll('.tile')];
@@ -313,6 +349,18 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .face :global(.lala-canvas) { position: absolute; left: -100%; top: -100%; width: 300%; height: 300%; pointer-events: none; z-index: 3; }
   .mini { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; object-fit: cover; background: var(--surface); color: var(--tint-ink, #3D5A50); display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 24px; border: 3px solid var(--surface); box-shadow: 0 0 0 2px var(--tint-ink, #3D5A50), 0 8px 18px rgba(30,28,24,.18); transition: transform .3s; }
   .has-pop:hover .mini, .has-pop.open .mini { transform: scale(1.04); }
+  .mini[data-zoom] { cursor: zoom-in; }
+  /* 點兩下展開的頭貼：圓形 */
+  .avatar-view { width: min(440px, calc(100% - 32px), calc(100dvh - 140px)); max-width: none; padding: 0; border: 0; background: transparent; color: #F2EFE8; overflow: visible; }
+  .avatar-view::backdrop { background: rgba(15,18,16,.88); }
+  .avatar-view[open] { display: flex; flex-direction: column; align-items: center; gap: 18px; animation: pop .3s ease-out; }
+  .avatar-view img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; background: #111; border: 5px solid var(--surface); box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+  .av-bar { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .av-name { font-size: 19px; }
+  .av-dl, .av-close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 700; font-family: var(--sans); cursor: pointer; text-decoration: none; }
+  .av-dl { border: 1px solid #6E8079; color: #F2EFE8; background: transparent; }
+  .av-dl:hover { background: rgba(255,255,255,.08); }
+  .av-close { border: 0; background: var(--coral); color: #1E1F1D; }
   .card { padding-top: 0; overflow: hidden; }
   .card-head { position: relative; display: flex; align-items: center; gap: 16px; margin: 0 -20px; padding: 22px 20px 6px 22px; background: linear-gradient(160deg, var(--tint, #DCE5E0) 0%, var(--tint, #DCE5E0) 40%, transparent 100%); }
   /* 右上角的淡色裝飾圓 */

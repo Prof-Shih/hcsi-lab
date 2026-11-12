@@ -74,6 +74,9 @@
     "照片": "Photo",
     "影片": "Video",
     "照片檢視": "Photo viewer",
+    "頭像": "Profile photo",
+    "下載": "Download",
+    "點兩下放大": "Double-click to enlarge",
     "關閉": "Close",
     "送出": "Send",
     "連結": "Links",
@@ -725,6 +728,7 @@
   "patterns": [
     { "zh": "^(.+) · HCSI Lab$", "en": "$1 · HCSI Lab" },
     { "zh": "^(.+) 介紹$", "en": "About $1" },
+    { "zh": "^(.+) 的頭像$", "en": "$1's photo" },
     { "zh": "^(.+) · (\\d{4}) 畢業$", "en": "$1 · Class of $2" },
     { "zh": "^(.+) · (\\d{4} 學期)$", "en": "$1 · $2" },
     { "zh": "^(.+) · (照片|影片)$", "en": "$1 · $2" },

@@ -64,6 +64,8 @@ Issue 的即時狀態以 `gh issue list --state all` 為準；這份記的是「
 
 新的放最上面：`- YYYY-MM-DD HH:mm <誰>：<做了什麼>（#issue／PR）`
 
+- 2026-11-13 02:38 黃予岑＋Claude：成員頁頭貼點兩下展開成圓形大圖，可下載（大頭貼與介紹卡小頭像）
+
 - 2026-11-11 01:44 李秉霖＋Claude：李秉霖換頭像（`public/avatars/li-bing-lin.jpg`，本人提供）
 
 - 2026-11-11 01:29 李秉霖＋Claude：李秉霖新增介紹卡小照片（`public/uploads/members/li-bing-lin-card.jpg`，本人提供，裁成 400×400）
