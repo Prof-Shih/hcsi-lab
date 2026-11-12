@@ -19,6 +19,8 @@
     { "y": "2006/09 – 2007/04", "t": "University of Washington 電機系 Information Processing Lab 訪問學者（Prof. Jenq-Neng Hwang）" }
   ],
   "honors": [
+    { "y": "2026", "t": "中華民國民生電子學會碩博士論文佳作（學生：涂睿奇）" },
+    { "y": "2024", "t": "中華民國民生電子學會碩博士論文佳作（學生：鄭宇昌）" },
     { "y": "2024", "t": "IWAIT 2024 最佳論文獎" },
     { "y": "2023", "t": "台灣創新技術博覽會 銅牌" },
     { "y": "2022", "t": "元智大學 教學優良（108–110 學年）" },
@@ -39,7 +41,7 @@
   ],
   "service": [
     { "k": "期刊副編輯", "v": "IEEE Trans. on Consumer Electronics（2026–2027）、IEEE Trans. on Circuits and Systems for Video Technology（2022–2025）" },
-    { "k": "Workshop 主辦", "v": "IEEE ICME AI-Sports 2020–2024、AVSS CAVA 2019、AIVR ETXR 2018" },
+    { "k": "Workshop 主辦", "v": "IEEE BigData AI-Sports Workshop 2026、IEEE ICME AI-Sports 2020–2024、AVSS CAVA 2019、AIVR ETXR 2018" },
     { "k": "大會職務", "v": "ICCE-TW26 Program Co-Chair、GCCE19–21 International Coordinator、ICCE-TW20/21 Publication Chair" },
     { "k": "Area Chair", "v": "VCIP18、ICME20、TANET22、TANET24" },
     { "k": "Session Chair", "v": "Organized Session：ICCE11、SMC14、GCCE15–18、ISCAS18、GCCE19、ACM MMSports19；Special Session：ICCE-TW19、CVGIP24、GEM24" },
@@ -49,19 +51,28 @@
   "partners": [
     { "kind": "國際學界", "name": "Santa Clara University", "what": "Prof. Ying Liu · 姿態估測、影像壓縮" },
     { "kind": "國際學界", "name": "Hokkaido University", "what": "Prof. Takahiro Ogawa · 團隊運動分析" },
-    { "kind": "產業", "name": "智匯創育（耐能科技子公司）", "what": "AIoT 課程、邊緣 AI 應用" },
+    { "kind": "國際學界", "name": "University at Albany - SUNY", "what": "Prof. Ming-Ching Chang", "url": "https://scholar.google.com/citations?view_op=view_org&hl=en&org=15776551511564474777" },
+    { "kind": "產業", "name": "智匯創育（耐能科技子公司）", "what": "AIoT 課程、邊緣 AI 應用", "url": "https://www.taiwanarena.tech/startups-detail/Innovedus/" },
     { "kind": "產業", "name": "智之視 IdeasLab", "what": "高爾夫／棒球 AI 顧問" },
     { "kind": "產業", "name": "匯陽百貨（臺北市網球中心）", "what": "網球賽事分析計畫合作" },
     { "kind": "醫院", "name": "壢新國際醫院", "what": "復健治療科" },
     { "kind": "醫院", "name": "亞東紀念醫院", "what": "視網膜影像智慧醫療" }
   ],
   "grants": [
+    { "y": "2026–2028", "t": "智慧運動防護：多模態感測與生成式 AI 的網球傷害風險預測及可解釋性分析", "s": "國科會" },
     { "y": "2024–2025", "t": "網球賽事結構自動標記及即時表現評估系統研製", "s": "國科會" },
     { "y": "2022–2024", "t": "智慧型醫療診斷技術—基於對比預測編碼在時間軸上之視網膜病變數據評估系統", "s": "國科會" },
     { "y": "2018–2022", "t": "棒球投打訓練最佳化及球員狀態快篩技術研發（精準運動科學 4 年期整合計畫）", "s": "科技部" },
     { "y": "2021–2022", "t": "眼震儀檢測有效性判別及瞳孔追蹤演算法開發", "s": "神經元科技" },
     { "y": "2020–2021", "t": "基於深度學習之車輛三維可變外觀模型及其應用", "s": "科技部" },
     { "y": "2018–2020", "t": "群模共舞：互動藝術擴增實境劇院—舞者與機器人同步互動", "s": "科技部" }
+  ],
+  "ncu_courses": [
+    { "name": "初階程式設計", "code": "IM1013A", "semesters": ["1141", "1151"] },
+    { "name": "微電腦軟體應用", "code": "IM1007-*", "semesters": ["1141"] },
+    { "name": "網頁程式設計", "code": "IM3029A/B", "semesters": ["1142"] },
+    { "name": "物聯網實務應用", "code": "IM5032-* A", "semesters": ["1151"] },
+    { "name": "物聯網與大數據", "code": "IMA023-*", "semesters": ["1151"] }
   ],
   "courses": ["計算機概論", "數位邏輯設計", "程式語言", "人機互動導論", "影像處理", "影像處理演算法", "即時多媒體人機互動", "行動裝置相機應用開發", "電機通訊導論", "系統設計與實作", "畢業專題", "數位邏輯設計實驗", "專題討論（Seminar for EE students）"]
 }

@@ -61,7 +61,7 @@ const site = await getSite();
       <div class="stack" style="flex:1 1 400px;min-width:0;gap:16px">
         <h2 class="h3">合作夥伴</h2>
         <div class="partners">
-          {pi.partners.map((p) => <div><span class="pk">{p.kind}</span><b>{p.name}</b><span class="pw">{p.what}</span></div>)}
+          {pi.partners.map((p) => <div><span class="pk">{p.kind}</span><b>{p.url ? <a href={p.url}>{p.name}</a> : p.name}</b><span class="pw">{p.what}</span></div>)}
         </div>
       </div>
     </div>
@@ -80,8 +80,17 @@ const site = await getSite();
   <section class="reveal" style="background:var(--surface);border-top:1px solid var(--line)">
     <div class="wrap" style="padding-top:64px;padding-bottom:88px;display:flex;flex-direction:column;gap:18px">
       <h2 class="h3">授課</h2>
-      <div style="font-size:14px;color:var(--muted)">中央資管：初階程式設計（IM1013A）、網頁程式設計 [待老師確認課號] · 元智電機歷年（多門以全英語授課）：</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px">{pi.courses.map((c) => <span class="course">{c}</span>)}</div>
+      <div class="course-group">
+        <h3>中央資管</h3>
+        <ol class="course-list">
+          {pi.ncu_courses.map((c) => <li><span>{c.name}</span>{c.code && ` (${c.code})`}{c.semesters?.length ? `: ${c.semesters.join(', ')}` : ''}</li>)}
+        </ol>
+      </div>
+      <div class="course-group">
+        <h3>元智電機歷年</h3>
+        <p class="course-note">多門以全英語授課</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">{pi.courses.map((c) => <span class="course">{c}</span>)}</div>
+      </div>
     </div>
   </section>
 </Layout>
@@ -95,7 +104,7 @@ const site = await getSite();
   .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 15px; }
   .facts > div { display: flex; flex-direction: column; gap: 2px; }
   .facts > div > span:first-child { font-size: 13px; color: var(--muted); }
-  .bio { margin: 0; font-size: 16px; line-height: 1.85; color: #3F3F3F; }
+  .bio { margin: 0; font-size: 16px; line-height: 1.85; color: #3F3F3F; text-align: justify; }
   .two { padding-top: 64px; padding-bottom: 64px; display: flex; flex-wrap: wrap; gap: 56px; }
   .h3 { margin: 0; font-family: var(--serif); font-size: 28px; font-weight: 700; }
   .yr { flex: 0 0 56px; font-family: var(--display); font-size: 24px; font-weight: 600; color: var(--accent-ink); }
@@ -115,6 +124,11 @@ const site = await getSite();
   table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; }
   th { text-align: left; font-size: 13px; color: var(--muted); font-weight: 500; padding: 12px 18px; border-bottom: 1px solid var(--line); }
   td { padding: 14px 18px; border-bottom: 1px solid #EFEBE3; line-height: 1.55; vertical-align: top; }
+  .course-group { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+  .course-group h3 { margin: 0; font-size: 18px; font-weight: 600; }
+  .course-list { margin: 0; padding-left: 24px; font-size: 15px; line-height: 1.8; }
+  .course-list li + li { margin-top: 6px; }
+  .course-note { margin: 0; font-size: 14px; color: var(--muted); }
   .course { font-size: 14px; padding: 8px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; }
   @media (max-width: 767px) { .name { font-size: 36px; } .partners { grid-template-columns: 1fr; } .profile { gap: 32px; } }
 </style>
