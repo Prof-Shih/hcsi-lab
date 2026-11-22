@@ -144,7 +144,7 @@ const strip = [...home.strip, ...home.strip];
             </div>
             <div class="pop" role="tooltip" style="top:calc(100% - 24px);width:min(320px,90vw)">
               <b style="font-size:17px">{t.data.title}</b>
-              <span style="font-size:14px;line-height:1.65;color:#4A4A4A">{t.data.short ?? t.data.summary}</span>
+              <span style="font-size:14px;line-height:1.65;color: var(--ink-2)">{t.data.short ?? t.data.summary}</span>
               <span style="font-size:13px;color:var(--accent-ink);font-weight:500">點擊看成果、論文與學長姐題目 →</span>
             </div>
           </a>
@@ -159,10 +159,10 @@ const strip = [...home.strip, ...home.strip];
       <a href={u('/members/#life')} style="font-size:15px">看更多照片與影片 →</a>
     </div>
     <div class="life-mosaic">
-      <a href={u('/members/#life')} class="zoom ph" style="grid-row:span 2;background:#3D5A50">[實驗室合照待補]<span class="tag" style="top:auto;bottom:10px;left:10px">實驗室合照</span></a>
+      <a href={u('/members/#life')} class="zoom" style="grid-row:span 2"><img src={u('/images/lab-camera.jpg')} alt="實驗室一角" loading="lazy" /><span class="tag" style="top:auto;bottom:10px;left:10px">實驗室日常</span></a>
       <a href={u('/research/hci/')} class="zoom"><img src={u('/videos/run-motion.jpg')} alt="即時人體動作擷取影片" /><span class="play" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1F2622"><path d="M8 5v14l11-7z"></path></svg></span></a>
       <a href={u('/members/#life')} class="zoom"><img src={u('/images/glove2.jpg')} alt="打擊手套實測" /></a>
-      <a href={u('/members/#life')} class="zoom ph" style="background:#6B5A48">[Group Meeting]</a>
+      <a href={u('/members/#life')} class="zoom"><img src={u('/images/puzzle.jpg')} alt="機械手臂拼圖 Demo" loading="lazy" /></a>
       <a href={u('/members/#life')} class="zoom"><img src={u('/images/robot.jpg')} alt="Otto 機器人" /></a>
     </div>
   </section>
@@ -187,7 +187,7 @@ const strip = [...home.strip, ...home.strip];
       </div>
       <div class="cta-box">
         <div style="font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.4">推甄、考試、專題<br>都歡迎直接來信聊聊</div>
-        <p style="margin:0;font-size:14px;line-height:1.7;color:#B9C4BF">[面談時段、研究室位置 — 待老師提供]</p>
+        <p style="margin:0;font-size:14px;line-height:1.7;color:#B9C4BF">研究室：{site.lab_room}<br>電話：{site.phone}<br>面談時段請先來信約時間</p>
         <a class="btn btn-coral" style="align-self:flex-start" href={`mailto:${site.email}`}>寄信給老師</a>
         <a href={u('/contact/')} style="color:#E8C9A8;font-size:15px">研究室位置與聯絡方式 →</a>
       </div>
@@ -230,7 +230,7 @@ const strip = [...home.strip, ...home.strip];
   .car-no { font-family: var(--latin); font-size: 13px; color: #B9C4BF; }
   .scroll-hint { position: absolute; left: 50%; bottom: 18px; margin-left: -22px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #D9D3C7; animation: bob 1.8s ease-in-out infinite; }
 
-  .hl { background: #EEF2EE; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .hl { background: var(--hl); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .hl-inner { padding-top: 56px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 24px; }
   .hl-sub { font-family: var(--latin); font-size: 13px; letter-spacing: .12em; color: var(--accent); }
   .hl-grid { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto auto; gap: 16px; }
@@ -244,7 +244,7 @@ const strip = [...home.strip, ...home.strip];
   .hl-btns { display: flex; flex-wrap: wrap; gap: 10px; }
   .browser { border-radius: 8px; overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 14px 32px rgba(30,28,24,.12); transform: perspective(1200px) rotateY(-8deg); transition: transform .5s; }
   .hl-ws:hover .browser { transform: perspective(1200px) rotateY(0); }
-  .browser-bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: #E9E3D8; font-family: var(--latin); font-size: 11px; color: #6B6B6B; }
+  .browser-bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: var(--sand); font-family: var(--latin); font-size: 11px; color: var(--muted); }
   .browser-bar i { width: 9px; height: 9px; border-radius: 50%; background: #CFC8BB; }
   .browser-bar span { margin-left: 8px; }
   .browser-view { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
@@ -264,7 +264,7 @@ const strip = [...home.strip, ...home.strip];
   .strip { overflow: hidden; padding: 40px 0 56px; }
   .strip-track { display: flex; gap: 16px; width: max-content; animation: marq 48s linear infinite; }
   .strip:hover .strip-track { animation-play-state: paused; }
-  .strip figure { margin: 0; position: relative; width: 260px; height: 180px; border-radius: 6px; overflow: hidden; background: #E9E3D8; }
+  .strip figure { margin: 0; position: relative; width: 260px; height: 180px; border-radius: 6px; overflow: hidden; background: var(--sand); }
   .strip img { width: 100%; height: 100%; object-fit: cover; }
   .strip figcaption { position: absolute; left: 10px; bottom: 10px; font-size: 13px; color: #fff; background: rgba(20,24,22,.65); padding: 4px 10px; border-radius: 999px; }
 

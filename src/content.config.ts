@@ -43,6 +43,8 @@ const members = defineCollection({
     instagram: z.string().optional(),
     website: z.string().optional(),
     card_photo: path.optional(),
+    // 生日只填月-日（MM-DD），當天成員頁會戴派對帽、灑彩帶；不填就沒有
+    birthday: z.string().regex(/^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/, '生日格式為 月-日，例：03-14').optional(),
     grad_year: z.number().int().optional(),
     dept: z.string().optional(),
     thesis: z.string().optional(),

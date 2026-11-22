@@ -17,7 +17,7 @@ const site = await getSite();
       <div class="eyebrow" style="color:var(--accent-ink)">Principal Investigator</div>
       <h2 class="name">施皇嘉 <span>副教授</span></h2>
       <div class="name-en">Huang-Chia (Royal) Shih, Ph.D.</div>
-      <div style="font-size:16px;line-height:1.8;color:#3F3F3F">國立中央大學 資訊管理學系 副教授<br>IEEE Senior Member · IEEE Trans. on Consumer Electronics 副編輯（2026–2027）</div>
+      <div style="font-size:16px;line-height:1.8;color: var(--ink-3)">國立中央大學 資訊管理學系 副教授<br>IEEE Senior Member · IEEE Trans. on Consumer Electronics 副編輯（2026–2027）</div>
       <div class="facts">
         <div><span>E-mail</span><a href={`mailto:${site.email}`}>{site.email}</a></div>
         <div><span>研究室</span>{site.lab_room ?? site.room}</div>
@@ -95,7 +95,7 @@ const site = await getSite();
   .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 15px; }
   .facts > div { display: flex; flex-direction: column; gap: 2px; }
   .facts > div > span:first-child { font-size: 13px; color: var(--muted); }
-  .bio { margin: 0; font-size: 16px; line-height: 1.85; color: #3F3F3F; }
+  .bio { margin: 0; font-size: 16px; line-height: 1.85; color: var(--ink-3); }
   .two { padding-top: 64px; padding-bottom: 64px; display: flex; flex-wrap: wrap; gap: 56px; }
   .h3 { margin: 0; font-family: var(--serif); font-size: 28px; font-weight: 700; }
   .yr { flex: 0 0 56px; font-family: var(--display); font-size: 24px; font-weight: 600; color: var(--accent-ink); }
@@ -106,15 +106,15 @@ const site = await getSite();
   .honors { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
   .honors > div { display: flex; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; }
   .hy { flex: 0 0 48px; font-family: var(--display); font-size: 22px; font-weight: 600; color: #A0703F; }
-  .svc { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid #EFEBE3; }
-  .svc b { font-size: 15px; } .svc span { font-size: 14px; color: #4A4A4A; line-height: 1.6; }
+  .svc { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid var(--paper-2); }
+  .svc b { font-size: 15px; } .svc span { font-size: 14px; color: var(--ink-2); line-height: 1.6; }
   .partners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .partners > div { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-  .pk { font-size: 12px; color: var(--muted); } .partners b { font-size: 15px; } .pw { font-size: 13px; color: #4A4A4A; line-height: 1.5; }
+  .pk { font-size: 12px; color: var(--muted); } .partners b { font-size: 15px; } .pw { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
   .table-box { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
   table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; }
   th { text-align: left; font-size: 13px; color: var(--muted); font-weight: 500; padding: 12px 18px; border-bottom: 1px solid var(--line); }
-  td { padding: 14px 18px; border-bottom: 1px solid #EFEBE3; line-height: 1.55; vertical-align: top; }
+  td { padding: 14px 18px; border-bottom: 1px solid var(--paper-2); line-height: 1.55; vertical-align: top; }
   .course { font-size: 14px; padding: 8px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 2px; }
   @media (max-width: 767px) { .name { font-size: 36px; } .partners { grid-template-columns: 1fr; } .profile { gap: 32px; } }
 </style>

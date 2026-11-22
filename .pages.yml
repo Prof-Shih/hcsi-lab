@@ -40,6 +40,7 @@ content:
       - { name: topic, label: 研究題目, type: string }
       - { name: instagram, label: Instagram 帳號, type: string, description: "只填帳號，不含 @" }
       - { name: website, label: 個人網站, type: string, description: "完整網址，例：https://xxx.github.io/" }
+      - { name: birthday, label: 生日（月-日）, type: string, pattern: "^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$", description: "選填，例：03-14。當天成員頁會戴派對帽、灑彩帶；不填年份" }
       - { name: card_photo, label: 介紹卡小照片, type: image, description: "成員頁點頭像後，介紹卡左上角的圓形小照；正方形較好。沒放就用頭像" }
       - { name: grad_year, label: 畢業年（西元）, type: number, description: "畢業生才需要" }
       - { name: dept, label: 系所, type: string }

@@ -1,5 +1,5 @@
 ---
-title: "IEEE BigData 2026 第六屆 AI-Sports Workshop 徵稿，投稿延長至 11/11"
+title: "IEEE BigData 2026 第六屆 AI-Sports Workshop，12/14–17 美國 Phoenix"
 date: "2026-11-02"
 ---
 **The Sixth International Workshop on Artificial Intelligence in Sports（AI-Sports 2026）**，為 **IEEE BigData 2026** 的附屬 workshop，聚焦運動資料分析、大數據系統、邊緣 AI、物聯網與即時運算在運動上的應用。

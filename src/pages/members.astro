@@ -18,7 +18,11 @@ const gradeOf = (role: string, y?: number) => {
   if (n < 1 || n > 9) return role;
   return role === '碩士生' ? `碩${'一二三四五六七八九'[n - 1]}` : role === '博士生' ? `博${'一二三四五六七八九'[n - 1]}` : role;
 };
-const people = [...pi, ...current].map(({ data }) => ({ ...data, ...(data.role === '教授' ? { photo: '/images/pi-suit.jpg' } : {}), role: gradeOf(data.role, data.enroll_year), lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
+// 還沒填的「[學歷 — 待補]」之類佔位字不要顯示在介紹卡上
+const filled = (v?: string) => (v && !/待補/.test(v) ? v : undefined);
+// 生日只收 MM-DD；是不是今天由瀏覽器端判斷（網站是靜態的，建置日期不等於瀏覽日期）
+const bday = (v?: string) => (v && /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(v) ? v : undefined);
+const people = [...pi, ...current].map(({ data }) => ({ ...data, edu: filled(data.edu), topic: filled(data.topic), ...(data.role === '教授' ? { photo: '/images/pi-suit.jpg' } : {}), role: gradeOf(data.role, data.enroll_year), lala: data.avatar_style === '拉拉看' ? data.lala_photo : undefined }));
 // 依年級分區：高年級在前，推算不出年級的（沒填入學年）放最後
 const rank = (r: string) => '博碩'.indexOf(r[0]) * 10 - '一二三四五六七八九'.indexOf(r[1]);
 const key = (r: string) => (r === '教授' ? -99 : /^[博碩][一二三四五六七八九]$/.test(r) ? rank(r) : 99);
@@ -67,7 +71,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
       </div>
     <div class="people">
       {g.list.map((m) => people.indexOf(m)).map((i) => [people[i], i] as const).map(([m, i]) => (
-        <div class:list={['person has-pop', `tier-${g.code || 'x'}`]}>
+        <div class:list={['person has-pop', `tier-${g.code || 'x'}`]} data-birthday={bday(m.birthday)}>
           <div class="frame" data-tilt={m.lala ? undefined : ''}>
           {g.pi && (
             <svg class="laurel" viewBox="0 0 220 220" aria-hidden="true">
@@ -77,6 +81,9 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
             </svg>
           )}
           <span class="ring" aria-hidden="true"></span>
+          {bday(m.birthday) && (
+            <svg class="bday-hat" viewBox="0 0 60 70" aria-hidden="true"><path d="M30 4 8 62h44z" fill="#E07A5F" stroke="#2B2B2B" stroke-width="2.5" stroke-linejoin="round" /><path d="M19 34l22-6M14 48l32-8" stroke="#F3DE9C" stroke-width="5" stroke-linecap="round" /><circle cx="30" cy="5" r="6" fill="#F3DE9C" stroke="#2B2B2B" stroke-width="2.5" /><path d="M5 62h50" stroke="#2B2B2B" stroke-width="5" stroke-linecap="round" /></svg>
+          )}
           {g.pi && <span class="orbit" aria-hidden="true"><i></i></span>}
           <button type="button" class:list={['face', { lala: m.lala }]} data-lala={u(m.lala)} aria-label={m.lala ? `${m.name} 介紹（拉拉看：可以拉長頭像）` : `${m.name} 介紹`} style={`background:${pal[i % 6][0]};color:${pal[i % 6][1]}`} data-zoom={u(m.lala ?? m.photo)} data-name={m.name}>
             {m.lala || m.photo ? <img src={u(m.lala ?? m.photo)} alt="" /> : initial(m.name)}
@@ -85,6 +92,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
           {g.pi && <span class="seal" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M3 18h18l-1.6-10-4.9 4.2L12 5l-2.5 7.2L4.6 8z" fill="currentColor" /></svg></span>}
           </div>
           <b style="font-size:18px">{m.name}</b>
+          {bday(m.birthday) && <span class="bday-tag">今天生日</span>}
           <span class="note">{g.pi ? '指導教授 · 副教授' : m.role}</span>
           <div class="pop card" role="dialog" aria-label={m.name} style={`top:150px;width:min(300px,86vw);gap:14px;--tint:${pal[i % 6][0]};--tint-ink:${pal[i % 6][1]}`}>
             <div class="card-head">
@@ -110,7 +118,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
             )}
             <div class="links">
               {m.instagram && <a href={u(`https://instagram.com/${m.instagram}`)} target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>@{m.instagram}</a>}
-              {m.email ? <a href={`mailto:${m.email}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>{m.email}</a> : <span class="note">信箱 [待補]</span>}
+              {m.email ? <a href={`mailto:${m.email}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>{m.email}</a> : null}
             </div>
           </div>
         </div>
@@ -148,7 +156,11 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   </section>
 
   <dialog class="avatar-view" aria-label="頭像">
-    <img alt="" />
+    <div class="av-stage">
+      <button type="button" class="av-nav av-prev" aria-label="上一位">‹</button>
+      <img alt="" draggable="false" />
+      <button type="button" class="av-nav av-next" aria-label="下一位">›</button>
+    </div>
     <div class="av-bar">
       <b class="av-name"></b>
       <span style="display:flex;gap:8px">
@@ -198,7 +210,10 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
 <script>
   // 拉拉看頭像（只有選了拉拉看風格的成員才有 data-lala）
   import { mountLala } from '../scripts/lala';
+  import { mountGoogly } from '../scripts/googly';
   mountLala();
+  // 滑鼠進到成員區：頭貼長出卡通眼睛，眼珠跟著游標轉（拉拉看頭像不加）
+  mountGoogly('#people', '.face:not(.lala) > img');
 </script>
 
 <script define:vars={{ gallery }}>
@@ -228,10 +243,66 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
     h.addEventListener('focusin', () => keepIn(h));
   });
 
+  // 頭貼可以用滑鼠抓起來丟：放手後帶著速度飛出去、撞到螢幕邊彈回，最後像彈簧一樣回到原位。
+  // 只有滑鼠（手機上拖曳要留給捲動頁面）；拉拉看頭像本來就能拉，不加。拖過就不算點擊。
+  if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.frame[data-tilt]').forEach((f) => {
+      const person = f.closest('.person');
+      let x = 0, y = 0, vx = 0, vy = 0, sx = 0, sy = 0, lt = 0, held = false, moved = false, raf = 0;
+      const put = () => { f.style.translate = `${x}px ${y}px`; f.style.rotate = `${Math.max(-25, Math.min(25, vx / 60))}deg`; };
+      const fly = (t0) => {
+        let prev = t0;
+        const tick = (t) => {
+          const dt = Math.min(0.032, (t - prev) / 1000); prev = t;
+          vx += (-70 * x - 5 * vx) * dt; vy += (-70 * y - 5 * vy) * dt;
+          x += vx * dt; y += vy * dt;
+          // 撞到視窗邊緣就反彈
+          const r = f.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = innerHeight;
+          if (r.left < 0 && vx < 0) { x -= r.left; vx = -vx * 0.7; }
+          if (r.right > vw && vx > 0) { x -= r.right - vw; vx = -vx * 0.7; }
+          if (r.top < 0 && vy < 0) { y -= r.top; vy = -vy * 0.7; }
+          if (r.bottom > vh && vy > 0) { y -= r.bottom - vh; vy = -vy * 0.7; }
+          put();
+          if (Math.hypot(x, y) < 0.5 && Math.hypot(vx, vy) < 5) {
+            x = y = vx = vy = 0; f.style.translate = ''; f.style.rotate = ''; person.classList.remove('flying'); raf = 0; return;
+          }
+          raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      };
+      f.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        cancelAnimationFrame(raf); raf = 0;
+        held = true; moved = false; sx = e.clientX - x; sy = e.clientY - y; lt = e.timeStamp; vx = vy = 0;
+      });
+      addEventListener('pointermove', (e) => {
+        if (!held) return;
+        const nx = e.clientX - sx, ny = e.clientY - sy;
+        if (!moved && Math.hypot(nx, ny) < 8) return;
+        if (!moved) { moved = true; f.setPointerCapture?.(e.pointerId); person.classList.add('flying', 'dragging'); person.classList.remove('open'); }
+        const dt = Math.max(1, e.timeStamp - lt) / 1000; lt = e.timeStamp;
+        vx = vx * 0.5 + ((nx - x) / dt) * 0.5; vy = vy * 0.5 + ((ny - y) / dt) * 0.5;
+        x = nx; y = ny; put();
+      });
+      addEventListener('pointerup', () => {
+        if (!held) return;
+        held = false;
+        if (!moved) return;
+        person.classList.remove('dragging');
+        vx = Math.max(-4000, Math.min(4000, vx)); vy = Math.max(-4000, Math.min(4000, vy));
+        fly(performance.now());
+      });
+      // 剛丟完的那一下 click 不要打開介紹卡或放大
+      f.addEventListener('click', (e) => { if (moved) { moved = false; e.stopPropagation(); e.preventDefault(); } }, true);
+      f.addEventListener('dragstart', (e) => e.preventDefault());
+    });
+  }
+
   // 頭像 3D 傾斜（只有滑鼠；拉拉看頭像要拖曳，不加）
   if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.querySelectorAll('.frame[data-tilt]').forEach((f) => {
       f.addEventListener('pointermove', (e) => {
+        if (f.closest('.flying')) return;
         const r = f.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
         f.classList.add('tilting');
@@ -252,23 +323,71 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   const av = document.querySelector('.avatar-view');
   const avImg = av.querySelector('img');
   const avDl = av.querySelector('.av-dl');
-  const openAvatar = (src, name) => {
-    document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open'));
+  // 左右切換的順序＝成員頁大頭貼的順序（沒有照片的人跳過）
+  const faces = [...document.querySelectorAll('.face[data-zoom]')];
+  let at = -1;
+  const showAvatar = (src, name, dir = 0) => {
     avImg.src = src; avImg.alt = `${name} 的頭像`;
     av.querySelector('.av-name').textContent = name;
     avDl.href = src;
     avDl.download = `${name}${(src.match(/\.\w+$/) || ['.jpg'])[0]}`;
+    if (dir) { avImg.classList.remove('from-l', 'from-r'); void avImg.offsetWidth; avImg.classList.add(dir > 0 ? 'from-r' : 'from-l'); }
+  };
+  const openAvatar = (el) => {
+    document.querySelectorAll('.person.open').forEach((x) => x.classList.remove('open'));
+    at = faces.indexOf(el.closest('.person')?.querySelector('.face[data-zoom]'));
+    showAvatar(el.dataset.zoom, el.dataset.name);
+    av.classList.toggle('single', faces.length < 2);
     av.showModal();
+  };
+  const step = (d) => {
+    if (faces.length < 2) return;
+    at = ((at < 0 ? 0 : at + d) + faces.length) % faces.length;
+    showAvatar(faces[at].dataset.zoom, faces[at].dataset.name, d);
   };
   document.querySelectorAll('[data-zoom]').forEach((el) => {
     let last = 0;
     el.addEventListener('click', (e) => {
       e.stopPropagation();
       const now = Date.now();
-      if (now - last < 350) { last = 0; openAvatar(el.dataset.zoom, el.dataset.name); }
+      if (now - last < 350) { last = 0; openAvatar(el); }
       else last = now;
     });
   });
+  av.querySelector('.av-prev').addEventListener('click', () => step(-1));
+  av.querySelector('.av-next').addEventListener('click', () => step(1));
+  av.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
+  // 手機左右滑
+  let sx = null, sy = 0;
+  avImg.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
+  avImg.addEventListener('pointerup', (e) => {
+    if (sx === null) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+  });
+  avImg.addEventListener('pointercancel', () => { sx = null; });
+
+  // 生日彩蛋：今天（台灣時間）生日的人戴派對帽，進到畫面時灑彩帶，滑鼠移上去再灑一次
+  const tw = new Date(Date.now() + 8 * 3600e3).toISOString().slice(5, 10);
+  const stars = [...document.querySelectorAll('.person[data-birthday]')].filter((p) => p.dataset.birthday === tw);
+  stars.forEach((p) => p.classList.add('bday'));
+  if (stars.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const colors = ['#E07A5F', '#F3DE9C', '#5B7B6F', '#C08B5C', '#8FB8DE', '#E9A6C6'];
+    const burst = (p) => {
+      const r = p.querySelector('.frame').getBoundingClientRect();
+      for (let k = 0; k < 60; k++) {
+        const c = document.createElement('i');
+        c.className = 'confetti';
+        const a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 220;
+        c.style.cssText = `left:${r.left + r.width / 2 + scrollX}px;top:${r.top + r.height / 3 + scrollY}px;background:${colors[k % colors.length]};--dx:${Math.cos(a) * v}px;--dy:${Math.sin(a) * v - 120}px;--rot:${Math.random() * 720 - 360}deg;animation-delay:${Math.random() * .15}s`;
+        document.body.append(c);
+        setTimeout(() => c.remove(), 2300);
+      }
+    };
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { burst(e.target); io.unobserve(e.target); } }), { threshold: .6 });
+    stars.forEach((p) => { io.observe(p); p.querySelector('.face').addEventListener('mouseenter', () => burst(p)); });
+  }
+
   av.querySelector('.av-close').addEventListener('click', () => av.close());
   av.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === av) av.close(); });
 
@@ -354,7 +473,41 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .avatar-view { width: min(440px, calc(100% - 32px), calc(100dvh - 140px)); max-width: none; padding: 0; border: 0; background: transparent; color: #F2EFE8; overflow: visible; }
   .avatar-view::backdrop { background: rgba(15,18,16,.88); }
   .avatar-view[open] { display: flex; flex-direction: column; align-items: center; gap: 18px; animation: pop .3s ease-out; }
-  .avatar-view img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; background: #111; border: 5px solid var(--surface); box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+  .av-stage { position: relative; width: 100%; }
+  .avatar-view img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; background: #111; border: 5px solid var(--surface); box-shadow: 0 18px 50px rgba(0,0,0,.45); touch-action: pan-y; user-select: none; }
+  .avatar-view img.from-r { animation: av-in-r .35s cubic-bezier(.2,.8,.2,1); }
+  .avatar-view img.from-l { animation: av-in-l .35s cubic-bezier(.2,.8,.2,1); }
+  @keyframes av-in-r { from { opacity: 0; transform: translateX(40px) rotate(6deg) scale(.94); } }
+  @keyframes av-in-l { from { opacity: 0; transform: translateX(-40px) rotate(-6deg) scale(.94); } }
+  .av-nav { position: absolute; top: 50%; translate: 0 -50%; z-index: 1; width: 46px; height: 46px; border-radius: 50%; border: 0; background: rgba(247,245,240,.92); color: #1F2622; font-size: 26px; line-height: 1; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+  .av-prev { left: -14px; } .av-next { right: -14px; }
+  .avatar-view.single .av-nav { display: none; }
+  /* 生日：派對帽、「今天生日」標籤、彩帶 */
+  /* 深色模式：介紹卡的粉色標頭改成淡淡一層，標籤字改用淺色 */
+  :global(:root[data-theme="dark"]) .card-head { background: linear-gradient(160deg, color-mix(in srgb, var(--tint) 22%, var(--surface)) 0%, transparent 100%); }
+  :global(:root[data-theme="dark"]) .badge, :global(:root[data-theme="dark"]) .site-go, :global(:root[data-theme="dark"]) .site-ico { color: var(--tint); }
+  :global(:root[data-theme="dark"]) .site-ico { background: color-mix(in srgb, var(--tint) 18%, var(--surface)); }
+  :global(:root[data-theme="dark"]) .mini { color: var(--tint); box-shadow: 0 0 0 2px var(--tint), 0 8px 18px rgba(0,0,0,.4); }
+  :global(:root[data-theme="dark"]) .links a:hover { background: color-mix(in srgb, var(--tint) 22%, var(--surface)); color: var(--ink); }
+  :global(:root[data-theme="dark"]) .alum-face { color: #D9C2A6; }
+  /* 抓起來丟 */
+  .person.flying { position: relative; z-index: 40; }
+  .person.flying .frame { transition: none; }
+  .person.dragging .frame { cursor: grabbing; }
+  .person.flying .pop { display: none; }
+  /* 卡通眼睛 */
+  .face :global(.googly) { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .35s; z-index: 2; }
+  #people:global(.googly-on) .face :global(.googly) { opacity: 1; }
+  .face :global(.googly i) { position: absolute; translate: -50% -50%; border-radius: 50%; background: #fff; border: 2px solid #2B2B2B; box-shadow: 0 2px 4px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; }
+  .face :global(.googly b) { width: 46%; height: 46%; border-radius: 50%; background: #1F1F1F; box-shadow: inset 2px 2px 0 rgba(255,255,255,.55); transition: transform .08s linear; }
+  .bday-hat { display: none; }
+  .bday .bday-hat { display: block; position: absolute; left: 50%; top: -46px; width: 54px; height: 63px; translate: -10% 0; rotate: 14deg; transform: translateZ(50px); z-index: 5; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,.2)); animation: hat-bob 2.4s ease-in-out infinite; }
+  .bday-tag { display: none; }
+  .bday .bday-tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #E07A5F; color: #fff; }
+  @keyframes hat-bob { 50% { translate: -10% -5px; rotate: 8deg; } }
+  :global(.confetti) { position: absolute; z-index: 60; width: 9px; height: 14px; border-radius: 2px; pointer-events: none; animation: confetti 1.9s cubic-bezier(.15,.6,.4,1) forwards; }
+  @keyframes confetti { to { transform: translate(var(--dx), calc(var(--dy) + 340px)) rotate(var(--rot)); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .bday .bday-hat { animation: none; } }
   .av-bar { display: flex; flex-direction: column; align-items: center; gap: 12px; }
   .av-name { font-size: 19px; }
   .av-dl, .av-close { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 700; font-family: var(--sans); cursor: pointer; text-decoration: none; }
@@ -374,6 +527,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .site-go { margin-left: auto; color: var(--tint-ink); font-size: 16px; transition: transform .2s; }
   .site:hover .site-go { transform: translate(2px, -2px); }
   .links { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; }
+  .links:empty { display: none; }
   .links a { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 5px 10px; border-radius: 999px; background: var(--bg); color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
   .links a:hover { background: var(--tint); color: var(--tint-ink); }
   .life-filters { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -397,7 +551,7 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .lb-bar .lb-close { width: auto; padding: 0 18px; border-radius: 999px; border: 0; background: var(--coral); color: #1E1F1D; font-weight: 700; font-size: 15px; }
   .alumni { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 24px 16px; }
   .alum { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; outline-offset: 4px; }
-  .alum-face { width: 96px; height: 96px; border-radius: 50%; background: #E9E3D8; color: #5C4A37; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 34px; transition: transform .3s; }
+  .alum-face { width: 96px; height: 96px; border-radius: 50%; background: var(--sand); color: #5C4A37; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 34px; transition: transform .3s; }
   .alum:hover .alum-face, .alum:focus .alum-face { transform: translateY(-6px); }
   .ug { font-size: 14px; padding: 7px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; text-decoration: none; color: var(--ink); }
   @media (max-width: 767px) {

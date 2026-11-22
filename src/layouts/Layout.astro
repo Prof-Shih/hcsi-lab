@@ -7,10 +7,12 @@ import ChatGuide from '../components/ChatGuide.astro';
 
 const site = await getSite();
 
-interface Props { title: string; description?: string; active: number; i18n?: boolean }
-const { title, description = `${site.lab_name}（${site.short_name}）· ${site.dept}`, active, i18n = true } = Astro.props;
+interface Props { title: string; description?: string; active: number; i18n?: boolean; noindex?: boolean }
+const { title, description = `${site.lab_name}（${site.short_name}）· ${site.dept}`, active, i18n = true, noindex = false } = Astro.props;
 const i18nUrl = u('/i18n/en.json');
 const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${title} · ${site.short_name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(u('/og.png'), Astro.site).href;
 ---
 <!doctype html>
 <html lang="zh-Hant">
@@ -19,6 +21,20 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{fullTitle}</title>
   <meta name="description" content={description}>
+  <!-- 分享到 LINE／FB 時的預覽：標題、說明與 public/og.png -->
+  <link rel="canonical" href={canonical}>
+  <meta property="og:type" content={active === 0 ? 'website' : 'article'}>
+  <meta property="og:site_name" content={`${site.short_name} · ${site.lab_name}`}>
+  <meta property="og:title" content={fullTitle}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="zh_TW">
+  <meta name="twitter:card" content="summary_large_image">
+  {noindex && <meta name="robots" content="noindex">}
+  <link rel="sitemap" href={u('/sitemap.xml')}>
   <!-- 語言：選英文時先把畫面藏起來，等譯文套用完再顯示，避免先閃一下中文（最多等 1.5 秒） -->
   <script is:inline>
     (function () {
@@ -34,6 +50,20 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
     })();
   </script>
   <style is:inline>html.i18n-wait body { visibility: hidden; }</style>
+  <!-- 深色模式：有手動選過就照選的，否則跟隨系統；在畫面出來前設好，避免閃一下白底 -->
+  <meta name="color-scheme" content="light dark">
+  <script is:inline>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('hcsi-theme'); } catch (e) {}
+      var mq = matchMedia('(prefers-color-scheme: dark)');
+      document.documentElement.dataset.theme = t || (mq.matches ? 'dark' : 'light');
+      mq.addEventListener && mq.addEventListener('change', function (e) {
+        try { if (localStorage.getItem('hcsi-theme')) return; } catch (x) {}
+        document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+      });
+    })();
+  </script>
   <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,10 +81,14 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
         {nav.map((n, i) => <a href={u(n.href)} aria-current={i === active ? 'page' : undefined} data-i={i}>{n.label}</a>)}
         <span class="nav-line" aria-hidden="true"></span>
       </nav>
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="切換深色／淺色模式" title="深色／淺色模式">
+        <svg class="ic-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
+        <svg class="ic-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" /></svg>
+      </button>
       <button class="lang-btn" type="button" data-lang-toggle lang="en" aria-label="Switch to English 切換為英文">EN</button>
       <button class="menu-btn" type="button" aria-label="開啟選單" aria-expanded="false" aria-controls="mobile-nav">
-        <svg class="ic-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
-        <svg class="ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B2B2B" stroke-width="1.6" aria-hidden="true" style="display:none"><path d="M5 5l14 14M19 5L5 19"></path></svg>
+        <svg class="ic-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+        <svg class="ic-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="display:none"><path d="M5 5l14 14M19 5L5 19"></path></svg>
       </button>
     </div>
   </header>
@@ -94,6 +128,14 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
       });
       nav.addEventListener('mouseleave', () => place(active));
     }
+
+    // 深色模式切換：手動選過就記住
+    document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+      const r = document.documentElement;
+      const next = r.dataset.theme === 'dark' ? 'light' : 'dark';
+      r.dataset.theme = next;
+      try { localStorage.setItem('hcsi-theme', next); } catch { /* 私密視窗存不了就只套用這一次 */ }
+    });
 
     // 手機選單：展開後左側直線標示目前頁面
     const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
@@ -136,8 +178,10 @@ const fullTitle = active === 0 ? `${site.short_name} · ${site.lab_name}` : `${t
   .lang-btn { flex: none; margin-left: auto; min-width: 44px; height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); font: 600 12px/1 var(--latin), var(--sans); letter-spacing: .04em; cursor: pointer; transition: color .2s, border-color .2s; }
   .lang-btn:hover, .lang-btn:focus-visible { color: var(--ink); border-color: var(--accent); }
   .site-header .nav { margin-left: auto; }
-  .site-header .nav + .lang-btn { margin-left: 0; }
-  @media (max-width: 1023px) { .site-header .nav + .lang-btn { margin-left: auto; } }
+  .site-header .nav + .theme-btn { margin-left: 0; }
+  @media (max-width: 1023px) { .site-header .nav + .theme-btn { margin-left: auto; } }
+  .site-header .theme-btn + .lang-btn { margin-left: -8px; }
+  .menu-btn { color: var(--ink); }
   /* 英文較長：品牌副標換行、選單字小一點，維持 84px 一格（滑動底線依此計算） */
   html[lang="en"] .brand-text span { max-width: 190px; }
   html[lang="en"] .nav a { font-size: 13px; letter-spacing: -.01em; }
