@@ -85,6 +85,14 @@ a:hover { color: var(--link-hover); }
 .theme-btn .ic-sun { display: none; }
 :root[data-theme="dark"] .theme-btn .ic-sun { display: block; }
 :root[data-theme="dark"] .theme-btn .ic-moon { display: none; }
+/* 切換主題的日出／日落動畫（Layout.astro 產生，動畫完就移除） */
+.sky { position: fixed; inset: 0; z-index: 9998; pointer-events: none; }
+.sky.to-dark { background: radial-gradient(130% 100% at 80% 0%, #2A3530 0%, #161B19 55%, #0C100E 100%); }
+.sky.to-light { background: linear-gradient(to top, #F3B98A 0%, #F5D9BC 28%, #F7EDE2 55%, #F7F5F0 85%); }
+.sky i { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #FFF6DE; box-shadow: 0 0 6px 1px rgba(255, 246, 222, .7); opacity: 0; animation: sky-star .9s ease forwards; }
+@keyframes sky-star { 0% { opacity: 0; } 50% { opacity: 1; } 75% { opacity: .45; } 100% { opacity: .9; } }
+.sky-orb { position: fixed; left: 0; top: 0; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%; z-index: 9999; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #FFF1C4 0 38%, #FFC66B 62%, #F2915A 100%); box-shadow: 0 0 44px 16px rgba(246, 166, 90, .55), 0 0 120px 40px rgba(246, 166, 90, .25); }
 
 /* buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 16px; cursor: pointer; border: 0; font-family: var(--sans); }

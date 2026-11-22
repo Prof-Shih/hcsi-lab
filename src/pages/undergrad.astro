@@ -63,12 +63,10 @@ const wins = [
     <div class="wrap section">
       <h2 class="h2">你可以用的設備</h2>
       <div class="gear">
-        <figure><div class="gear-ph" style="background:#3E4A5A">Kneron NPU</div><figcaption>耐能 AI 加速棒／離線 NPU</figcaption></figure>
-        <figure><div class="gear-ph" style="background:#7A3B3B">Raspberry Pi 4/5</div><figcaption>樹莓派邊緣運算</figcaption></figure>
         <figure class="zoom"><img src={u('/images/puzzle.jpg')} alt="機械手臂拼圖" loading="lazy" /><figcaption>機械手臂</figcaption></figure>
         <figure class="zoom"><img src={u('/images/baseball.jpg')} alt="智慧棒球" loading="lazy" /><figcaption>自製感測棒球／球棒／手套</figcaption></figure>
       </div>
-      <span class="note">設備照片待補拍：耐能、樹莓派、深度攝影機（Azure Kinect／ZED／RealSense）</span>
+      <div class="gear-more"><b>另外還有</b>{['耐能 AI 加速棒（離線 NPU）', '樹莓派 4／5 邊緣運算', '深度攝影機（Azure Kinect／ZED／RealSense）'].map((d) => <span class="chip">{d}</span>)}</div>
     </div>
   </section>
 
@@ -138,8 +136,8 @@ const wins = [
   .win span { font-size: 14px; color: var(--ink-2); line-height: 1.6; }
   .gear { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
   .gear figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
-  .gear img, .gear-ph { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
-  .gear-ph { color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--latin); font-size: 26px; font-weight: 600; }
+  .gear img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; }
+  .gear-more { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 15px; }
   .gear figcaption { font-size: 15px; font-weight: 700; }
   .count { font-size: 18px; }
   .filters { display: flex; flex-wrap: wrap; gap: 8px; }

@@ -16,7 +16,7 @@
       "img" : ""
    },
    {
-      "col" : 1,
+      "col" : 2,
       "img" : "/images/puzzle.jpg",
       "bg" : "#2B2B2B",
       "cap" : "機械手臂拼圖 Demo",
@@ -33,7 +33,7 @@
    },
    {
       "kind" : "video",
-      "row" : 1,
+      "row" : 2,
       "cap" : "球場揮棒分析",
       "bg" : "#2F3B36",
       "img" : "/images/pose2.jpg",

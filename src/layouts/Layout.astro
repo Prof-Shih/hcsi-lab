@@ -129,12 +129,59 @@ const ogImage = new URL(u('/og.png'), Astro.site).href;
       nav.addEventListener('mouseleave', () => place(active));
     }
 
-    // 深色模式切換：手動選過就記住
-    document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+    // 深色模式切換：手動選過就記住。
+    // 切換時有日出／日落動畫：天色從按鈕擴散開來；轉深色時太陽從按鈕沿弧線落到左下、星星亮起，
+    // 轉淺色時太陽從左下升起、落進按鈕。「減少動態效果」時直接切換。動畫約 1 秒，期間不擋點擊。
+    const themeBtn = document.querySelector<HTMLElement>('[data-theme-toggle]');
+    let skyBusy = false;
+    themeBtn?.addEventListener('click', () => {
       const r = document.documentElement;
       const next = r.dataset.theme === 'dark' ? 'light' : 'dark';
-      r.dataset.theme = next;
-      try { localStorage.setItem('hcsi-theme', next); } catch { /* 私密視窗存不了就只套用這一次 */ }
+      const set = () => {
+        r.dataset.theme = next;
+        try { localStorage.setItem('hcsi-theme', next); } catch { /* 私密視窗存不了就只套用這一次 */ }
+      };
+      if (skyBusy || matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate) { set(); return; }
+      skyBusy = true;
+      const b = themeBtn.getBoundingClientRect();
+      const x = b.left + b.width / 2, y = b.top + b.height / 2, W = innerWidth, H = innerHeight;
+      const R = Math.hypot(Math.max(x, W - x), Math.max(y, H - y));
+
+      const sky = document.createElement('div');
+      sky.className = `sky to-${next}`;
+      sky.setAttribute('aria-hidden', 'true');
+      if (next === 'dark') {
+        for (let i = 0; i < 26; i++) {
+          const s = document.createElement('i');
+          s.style.cssText = `left:${Math.random() * 100}%;top:${Math.random() * 60}%;animation-delay:${200 + Math.random() * 500}ms;scale:${0.6 + Math.random()}`;
+          sky.append(s);
+        }
+      }
+      const orb = document.createElement('div');
+      orb.className = 'sky-orb';
+      orb.setAttribute('aria-hidden', 'true');
+      document.body.append(sky, orb);
+
+      // 天色從按鈕擴散 → 換主題 → 淡出
+      sky.animate({ clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${R}px at ${x}px ${y}px)`] }, { duration: 560, easing: 'cubic-bezier(.4,0,.2,1)' })
+        .finished.then(() => {
+          set();
+          return sky.animate({ opacity: [1, 0] }, { duration: 520, delay: 120, easing: 'ease-out', fill: 'forwards' }).finished;
+        })
+        .finally(() => { sky.remove(); skyBusy = false; });
+
+      // 太陽沿二次貝茲曲線走：按鈕 ↔ 左下地平線
+      const horizon = { x: W * 0.14, y: H + 60 }, ctrl = { x: W * 0.5, y: -H * 0.05 };
+      const [p0, p2] = next === 'dark' ? [{ x, y }, horizon] : [horizon, { x, y }];
+      const frames: Keyframe[] = [];
+      for (let i = 0; i <= 16; i++) {
+        const t = i / 16, a = (1 - t) ** 2, c = 2 * (1 - t) * t, d = t * t;
+        const px = a * p0.x + c * ctrl.x + d * p2.x, py = a * p0.y + c * ctrl.y + d * p2.y;
+        const k = next === 'dark' ? t : 1 - t; // 0＝在按鈕（小），1＝在天上（大）
+        const sc = 0.3 + 0.7 * Math.min(1, k * 3);
+        frames.push({ transform: `translate(${px}px, ${py}px) scale(${sc})`, opacity: i === 0 || i === 16 ? 0.2 : 1 });
+      }
+      orb.animate(frames, { duration: 1150, easing: 'cubic-bezier(.45,.05,.35,1)' }).finished.finally(() => orb.remove());
     });
 
     // 手機選單：展開後左側直線標示目前頁面

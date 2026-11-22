@@ -36,15 +36,13 @@ const gallery = t.gallery.filter((g) => g.src !== t.cover);
   <section class="wrap cols">
     <div class="col">
       {hasBody && <div class="prose"><Content /></div>}
-      <h2>做出來的東西</h2>
-      {gallery.length ? (
+      {gallery.length > 0 && <h2>做出來的東西</h2>}
+      {gallery.length > 0 && (
         <div class="gal">
           {gallery.map((im) => (
             <figure class="zoom"><img src={u(im.src)} alt={im.cap} loading="lazy" /><figcaption>{im.cap}</figcaption></figure>
           ))}
         </div>
-      ) : (
-        <div class="gal-ph">[成果截圖／系統畫面 — 待補]</div>
       )}
       <h2 style="margin-top:16px">加入後你可能會做</h2>
       <div style="display:flex;flex-wrap:wrap;gap:10px">
@@ -103,7 +101,6 @@ const gallery = t.gallery.filter((g) => g.src !== t.cover);
   .gal figure { margin: 0; display: flex; flex-direction: column; gap: 6px; border-radius: 4px; }
   .gal img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 4px; background: var(--sand); }
   .gal figcaption { font-size: 13px; color: var(--muted); }
-  .gal-ph { aspect-ratio: 16 / 9; background: var(--sand); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); }
   .item { display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 14px; text-decoration: none; color: var(--ink); }
   .item:hover { color: var(--ink); border-color: var(--accent); }
   .item b { font-size: 15px; line-height: 1.5; }

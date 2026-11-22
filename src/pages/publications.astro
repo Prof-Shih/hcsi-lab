@@ -10,15 +10,34 @@ const pubs = await getPubs();
 // 分頁：國內（domestic）的期刊／會議另成一頁；沒有資料的分頁不顯示
 const tabOf = (p: Pub) => (p.domestic ? 'domestic' : p.type);
 const tabs = [
+  { key: 'all', label: '全部' },
   { key: 'journal', label: '期刊' },
   { key: 'conference', label: '國際會議' },
   { key: 'domestic', label: '國內' },
   { key: 'thesis', label: '學位論文' },
   { key: 'other', label: '其他' },
-].filter((t) => pubs.some((p) => tabOf(p) === t.key));
+].filter((t) => t.key === 'all' || pubs.some((p) => tabOf(p) === t.key));
 const years = [...new Set(pubs.map((p) => p.year))].sort((a, b) => b - a);
 const groups = years.map((y) => ({ year: y, items: pubs.filter((p) => p.year === y) }));
-const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
+const countOf = (k: string) => (k === 'all' ? pubs.length : pubs.filter((p) => tabOf(p) === k).length);
+// 年代篩選
+const maxYear = years[0];
+const decades = [...new Set(years.map((y) => Math.floor(y / 10) * 10))];
+// 常見主題快速篩選：比對英文標題（正規式），少於 3 篇的不顯示
+const TOPICS: [string, string][] = [
+  ['運動', 'sport|baseball|basketball|tennis|golf|badminton|soccer|pitch|swing|athlet'],
+  ['棒球', 'baseball|pitch|batting|\\bbat\\b'],
+  ['人體動作', 'human|pose|posture|motion|gesture|hand|skeleton|action|body'],
+  ['影片分析', 'video'],
+  ['影像切割', 'segment'],
+  ['臉部與膚色', 'skin|hair|face|facial'],
+  ['3D 與深度', '3d|stereo|depth|reconstruct'],
+  ['注意力', 'attention|saliency|salient'],
+  ['感測與穿戴', 'sensor|wearable|imu|iot|glove|inertial'],
+  ['深度學習', 'deep|neural|cnn|learning|transformer'],
+  ['多模態 LLM', 'llm|language model|multimodal'],
+];
+const topics = TOPICS.map(([label, re]) => ({ label, re, n: pubs.filter((p) => new RegExp(re, 'i').test(p.title)).length })).filter((t) => t.n >= 3);
 ---
 <Layout title="著作" active={NAV.publications}>
   <Hero eyebrow="Publications" title="著作" lead="期刊、國際會議、國內論文，可搜尋、只看得獎。" />
@@ -27,7 +46,7 @@ const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
     <div class="toolbar">
       <div class="tabs" role="tablist" aria-label="著作類型">
         {tabs.map((t, i) => (
-          <button type="button" role="tab" data-tab={t.key} aria-selected={i === 0 ? 'true' : 'false'}>{t.label} <span>{countOf(t.key)}</span></button>
+          <button type="button" role="tab" data-tab={t.key} aria-selected={t.key === 'journal' ? 'true' : 'false'}>{t.label} <span>{countOf(t.key)}</span></button>
         ))}
         <span class="tab-line" aria-hidden="true"></span>
       </div>
@@ -37,17 +56,33 @@ const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
           <span class="sr-only">搜尋著作</span>
           <input type="search" id="q" placeholder="搜尋標題、作者、會議（如 baseball）" />
         </label>
+        <label class="year-sel">
+          <span class="sr-only">年份</span>
+          <select id="yr">
+            <option value="">全部年份</option>
+            {decades.map((d) => <option value={d}>{d}–{Math.min(d + 9, maxYear)}</option>)}
+          </select>
+        </label>
         <button type="button" class="pill award-btn" id="award" aria-pressed="false">★ 只看得獎</button>
       </div>
     </div>
-    <div class="note" style="font-size:14px" id="status" aria-live="polite"></div>
+    <div class="topics" role="group" aria-label="常見主題">
+      <span class="topics-k">常見主題</span>
+      {topics.map((t) => <button type="button" class="topic" data-re={t.re} data-label={t.label} aria-pressed="false">{t.label} <span>{t.n}</span></button>)}
+    </div>
+    <div class="status-row">
+      <span class="note" style="font-size:14px" id="status" aria-live="polite"></span>
+      <button type="button" class="link-btn" id="elsewhere" hidden></button>
+      <button type="button" class="link-btn" id="reset" hidden>清除篩選</button>
+    </div>
+    <div class="empty" id="empty" hidden>找不到符合的著作，換個關鍵字或清除篩選試試。</div>
 
     {groups.map((g) => (
       <div class="year-group">
         <div class="year">{g.year}</div>
         <div class="items">
           {g.items.map((p) => (
-            <div class="pub" data-tab={tabOf(p)} data-award={p.award ? '1' : ''} data-text={`${p.title} ${authorLine(p)} ${p.venue}`.toLowerCase()}>
+            <div class="pub" data-tab={tabOf(p)} data-year={p.year} data-title={p.title.toLowerCase()} data-award={p.award ? '1' : ''} data-text={`${p.title} ${authorLine(p)} ${p.venue}`.toLowerCase()}>
               <a class="pt" href={u(pubLink(p))} target="_blank" rel="noopener">{p.title}</a>
               <div class="pa">{authorLine(p)}</div>
               <div class="pm">
@@ -76,6 +111,19 @@ const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
   .search { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; background: var(--surface); border: 1px solid var(--line-2); border-radius: 2px; width: 300px; max-width: 100%; }
   .search input { border: 0; outline: none; background: transparent; font-size: 14px; flex-grow: 1; font-family: var(--sans); min-width: 0; }
   .award-btn { min-height: 44px; }
+  .year-sel select { min-height: 44px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 2px; background: var(--surface); color: var(--ink); font-family: var(--sans); font-size: 14px; cursor: pointer; }
+  .topics { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: -12px; }
+  .topics-k { font-size: 13px; color: var(--muted); margin-right: 4px; }
+  .topic { font-family: var(--sans); font-size: 14px; padding: 6px 13px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); color: var(--ink-2); cursor: pointer; transition: background .15s, border-color .15s, color .15s, transform .15s; }
+  .topic span { font-size: 12px; color: var(--muted); }
+  .topic:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .topic[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .topic[aria-pressed="true"] span { color: rgba(255,255,255,.8); }
+  .status-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-top: -12px; }
+  .link-btn { border: 0; background: none; padding: 0; font-family: var(--sans); font-size: 14px; color: var(--accent-ink); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .link-btn[hidden], .empty[hidden] { display: none; }
+  .empty { padding: 40px 0; text-align: center; color: var(--muted); font-size: 15px; }
+  .pt :global(mark) { background: color-mix(in srgb, var(--coral) 32%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
   .award-btn[aria-pressed="true"] { background: var(--coral); border-color: var(--coral); color: #1E1F1D; }
   .year-group { display: flex; flex-wrap: wrap; gap: 32px; }
   .year-group[hidden] { display: none; }
@@ -91,7 +139,11 @@ const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
   @media (max-width: 767px) {
     .tabs { grid-auto-columns: minmax(0, 1fr); width: 100%; }
     .tabs button { font-size: 14px; }
-    .tab-line { width: 18%; }
+    .tab-line { width: 13%; }
+    .tabs button span { display: none; }
+    .topics { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding: 2px 16px 4px; }
+    .topics::-webkit-scrollbar { display: none; }
+    .topic, .topics-k { flex: none; }
     .tools { width: 100%; }
     .search { width: 100%; }
     .year-group { gap: 8px; }
@@ -100,39 +152,105 @@ const countOf = (k: string) => pubs.filter((p) => tabOf(p) === k).length;
 </style>
 
 <script>
+  // 著作篩選：類型分頁 × 關鍵字（空白分隔＝都要有）× 年代 × 常見主題 × 只看得獎。
+  // 條件會寫進網址（?q=baseball&topic=棒球），可以直接複製分享；?lang=en 等其他參數保留。
   const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tabs button')];
   const line = document.querySelector<HTMLElement>('.tab-line')!;
   const q = document.getElementById('q') as HTMLInputElement;
+  const yr = document.getElementById('yr') as HTMLSelectElement;
   const award = document.getElementById('award')!;
   const status = document.getElementById('status')!;
+  const elsewhere = document.getElementById('elsewhere')!;
+  const reset = document.getElementById('reset')!;
+  const empty = document.getElementById('empty')!;
+  const topicBtns = [...document.querySelectorAll<HTMLButtonElement>('.topic')];
   const items = [...document.querySelectorAll<HTMLElement>('.pub')];
   const groups = [...document.querySelectorAll<HTMLElement>('.year-group')];
+  // 標題原文（標示關鍵字前先存起來）
+  const titles = new Map(items.map((el) => [el, el.querySelector<HTMLElement>('.pt')!.textContent ?? '']));
   let tab = 'journal';
   let awardOnly = false;
+  let topic = -1;
+
+  const esc = (x: string) => x.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const reEsc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   const placeLine = () => {
-    const b = tabs.find((t) => t.dataset.tab === tab)!;
+    const b = tabs.find((t) => t.dataset.tab === tab) ?? tabs[0];
     line.style.left = (b.offsetLeft + (b.offsetWidth - line.offsetWidth) / 2) + 'px';
   };
+  const setTab = (k: string) => {
+    tab = tabs.some((t) => t.dataset.tab === k) ? k : 'journal';
+    tabs.forEach((x) => x.setAttribute('aria-selected', String(x.dataset.tab === tab)));
+  };
+  const setTopic = (i: number) => {
+    topic = i;
+    topicBtns.forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+  };
+
   const apply = () => {
-    const term = q.value.trim().toLowerCase();
-    let n = 0;
+    const words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const tre = topic >= 0 ? new RegExp(topicBtns[topic].dataset.re!, 'i') : null;
+    const mark = words.length ? new RegExp('(' + words.map(reEsc).join('|') + ')', 'gi') : null;
+    const d = +yr.value;
+    let n = 0, other = 0;
     items.forEach((el) => {
-      const on = el.dataset.tab === tab && (!awardOnly || el.dataset.award === '1') && (!term || el.dataset.text!.includes(term));
+      const y = +el.dataset.year!;
+      // 類型分頁以外的條件
+      const rest = (!awardOnly || el.dataset.award === '1')
+        && (!yr.value || (y >= d && y < d + 10))
+        && (!tre || tre.test(el.dataset.title!))
+        && words.every((w) => el.dataset.text!.includes(w));
+      const on = rest && (tab === 'all' || el.dataset.tab === tab);
+      if (rest && !on) other++;
       el.hidden = !on;
       if (on) n++;
+      const t = titles.get(el)!;
+      el.querySelector<HTMLElement>('.pt')!.innerHTML = on && mark ? esc(t).replace(mark, '<mark>$1</mark>') : esc(t);
     });
     groups.forEach((g) => { g.hidden = !g.querySelector('.pub:not([hidden])'); });
+    const filtered = words.length > 0 || !!yr.value || awardOnly || topic >= 0;
     status.textContent = `共 ${n} 篇`;
+    elsewhere.textContent = `其他類別還有 ${other} 篇 →`;
+    elsewhere.hidden = !(filtered && other > 0);
+    reset.hidden = !filtered;
+    empty.hidden = n > 0;
     placeLine();
+
+    const sp = new URLSearchParams(location.search);
+    const put = (k: string, v: string) => (v ? sp.set(k, v) : sp.delete(k));
+    put('q', q.value.trim());
+    put('y', yr.value);
+    put('tab', tab === 'journal' ? '' : tab);
+    put('topic', topic >= 0 ? topicBtns[topic].dataset.label! : '');
+    put('award', awardOnly ? '1' : '');
+    const qs = sp.toString();
+    history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
   };
-  tabs.forEach((b) => b.addEventListener('click', () => {
-    tab = b.dataset.tab!;
-    tabs.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
-    apply();
-  }));
+
+  tabs.forEach((b) => b.addEventListener('click', () => { setTab(b.dataset.tab!); apply(); }));
+  topicBtns.forEach((b, i) => b.addEventListener('click', () => { setTopic(topic === i ? -1 : i); apply(); }));
   q.addEventListener('input', apply);
+  yr.addEventListener('change', apply);
   award.addEventListener('click', () => { awardOnly = !awardOnly; award.setAttribute('aria-pressed', String(awardOnly)); apply(); });
+  elsewhere.addEventListener('click', () => { setTab('all'); apply(); });
+  reset.addEventListener('click', () => {
+    q.value = ''; yr.value = ''; awardOnly = false; award.setAttribute('aria-pressed', 'false'); setTopic(-1); apply(); q.focus();
+  });
+  // 按 / 直接跳到搜尋框
+  addEventListener('keydown', (e) => {
+    const el = e.target as HTMLElement;
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey && !el.closest('input, textarea, select, [contenteditable]')) { e.preventDefault(); q.focus(); }
+  });
   addEventListener('resize', placeLine);
+
+  // 打開分享連結時還原條件
+  const sp = new URLSearchParams(location.search);
+  q.value = sp.get('q') ?? '';
+  if ([...yr.options].some((o) => o.value && o.value === sp.get('y'))) yr.value = sp.get('y')!;
+  awardOnly = sp.get('award') === '1';
+  award.setAttribute('aria-pressed', String(awardOnly));
+  setTopic(topicBtns.findIndex((b) => b.dataset.label === sp.get('topic')));
+  setTab(sp.get('tab') ?? 'journal');
   apply();
 </script>
