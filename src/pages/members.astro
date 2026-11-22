@@ -435,6 +435,8 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   .grade-head .stack > span { font-size: 13px; color: var(--muted); }
   .grade-code { min-width: 48px; height: 48px; padding: 0 10px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 24px; font-weight: 700; letter-spacing: .04em; color: #fff; background: var(--accent); box-shadow: 0 6px 14px rgba(30,28,24,.14); }
   .grade:has(.tier-M1) .grade-code { background: var(--wood); }
+  /* 深色模式底色變淺，白字看不清楚，改深色字 */
+  :global(:root[data-theme="dark"]) .grade:not(.grade-pi) .grade-code { color: var(--bg); }
   .grade-pi .grade-code { color: #3A2C12; background: linear-gradient(135deg, #F3DE9C, #C79A3E 55%, #9C7428); }
   /* 頭像相框：大小一律相同，只換框與小特效；滑鼠移上去 3D 傾斜 */
   .frame { --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%; position: relative; width: 168px; height: 168px; max-width: 100%; transform-style: preserve-3d; transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .45s cubic-bezier(.2,.8,.2,1); }
