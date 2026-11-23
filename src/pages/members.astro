@@ -212,8 +212,8 @@ undergradProjects.forEach((p) => p.names.forEach((n) => { if (!seen.has(n)) { se
   import { mountLala } from '../scripts/lala';
   import { mountGoogly } from '../scripts/googly';
   mountLala();
-  // 滑鼠進到成員區：頭貼長出卡通眼睛，眼珠跟著游標轉（拉拉看頭像不加）
-  mountGoogly('#people', '.face:not(.lala) > img');
+  // 滑鼠進到成員區：頭貼長出卡通眼睛，眼珠跟著游標轉（拉拉看頭像、指導教授不加）
+  mountGoogly('#people', '.grade:not(.grade-pi) .face:not(.lala) > img');
 </script>
 
 <script define:vars={{ gallery }}>
